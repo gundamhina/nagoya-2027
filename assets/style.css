@@ -198,3 +198,6 @@
     color:var(--gold);font:600 12px/1.4 "Noto Serif TC","PMingLiU",serif;letter-spacing:.08em;}
   @media(max-width:760px){.ver-badge{font-size:11px;padding:2px 9px;}}
   @media print{.ver-badge{color:var(--ink);}}
+
+  a.ver-badge{transition:background .15s,color .15s;}
+  a.ver-badge:hover,a.ver-badge:focus-visible{background:var(--gold);color:#fff9e9;}
