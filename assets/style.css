@@ -221,3 +221,26 @@
 .group-card{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--gold);padding:18px 20px;border-radius:4px;}
 .group-card h3{margin:0 0 8px;color:var(--teal);font-size:17px;}.group-card p{margin:0;}.group-card strong{display:block;font-size:20px;}.group-card span{display:block;color:var(--muted);font-size:13px;margin-top:5px;}
 @media(max-width:760px){.group-summary{grid-template-columns:1fr;}.group-card strong{font-size:19px;}}
+
+  /* 每日行程 */
+  .days{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
+  .day{display:flex;border:1px solid var(--rule);border-radius:4px;background:var(--card);overflow:hidden;}
+  .day-mark{flex:none;width:86px;background:#193d36;color:#fff9e9;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;padding:18px 8px;}
+  .day-mark .d{font-family:"Noto Serif TC","PMingLiU",serif;font-size:19px;letter-spacing:.04em;}
+  .day-mark .w{font-size:11px;color:#bcd0c2;letter-spacing:.14em;}
+  .day-body{padding:18px 22px;flex:1;min-width:0;}
+  .day-body h3{margin:0 0 10px;font-family:"Noto Serif TC","PMingLiU",serif;font-size:18px;font-weight:500;letter-spacing:.03em;}
+  .day-body ul{margin:0;padding-left:1.1em;font-size:13.5px;line-height:1.95;}
+  .day-body li b{color:var(--teal);font-weight:600;margin-right:2px;}
+  .day-note{margin:10px 0 0;font-size:12.5px;line-height:1.85;color:var(--muted);
+    border-top:1px dashed var(--rule);padding-top:9px;}
+  .day-note b{color:var(--mark);}
+  .highlight-day{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;}
+  .highlight-day .day-mark{background:#8a6a2a;}
+  @media(max-width:760px){
+    .day{flex-direction:column;}
+    .day-mark{width:auto;flex-direction:row;justify-content:flex-start;gap:10px;padding:10px 16px;}
+    .day-body{padding:14px 16px;}
+  }
+  @media print{.day{break-inside:avoid;}}

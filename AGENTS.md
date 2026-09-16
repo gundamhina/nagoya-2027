@@ -5,7 +5,7 @@
 ## 一、每次改版必做五件事
 
 1. **先拉最新版**　`git pull --rebase`。這個 repo 有多方同時推送，直接推很容易撞號或被拒。
-2. **更新版本號**　三處必須一致：五個 HTML 頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、以及 `assets/style.css?vX.Y` 的快取參數。漏掉第三個，團員的瀏覽器會繼續用舊樣式。
+2. **更新版本號**　三處必須一致：六個 HTML 頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、以及 `assets/style.css?vX.Y` 的快取參數。漏掉第三個，團員的瀏覽器會繼續用舊樣式。
 3. **更新 CHANGELOG.md**　最上方新增 `## vX.Y — YYYY-MM-DD`，條列這次改了什麼。
 4. **更新 README.md**　開頭那行「目前版本」同步。
 5. **打上 git tag**　`git tag -a vX.Y -m "簡述"`，推送時加 `--follow-tags`。
@@ -16,10 +16,10 @@
 ## 二、內容原則
 
 - 航班、票價、人數、分攤金額都是真實資料，**不要臆測或自行補值**。數字不確定就標「待確認」，不要填推估值而不註明。
-- 五頁共用 `assets/style.css`，改樣式改這一份，不要在 HTML 內嵌 `<style>`。
+- 六頁共用 `assets/style.css`，改樣式改這一份，不要在 HTML 內嵌 `<style>`。
 - 純靜態，不引入 npm、建置工具或外部圖片服務。
 - 繁體中文，金額以新台幣為單位並加千分位。
-- 分組名稱目前是「【山】悠旅」（3/14 小松進）與「【城】樂聚」（3/17 名古屋進），內部代號 C-2 與 D-2。改名要五頁一起改。
+- 分組名稱目前是「【山】悠旅」（3/14 小松進）與「【城】樂聚」（3/17 名古屋進），內部代號 C-2 與 D-2。改名要六頁一起改。
 
 ## 三、頁面結構
 
@@ -27,9 +27,10 @@
 | --- | --- |
 | `index.html` | 總覽 |
 | `journey.html` | 01 行程與航班 |
-| `people.html` | 02 旅伴與分攤 |
-| `stay.html` | 03 住宿資訊 |
-| `reminders.html` | 04 旅行提醒 |
-| `assets/style.css` | 五頁共用樣式 |
+| `itinerary.html` | 02 每日行程 |
+| `people.html` | 03 旅伴與分攤 |
+| `stay.html` | 04 住宿資訊 |
+| `reminders.html` | 05 旅行提醒 |
+| `assets/style.css` | 六頁共用樣式 |
 
 部署：GitHub Pages 由 `main` 分支根目錄自動重建，推送後約一分鐘生效。
