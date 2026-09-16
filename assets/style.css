@@ -204,3 +204,15 @@
   .masthead-meta{display:flex;align-items:center;gap:14px;flex:none;}
   .masthead-meta .edition{white-space:nowrap;}
   @media(max-width:760px){.masthead-meta{gap:9px;}}
+
+.notion-hub{background:#e8eee3;border:1px solid #d3ddcd;padding:24px;border-radius:4px;margin-bottom:24px;}
+.notion-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.notion-heading h3{margin:0;font-size:17px;}
+.notion-hub p{color:var(--muted);font-size:13px;margin:8px 0 16px;}
+.notion-cta{background:var(--teal);color:white;padding:9px 15px;border-radius:3px;font-size:13px;}
+.stay-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.stay-links a{display:block;background:var(--card);border:1px solid var(--rule);padding:16px;border-radius:3px;}
+.stay-links a:hover{border-color:var(--gold);}
+.stay-links strong{display:block;font-size:14px;}
+.stay-links small{display:block;margin-top:5px;color:var(--muted);font-size:11px;}
+@media(max-width:760px){.stay-links{grid-template-columns:1fr;}.notion-hub{padding:18px;}}
