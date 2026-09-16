@@ -192,3 +192,9 @@
 
   .travel-footer .ver{font-family:"Noto Serif TC","PMingLiU",serif;letter-spacing:.06em;color:var(--gold);}
   @media(max-width:760px){.travel-footer .ver{order:-1;}}
+
+  .edition{display:inline-flex;align-items:center;gap:10px;}
+  .ver-badge{border:1px solid var(--gold);border-radius:30px;padding:3px 11px;
+    color:var(--gold);font:600 12px/1.4 "Noto Serif TC","PMingLiU",serif;letter-spacing:.08em;}
+  @media(max-width:760px){.ver-badge{font-size:11px;padding:2px 9px;}}
+  @media print{.ver-badge{color:var(--ink);}}
