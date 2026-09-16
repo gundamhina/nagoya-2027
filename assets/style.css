@@ -244,3 +244,6 @@
     .day-body{padding:14px 16px;}
   }
   @media print{.day{break-inside:avoid;}}
+
+  .day-lead{margin:14px 0 6px;font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;}
+  .day-lead:first-of-type{margin-top:0;}
