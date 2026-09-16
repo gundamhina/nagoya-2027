@@ -1,6 +1,6 @@
 # 名古屋・北陸 2027／3
 
-> 目前版本 **v1.3**（2026-09-16）·「更新紀錄」見 [CHANGELOG.md](CHANGELOG.md)
+> 目前版本 **v1.4**（2026-09-16）·「更新紀錄」見 [CHANGELOG.md](CHANGELOG.md)
 
 2027 年 3 月名古屋與金澤團體旅行的機票、住宿與分攤整理。
 
@@ -19,6 +19,16 @@
 | `reminders.html` | 04 旅行提醒：交通銜接與待確認事項 |
 | `assets/style.css` | 五頁共用樣式 |
 | `CHANGELOG.md` | 版本更新紀錄 |
+| `AGENTS.md` | 協作規範，改動前必讀 |
+
+## 改版規範
+
+**每次改動都要留下版本紀錄，動手前先 `git pull --rebase`。** 完整規則見 [AGENTS.md](AGENTS.md)，摘要：
+
+1. 五個 HTML 的頁首徽章、頁尾版次、CSS 快取參數三處版本號同步更新
+2. `CHANGELOG.md` 最上方新增一節 `## vX.Y — YYYY-MM-DD`
+3. README 開頭的「目前版本」跟著改
+4. `git tag -a vX.Y`，推送時加 `--follow-tags`
 
 ## 開發
 
