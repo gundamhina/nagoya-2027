@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>名古屋・北陸 2027／3　分兩批出發</title>
+<style>
+  html{color-scheme:dark;}
+  :root{
+    --paper:#14181C;
+    --card:#1C2228;
+    --ink:#E4E8EB;
+    --indigo:#3D6A94;
+    --teal:#3E8F74;
+    --muted:#8B98A3;
+    --rule:#313A43;
+    --mark:#D9705C;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+    font-size:15px;line-height:1.65;font-variant-numeric:tabular-nums;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 20px 72px;}
+
+  header{border-bottom:2px solid var(--ink);padding-bottom:18px;}
+  h1{
+    font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;
+    font-size:clamp(26px,5vw,42px);font-weight:600;letter-spacing:.04em;
+    margin:0 0 6px;line-height:1.25;
+  }
+  .sub{color:var(--muted);font-size:14px;margin:0;}
+  .sub b{color:var(--ink);font-weight:600;}
+
+  /* 時間軸 */
+  .axis{margin:30px 0 8px;background:var(--card);border:1px solid var(--rule);padding:20px 18px 14px;}
+  .axis h2{margin:0 0 16px;font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.1em;}
+  .lane{display:flex;align-items:stretch;margin-bottom:10px;min-height:52px;}
+  .lane .who{
+    width:92px;flex:none;font-size:13px;font-weight:600;padding-top:14px;
+    border-right:1px solid var(--rule);margin-right:14px;
+  }
+  .lane .bar{flex:1;position:relative;display:flex;align-items:center;}
+  .seg{height:26px;display:flex;align-items:center;padding:0 10px;color:#DCE6E2;font-size:12.5px;white-space:nowrap;overflow:hidden;}
+  .seg.hokuriku{background:#2F5878;}
+  .seg.nagoya{background:#2C6D57;}
+  .seg.empty{background:transparent;}
+  .scale{display:flex;font-size:11.5px;color:var(--muted);margin-left:106px;border-top:1px solid var(--rule);padding-top:5px;}
+  .scale span{flex:1;}
+  .meet{font-size:13px;color:var(--mark);margin:6px 0 0 106px;}
+
+  .scroller{overflow-x:auto;margin-top:26px;border:1px solid var(--rule);background:var(--card);-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;min-width:560px;}
+  th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule);font-size:14px;}
+  thead th{background:#24313D;color:#E8EEF3;font-weight:600;border-bottom:none;line-height:1.4;}
+  thead th:nth-child(3){background:#23362F;}
+  thead th .tag{display:block;font-weight:400;font-size:12px;color:#8FB0A4;margin-top:2px;}
+  thead th:nth-child(2) .tag{color:#9DBBD4;}
+  tbody th{
+    background:#232A31;font-weight:500;white-space:nowrap;
+    position:sticky;left:0;z-index:1;border-right:1px solid var(--rule);width:116px;
+  }
+  tbody tr:nth-child(even) td{background:#20272D;}
+  .flight .no{font-weight:600;}
+  .flight .tm{font-family:"Noto Serif TC","Songti TC",serif;font-size:15px;}
+  .flight .dur{color:var(--muted);font-size:12.5px;}
+  .money{font-family:"Noto Serif TC","Songti TC",serif;font-size:16px;}
+  .total{font-size:20px;font-weight:600;}
+  .plus{color:var(--muted);font-size:13px;}
+  .band th,.band td{
+    background:#262F37 !important;font-size:12px;letter-spacing:.14em;color:var(--muted);
+    padding-top:7px;padding-bottom:7px;
+  }
+  .same{color:var(--muted);}
+
+  section{margin-top:44px;}
+  h2.head{
+    font-family:"Noto Serif TC","Songti TC",serif;font-size:21px;font-weight:600;
+    margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--rule);
+  }
+  .box{background:var(--card);border:1px solid var(--rule);padding:16px 18px;font-size:14px;}
+  .box + .box{margin-top:12px;}
+  .box h3{margin:0 0 6px;font-size:15px;font-weight:600;}
+  .box.warn{border-left:4px solid var(--mark);}
+  ul{margin:0;padding-left:1.15em;}
+  li{margin-bottom:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>名古屋・北陸　2027 年 3 月</h1>
+  <p class="sub">分兩批出發，<b>3/17 名古屋會合</b>，3/23 同班機回台　·　民宿 15 人分攤　·　單人 TWD</p>
+</header>
+
+<div class="axis">
+  <h2>行程重疊</h2>
+  <div class="lane">
+    <div class="who">早去組<br><span style="font-weight:400;color:var(--muted);font-size:12px;">C-2</span></div>
+    <div class="bar">
+      <div class="seg hokuriku" style="flex:3;">金澤　3 晚</div>
+      <div class="seg nagoya" style="flex:6;">名古屋民宿　6 晚</div>
+    </div>
+  </div>
+  <div class="lane">
+    <div class="who">會合組<br><span style="font-weight:400;color:var(--muted);font-size:12px;">D-2</span></div>
+    <div class="bar">
+      <div class="seg empty" style="flex:3;"></div>
+      <div class="seg nagoya" style="flex:6;">名古屋民宿　6 晚</div>
+    </div>
+  </div>
+  <div class="scale">
+    <span style="flex:3;">3/14</span>
+    <span style="flex:3;">3/17</span>
+    <span style="flex:3;">3/20</span>
+    <span style="flex:0 0 auto;">3/23</span>
+  </div>
+  <p class="meet">3/17 中午名古屋會合 — 早去組從金澤南下，會合組 12:25 落地</p>
+</div>
+
+<div class="scroller">
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>早去組　C-2<span class="tag">小松進・名古屋出　11 人</span></th>
+      <th>會合組　D-2<span class="tag">名古屋來回　4 人</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="band"><th>航班</th><td colspan="2"></td></tr>
+    <tr>
+      <th>去程</th>
+      <td class="flight">03/14（日）<br><span class="no">IT 252</span>　桃園 → 小松<br><span class="tm">12:00 → 15:35</span><br><span class="dur">2 小時 35 分</span></td>
+      <td class="flight">03/17（三）<br><span class="no">IT 206</span>　桃園 → 名古屋<br><span class="tm">08:45 → 12:25</span><br><span class="dur">2 小時 40 分</span></td>
+    </tr>
+    <tr>
+      <th>回程</th>
+      <td class="flight">03/23（二）<br><span class="no">IT 207</span>　名古屋 → 桃園<br><span class="tm">13:15 → 15:50</span><br><span class="dur">3 小時 35 分</span></td>
+      <td class="flight same">同左　<span class="no">IT 207</span><br><span class="tm">13:15 → 15:50</span></td>
+    </tr>
+
+    <tr class="band"><th>費用</th><td colspan="2"></td></tr>
+    <tr><th>去程票價</th><td class="money">6,849</td><td class="money">2,849</td></tr>
+    <tr><th>回程票價</th><td class="money">3,229</td><td class="money">3,229</td></tr>
+    <tr><th>機票合計</th><td class="money">10,078</td><td class="money">6,078</td></tr>
+    <tr>
+      <th>名古屋民宿</th>
+      <td>3/17–3/23　6 晚<br><span class="plus">總價 166,266 ÷ 15</span></td>
+      <td>3/17–3/23　6 晚<br><span class="plus">總價 166,266 ÷ 15</span></td>
+    </tr>
+    <tr><th>民宿分攤</th><td class="money">11,084<br><span class="plus">每晚 1,847</span></td><td class="money">11,084<br><span class="plus">每晚 1,847</span></td></tr>
+    <tr>
+      <th>北陸段</th>
+      <td>金澤 3/14–3/17　3 晚<br><span class="plus">住宿與交通未含</span></td>
+      <td class="same">無</td>
+    </tr>
+    <tr>
+      <th>機票＋民宿</th>
+      <td class="money total">21,162<br><span class="plus">＋北陸三晚</span></td>
+      <td class="money total">17,162</td>
+    </tr>
+    <tr><th>兩組價差</th><td colspan="2">早去組每人多 <b>4,000</b>（全部來自機票）＋北陸三晚費用</td></tr>
+
+    <tr class="band"><th>時間</th><td colspan="2"></td></tr>
+    <tr><th>停留</th><td>9 晚 / 10 天</td><td>6 晚 / 7 天</td></tr>
+    <tr><th>請假平日</th><td>7 天（3/15–3/19、3/22–3/23）</td><td>5 天（3/17–3/19、3/22–3/23）</td></tr>
+    <tr><th>出發當天</th><td>中午出門</td><td>台中約凌晨 04:00 出門</td></tr>
+    <tr><th>抵達日</th><td>15:35 落地，當晚可逛金澤近江町、東茶屋街</td><td>12:25 落地，下午即可進市區</td></tr>
+    <tr><th>含週末</th><td>3/20–21</td><td>3/20–21</td></tr>
+    <tr><th>回國後</th><td colspan="2">3/23（二）15:50 落地，隔天就上班</td></tr>
+  </tbody>
+</table>
+</div>
+
+<section>
+  <h2 class="head">人員名單　10 大 5 小　共 15 人</h2>
+  <div class="scroller">
+  <table>
+    <thead>
+      <tr><th>家庭</th><th>大人</th><th>小孩</th><th>人數</th><th>分組</th><th>機票（自理）</th><th>民宿分攤（需收款）</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>1</th><td>劭、雯</td><td>冪</td><td>3</td><td>C-2 早去</td><td class="money">30,234<span class="plus">未購</span></td><td class="money">33,252</td></tr>
+      <tr><th>2</th><td>軒、婷</td><td>豆虎</td><td>3</td><td>C-2 早去</td><td class="money">30,234<span class="plus">未購</span></td><td class="money">33,252</td></tr>
+      <tr><th>3</th><td>穎、儒</td><td>uni</td><td>3</td><td>D-2 會合</td><td class="money">18,234<span class="plus">未購</span></td><td class="money">33,252</td></tr>
+      <tr><th>4</th><td>allen、mica</td><td>嘿莉</td><td>3</td><td>C-2 早去</td><td class="money">30,234<span class="plus">回程已購，尚缺去程 20,547</span></td><td class="money">33,252</td></tr>
+      <tr><th>5</th><td>祈絜</td><td class="same">—</td><td>1</td><td>D-2 會合</td><td class="money">6,078<span class="plus">未購</span></td><td class="money">11,084</td></tr>
+      <tr><th>6</th><td>宛瑩</td><td>璐兒</td><td>2</td><td>C-2 早去</td><td class="money">20,156<span class="plus">未購</span></td><td class="money">22,168</td></tr>
+      <tr><th>合計</th><td>10 人</td><td>5 人</td><td><b>15</b></td><td>C-2 十一人／D-2 四人</td><td class="money">135,170<span class="plus">各家自付</span></td><td class="money"><b>166,266</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="box" style="margin-top:12px;">
+    <h3>兩件事會影響金額</h3>
+    <ul>
+      <li>機票由各家自行訂購，只有民宿 166,266 需要統一收款。</li>
+      <li>民宿目前是 166,266 ÷ 15 平均分攤，若小孩只算半份或不計，大人的分攤金額會往上調。</li>
+      <li>機票查價是以 1 位大人為基準。虎航 2 歲以上兒童與大人同價，2 歲以下嬰兒另計，若有未滿 2 歲的小孩，那一份要另外抓。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 class="head">住宿配置</h2>
+
+  <h3 style="margin:0 0 10px;font-size:16px;">① 金澤　3/14–3/17　3 晚　11 人　<span style="color:var(--mark);font-weight:400;font-size:14px;">未訂</span></h3>
+  <div class="box">
+    <p style="margin:0;">只有早去組住，會合組不參與。訂房搜尋條件：<b>大人 7、兒童 4</b>，3/14 入住、3/17 退房。以金澤站周邊或東茶屋街一帶為主，三晚定點、白川鄉與高山安排成一日來回。</p>
+  </div>
+  <div class="scroller" style="margin-top:12px;">
+  <table>
+    <thead><tr><th>房間</th><th>入住</th><th>人數</th><th>需求</th></tr></thead>
+    <tbody>
+      <tr><th>A</th><td>劭、雯、冪</td><td>3</td><td>雙人床＋加床，或 2 張床</td></tr>
+      <tr><th>B</th><td>軒、婷、豆虎</td><td>3</td><td>雙人床＋加床，或 2 張床</td></tr>
+      <tr><th>C</th><td>allen、mica、嘿莉</td><td>3</td><td>雙人床＋加床，或 2 張床</td></tr>
+      <tr><th>D</th><td>宛瑩、璐兒</td><td>2</td><td>雙人床或 2 張單人床</td></tr>
+      <tr><th>合計</th><td>4 個家庭</td><td><b>11</b></td><td>4 間房，或一棟 4 房以上民宿</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="margin:26px 0 10px;font-size:16px;">② 名古屋　3/17–3/23　6 晚　15 人　<span style="color:var(--teal);font-weight:400;font-size:14px;">荣园・名站日式庭院邸宅</span></h3>
+  <div class="box">
+    <p style="margin-bottom:10px;">名古屋市中村區，步行可達名古屋站。整棟三層獨棟，6 間臥室、7 張床、3.5 間衛浴，評價 4.84（102 則），房東成田為超讚房東、7 年經驗、1 小時內回覆。</p>
+    <p style="margin:0;color:var(--muted);">免費停車 1 車位　·　廚房　·　洗衣機與烘衣機　·　按摩浴池　·　兒童餐具　·　自助入住　·　可寄放行李　·　Wi-Fi　·　Netflix</p>
+  </div>
+
+  <div class="scroller" style="margin-top:12px;">
+  <table>
+    <thead><tr><th>臥室</th><th>床位</th><th>可睡</th><th>建議入住</th></tr></thead>
+    <tbody>
+      <tr><th>1</th><td>2 張標準雙人床</td><td>4</td><td>宛瑩、璐兒、祈絜</td></tr>
+      <tr><th>2</th><td>2 張標準雙人床</td><td>4</td><td>3 人家庭</td></tr>
+      <tr><th>5</th><td>3 張地板床墊</td><td>3</td><td>3 人家庭</td></tr>
+      <tr><th>3</th><td>1 張標準雙人床</td><td>2–3</td><td>3 人家庭（小孩同睡）</td></tr>
+      <tr><th>4</th><td>1 張標準雙人床</td><td>2–3</td><td>3 人家庭（小孩同睡）</td></tr>
+      <tr><th>6</th><td>1 張標準雙人床</td><td>2</td><td class="same">機動／空房</td></tr>
+      <tr><th>合計</th><td>7 雙人床＋3 床墊</td><td>17 床位</td><td>15 人住 5 間，留 1 間備用</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box warn" style="margin-top:12px;">
+    <h3>人數變動，民宿要重查</h3>
+    <p>凱與源源不去，全團從 17 人減為 15 人（大人 10、兒童 5）。166,266 這個報價是以大人 11、兒童 5 查出來的，人數改了總價通常會跟著變，請用 10 大 5 小重查一次，我再更新分攤金額。目前表上的 11,084 是暫以舊總價除以 15 推算。</p>
+  </div>
+</section>
+
+<section>
+  <h2 class="head">這樣安排的好處</h2>
+  <div class="box">
+    <p>北陸段只有想去的人付，不用全團一起承擔金澤與高山的住宿和巴士；民宿從 3/17 才起算，兩組分攤金額相同，帳目乾淨。回程同一班 IT207，行李和接送可以一起處理。</p>
+  </div>
+  <div class="box">
+    <h3>要注意的地方</h3>
+    <ul>
+      <li>早去組 3/17 從金澤到名古屋，特急列車約 3 小時、高速巴士約 4 小時，建議訂上午班次才能和會合組接上。</li>
+      <li>金澤三晚定點，白川鄉與高山安排一日來回，巴士需提前訂位；3 月北陸仍可能積雪影響班次。</li>
+      <li>兩組請假天數差 2 天，早去組實際是 7 天。</li>
+    </ul>
+  </div>
+  <div class="box warn">
+    <h3>待確認</h3>
+    <ul>
+      <li>allen 家目前只買到回程 3 張，金額以 3,229 特價推算；其餘五家機票全部未購，去程 IT252 與 IT206 的票價會隨時間變動。</li>
+      <li>金澤三晚住宿與交通費用尚未估入早去組總額。</li>
+      <li>回程 IT207 目前是 3,229 的特價，非特價基本價 2,146，票價依官方最終核准為主。</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
