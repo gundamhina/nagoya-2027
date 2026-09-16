@@ -189,3 +189,6 @@
 
   .page-head + .quick-nav{margin-top:0;}
   section:first-of-type{margin-top:32px;}
+
+  .travel-footer .ver{font-family:"Noto Serif TC","PMingLiU",serif;letter-spacing:.06em;color:var(--gold);}
+  @media(max-width:760px){.travel-footer .ver{order:-1;}}
