@@ -62,13 +62,35 @@
       function end(a, right) {
         return '<span class="c' + (right ? " r" : "") + '"><span class="tm">' + a[2] + '</span><span class="ap">' + a[1] + " " + a[0] + "</span></span>";
       }
-      return sec("航班", "", "margin-top:0") + '<div class="ledger">' + each(T.groups, function (g) {
+      function tlFlight(f) {
+        return '<div class="tl-flight"><span class="k">' + f.date + " · " + f.label + '</span><span class="rt">' + f.from[0] + " " + f.from[1] + " → " + f.to[0] + " " + f.to[1] +
+          '</span><span class="tm">' + f.from[2] + " → " + f.to[2] + "</span>" + (f.note ? '<span class="nt">' + f.note + "</span>" : "") + "</div>";
+      }
+      var rows = each(T.groups, function (g) {
+        return '<tr><th scope="row"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="rg">' + g.period + "<br>" + g.count + "</span></th>" +
+          each(t.timeline[g.id], function (c) {
+            var span = c.span > 1 ? ' colspan="' + c.span + '"' : "";
+            if (c.kind === "empty") return "<td" + span + ' class="tl-empty" aria-label="非旅行區間"></td>';
+            return "<td" + span + ' class="' + (c.kind === "pending" ? "tl-pending" : "tl-" + g.id) + '">' + each(c.blocks, function (b) {
+              if (b.flight !== undefined) return tlFlight(t.flights[g.id][b.flight]);
+              if (b.unknown) return '<div class="tl-unknown"><b>' + b.unknown + "</b><small>" + b.small + "</small></div>";
+              return (b.strong ? "<b>" + b.strong + "</b>" : "") + (b.small ? "<small>" + b.small + "</small>" : "");
+            }) + "</td>";
+          }) + "</tr>";
+      });
+      var timeline = sec("日期時間軸", "", "margin-top:0") + '<p class="fine tl-intro">' + t.timelineIntro + "</p>" +
+        '<div class="tl-legend">' + each(T.groups, function (g) { return '<span><i class="tl-' + g.id + '"></i>' + g.label + "</span>"; }) +
+        '<span><i class="tl-pending"></i>' + t.pendingLegend + "</span></div>" +
+        '<div class="tl-scroll" tabindex="0" role="region" aria-label="三組旅伴的日期、交通與旅行地點"><table class="tl"><caption>' + t.timelineCaption +
+        '</caption><thead><tr><th scope="col">旅伴</th>' + each(t.timelineDates, function (d) { return '<th scope="col">' + d + "</th>"; }) +
+        "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="fine">' + t.airportNote + "</p>";
+      return timeline + sec("航班") + '<div class="ledger">' + each(T.groups, function (g) {
         return '<div class="flight"><div class="flight-h"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="ct">' + g.people + '</span></div><div class="legs">' +
           each(t.flights[g.id], function (f) {
             return '<div class="leg"><span class="k">' + f.dir + " · " + f.date + '</span><div class="leg-t">' + end(f.from) + '<span class="dash"></span>' + end(f.to, true) +
               '</div><span class="mt">' + (f.v2label || f.label) + (f.note ? " · " + f.note : "") + "</span></div>";
           }) + "</div></div>";
-      }) + '</div><p class="fine">' + t.flightTimeNote + t.airportNote + "</p>" +
+      }) + '</div><p class="fine">' + t.flightTimeNote + "</p>" +
         sec("地面交通") + '<div class="ledger">' + each(t.ground, function (x) {
           return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
             x.title + "</span><p>" + x.text + '</p><span class="todo">待確認 · ' + x.todo + "</span></div></div>";
@@ -105,12 +127,25 @@
         if (d.choice) chips.push("二擇一");
         if (d.extra) chips.push(d.extra);
         if (d.pending) chips.push(group(d.pending).tag + " 住宿未定");
-        return '<div class="day"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
+        return '<div class="day" id="v2-day-' + d.date.replace("/", "-") + '"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
           '<div class="body"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + '</span><span class="crew">' +
           each(d.crew, function (c) { return "<span>" + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
           '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div></div>";
       });
-      return '<div class="ledger" style="margin-top:0">' + days + "</div>" +
+      function crew(ids) { return '<span class="crew">' + each(ids, function (c) { return "<span>" + group(c).tag + "</span>"; }) + "</span>"; }
+      var periods = '<div class="groups" style="margin-top:0">' + each(T.groups, function (g) {
+        return '<div class="group"><span class="kanji">' + g.tag + '</span><div class="body"><span class="nm">' + g.name + '</span><span class="ct">' + g.period +
+          '</span><span class="rg">' + g.brief + "</span></div></div>";
+      }) + "</div>";
+      var summary = sec("行程總表") + '<p class="fine tl-intro">' + it.tableHint + "</p>" +
+        '<div class="ledger">' + each(it.days, function (d) {
+          return '<div class="row row-sum"><a class="sum-d" href="#itinerary" data-day="' + d.date + '"><span class="d">' + d.date + '</span><span class="w">' + d.wd + " ↓</span></a>" +
+            '<div class="sum-p"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + "</span>" + crew(d.crew) + "</div>" +
+            (d.note ? '<span class="cell-s warnc">' + d.note + "</span>" : "") + "</div>" +
+            '<div class="sum-s">' + (d.stay ? '<span class="cell">' + d.stay + "</span>" + crew(d.crew) +
+              (d.pending ? '<span class="cell-s warnc">' + group(d.pending).tag + " 住宿未定</span>" : "") : '<span class="cell-s">—</span>') + "</div></div>";
+        }) + "</div>";
+      return periods + summary + sec("每天細項") + '<div class="ledger">' + days + "</div>" +
         '<div class="prose plain" style="margin-top:clamp(30px,3.6vw,44px);gap:12px"><p style="margin:0;font-size:13px;line-height:2.05;color:var(--body)">' + T.people.carsSummary +
         '</p><a href="#people" style="font-size:12.5px;letter-spacing:.1em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:2px;width:max-content">查看車輛分組 →</a></div>' +
         sec(it.remindersTitle) + '<div class="ledger">' + each(it.reminders, function (r, i) {
@@ -147,6 +182,13 @@
     window.scrollTo(0, 0);
   }
   window.addEventListener("hashchange", route);
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-day]");
+    if (!a) return;
+    e.preventDefault();
+    var el = document.getElementById("v2-day-" + a.getAttribute("data-day").replace("/", "-"));
+    if (el) el.scrollIntoView();
+  });
 
   /* ---------- 倒數 ---------- */
   var s = T.start.split("-");
