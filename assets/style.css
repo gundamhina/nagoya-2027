@@ -298,3 +298,43 @@ section { scroll-margin-top:90px; }
  .compact-schedule .schedule-plan { display:block; }
  .compact-schedule .crew-tags { display:flex; margin-top:9px; }
 }
+
+/* Travel-party date and location timeline */
+.timeline-scroll { overflow-x:auto; border:1px solid var(--rule); border-radius:12px; margin:16px 0; }
+.travel-timeline { width:100%; min-width:1100px; table-layout:fixed; margin:0; }
+.travel-timeline thead th:first-child { width:170px; }
+.travel-timeline th,.travel-timeline td { padding:14px 8px; text-align:center; white-space:normal; overflow-wrap:anywhere; border-right:1px solid var(--rule); }
+.travel-timeline tbody th { width:170px; text-align:left; background:var(--card); z-index:1; }
+.travel-timeline strong { font-size:14px; line-height:1.6; }
+.travel-timeline small { display:block; margin-top:6px; font-size:12px; font-weight:400; line-height:1.7; }
+.travel-timeline .timeline-spring { background:#e5eee3; color:#315b3b; }
+.travel-timeline .timeline-village { background:#f5ead6; color:#805d25; }
+.travel-timeline .timeline-meet { background:#eee6f1; color:#725a7e; }
+.travel-timeline .timeline-pending { background:#e4e5e6; color:#50555b; border:1px dashed #a4a8ad; }
+.travel-timeline .timeline-empty { background:#faf9f5; }
+.timeline-caption { text-align:left; padding:12px 16px; color:var(--muted); font-size:13px; }
+.timeline-legend { display:flex; flex-wrap:wrap; gap:12px 20px; font-size:13px; }
+.timeline-legend span { display:inline-flex; align-items:center; gap:7px; }
+.timeline-legend i { display:inline-block; width:16px; height:16px; border-radius:4px; }
+.legend-spring { background:#e5eee3; }
+.legend-village { background:#f5ead6; }
+.legend-meet { background:#eee6f1; }
+.legend-pending { background:#e4e5e6; border:1px dashed #a4a8ad; }
+.timeline-scroll:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+@media print { .timeline-scroll { overflow:visible; } .travel-timeline { min-width:0; } }
+
+/* Two car cards use the available width; names wrap naturally on phones. */
+#cars .group-summary { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media(max-width:760px) { #cars .group-summary { grid-template-columns:1fr; } }
+
+/* Flights embedded directly in the party timeline */
+.transport-timeline { min-width:1640px; }
+.transport-timeline thead th:first-child { width:170px; }
+.transport-timeline td { vertical-align:top; }
+.timeline-flight { padding:9px 7px; border:1px solid rgba(0,0,0,.12); border-radius:9px; background:rgba(255,255,255,.65); text-align:left; }
+.timeline-flight b,.timeline-flight span,.timeline-flight strong { display:block; }
+.timeline-flight b { font-size:12px; line-height:1.6; }
+.timeline-flight span { font-size:12px; margin:6px 0; line-height:1.6; }
+.timeline-flight strong { font-size:15px; white-space:nowrap; }
+.timeline-unknown { background:#e4e5e6; color:#50555b; border:1px dashed #a4a8ad; border-radius:8px; padding:9px 5px; margin-top:10px; }
+@media print { .transport-timeline { min-width:0; } .timeline-flight strong { white-space:normal; } }
