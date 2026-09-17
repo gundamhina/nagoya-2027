@@ -136,7 +136,7 @@
     return '<section id="ground"><h2 class="head">地面交通</h2><div class="scroller" tabindex="0"><table class="ground-table"><thead><tr><th>類型</th><th>日期</th><th>安排</th><th>待確認</th></tr></thead><tbody>' +
       each(T.transport.ground, function (x) {
         return "<tr><th>" + x.kind + "</th><td>" + x.when + "</td><td><strong>" + x.title + "</strong><br>" + x.text + "</td><td>" + x.todo + "</td></tr>";
-      }) + "</tbody></table></div>" + mapBox() + "</section>";
+      }) + "</tbody></table></div></section>";
   }
   function prep() {
     var p = T.prep;

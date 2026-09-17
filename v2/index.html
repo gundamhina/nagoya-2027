@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<link rel="stylesheet" href="style.css?v2.3">
+<link rel="stylesheet" href="style.css?v2.4">
 </head>
 <body id="top">
 <div class="wrap">
@@ -19,7 +19,7 @@
   <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
   <div class="mast-meta">
     <span class="lab">2027 SPRING</span>
-    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.3</a>
+    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.4</a>
     <a class="legacy" href="../index.html">回到舊版</a>
   </div>
 </div>
@@ -44,6 +44,7 @@
     <div class="dates">
       <span class="big">三月十三日 — 二十三日</span>
       <span class="sm">2027 年 3 月 · 我們的春日旅帖</span>
+      <span class="sm" data-v2="hero-line"></span>
     </div>
     <div class="count"><span class="k">倒數</span><span class="n" id="cd-n">—</span><span class="u" id="cd-u">計算中</span></div>
     <p class="lead" data-v2="overview-lead"></p>
@@ -92,10 +93,6 @@
     <p class="lead" data-v2="journey-lead"></p>
   </div>
   <div data-v2="journey"></div>
-  <a class="mapcard" href="#route">
-    <span class="l"><span class="k">動線 · ROUTE MAP</span><span class="t">小松 → 金澤 → 高山 → 白川鄉 → 名古屋</span></span>
-    <span class="go">查看動線 →</span>
-  </a>
 </section>
 
 <section id="route" hidden>
@@ -141,14 +138,14 @@
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.3 · 旅帖版</span>
+  <span class="v">v2.4 · 旅帖版</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
-<script src="../assets/trip-data.js?v2.3"></script>
-<script src="../assets/route-map.js?v2.3"></script>
-<script src="render.js?v2.3"></script>
+<script src="../assets/trip-data.js?v2.4"></script>
+<script src="../assets/route-map.js?v2.4"></script>
+<script src="render.js?v2.4"></script>
 </body>
 </html>

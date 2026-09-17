@@ -26,6 +26,7 @@
 
   var views = {
     "overview-lead": function () { return T.overview.lead; },
+    "hero-line": function () { return T.overview.heroLine; },
     "people-lead": function () { return T.people.lead; },
     "journey-lead": function () { return T.transport.lead; },
     "timeline-lead": function () { return T.transport.timelineCaption; },
@@ -55,11 +56,13 @@
 
     people: function () {
       var p = T.people;
-      return groupsHtml("margin-top:0") + sec("旅伴名單") + '<div class="ledger">' + each(p.families, function (f, i) {
+      return groupsHtml("margin-top:0") + sec("旅伴名單") + '<div class="ledger" id="v2-people-list">' +
+        '<div class="row row-people row-head"><span class="cell-w">家庭</span><span class="cell-w">大人</span><span class="cell-w">小孩</span><span class="cell-w">人數</span><span class="cell-w g-col">同行組別</span></div>' +
+        each(p.families, function (f, i) {
         return '<div class="row row-people"><span class="no-m">' + (i + 1) + '</span><span class="cell">' + f.adults + '</span><span class="cell-s">' +
           (f.kids || "—") + '</span><span class="num">' + f.n + '</span><span class="cell-s g-col">' + group(f.group).label + "</span></div>";
       }) + '</div><div class="prose plain" style="margin-top:clamp(28px,3.4vw,40px)"><div class="blk"><h3>在哪裡一起旅行？</h3><p>' + p.together + "</p></div></div>" +
-        sec(p.carsTitle, p.carsCount) +
+        sec(p.carsTitle, p.carsCount).replace('<div class="sec"', '<div class="sec" id="v2-cars"') +
         '<div class="groups" style="margin-top:clamp(20px,2.4vw,28px);grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">' + each(p.cars, function (c) {
           return '<div class="group"><div class="body"><span class="k lab">' + c.title + '</span><span class="nm" style="font-size:19px;line-height:1.8">' + c.lines.join("<br>") + "</span></div></div>";
         }) + '</div><p class="note">' + p.carsNote + "</p>";
@@ -88,7 +91,7 @@
         '<span><i class="tl-pending"></i>' + t.pendingLegend + "</span></div>" +
         '<div class="tl-scroll" tabindex="0" role="region" aria-label="三組旅伴的日期、交通與旅行地點"><table class="tl"><caption>' + t.timelineCaption +
         '</caption><thead><tr><th scope="col">旅伴</th>' + each(t.timelineDates, function (d) { return '<th scope="col">' + d + "</th>"; }) +
-        "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="fine">' + t.airportNote + ' <a class="inline-link" href="#people">查看租車分組 →</a></p>';
+        "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="fine">' + t.airportNote + ' <a class="inline-link" href="#people" data-jump="v2-cars">查看租車分組 →</a></p>';
     },
 
     journey: function () {
@@ -115,13 +118,17 @@
       return '<div class="hub"><div class="l"><span class="t">' + s.notion.title + '</span><span class="n">' + s.notion.text + '</span></div><a class="cta" href="' +
         attr(s.notion.href) + '"' + ext + ">" + s.notion.cta + "</a></div>" +
         sec(k.place, dash(k.period)) + '<div class="prose">' + each(k.blocks, function (b) { return '<div class="blk"><h3>' + b.title + "</h3>" + b.html + "</div>"; }) + "</div>" +
-        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' + each(T.people.families, function (f) {
+        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' +
+        '<div class="row row-stay row-head"><span class="cell-w">家庭／旅伴</span><span class="cell-w">人數</span><span class="cell-w">入住日期</span></div>' +
+        each(T.people.families, function (f) {
           return '<div class="row row-stay"><span class="cell">' + f.adults + (f.kids ? "、" + f.kids : "") + '</span><span class="num">' + f.n + '</span><span class="cell-s' +
             (f.pending ? " warnc" : "") + '">' + f.kanazawa + "</span></div>";
         }) + "</div>" +
         sec(n.place, dash(n.period)) + '<div class="prose"><a class="linkline" href="' + attr(n.house.href) + '"' + ext + ">" + n.house.text + '</a><div class="blk">' +
         each(n.paragraphs, function (x) { return "<p>" + x + "</p>"; }) + "</div></div>" +
-        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' + each(n.rooms, function (r, i) {
+        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' +
+        '<div class="row row-room row-head"><span class="cell-w">臥室</span><span class="cell-w">床位</span><span class="cell-w">入住分配</span></div>' +
+        each(n.rooms, function (r, i) {
           return '<div class="row row-room"><span class="no-m">' + (i + 1) + '</span><span class="cell">' + r[0] + '</span><span class="cell-s">' + r[1] + "</span></div>";
         }) + "</div>" +
         '<div class="prose plain" style="margin-top:clamp(40px,5vw,64px)"><div class="blk"><h3>' + v.title + "</h3><p>" + v.ja + "<br>" + v.en + "</p></div>" +
@@ -159,7 +166,7 @@
         }) + "</div>";
       return periods + summary + sec("每天細項") + '<div class="ledger">' + days + "</div>" +
         '<div class="prose plain" style="margin-top:clamp(30px,3.6vw,44px);gap:12px"><p style="margin:0;font-size:13px;line-height:2.05;color:var(--body)">' + T.people.carsSummary +
-        '</p><a href="#people" style="font-size:12.5px;letter-spacing:.1em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:2px;width:max-content">查看車輛分組 →</a></div>' +
+        '</p><a href="#people" data-jump="v2-cars" style="font-size:12.5px;letter-spacing:.1em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:2px;width:max-content">查看車輛分組 →</a></div>' +
         sec(it.remindersTitle) + '<div class="ledger">' + each(it.reminders, function (r, i) {
           return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + r + "</span></div>";
         }) + "</div>";
@@ -201,6 +208,16 @@
   }
   window.addEventListener("hashchange", route);
   document.addEventListener("click", function (e) {
+    /* 跨分頁跳到某個區塊：先切分頁，再捲到該區塊 */
+    var j = e.target.closest("[data-jump]");
+    if (j) {
+      e.preventDefault();
+      history.pushState(null, "", j.getAttribute("href"));
+      route();
+      var target = document.getElementById(j.getAttribute("data-jump"));
+      if (target) target.scrollIntoView();
+      return;
+    }
     var a = e.target.closest("[data-day]");
     if (!a) return;
     e.preventDefault();
