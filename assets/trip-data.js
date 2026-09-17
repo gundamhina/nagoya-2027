@@ -92,7 +92,7 @@ window.TRIP = {
         { dir: "回程", date: "3/23", label: "台灣虎航", from: ["名古屋", "NGO", "13:15"], to: ["桃園", "TPE", "15:50"], note: "已購買；航班編號待確認" }
       ]
     },
-    timelineTitle: "旅伴與交通 · 日期時間軸",
+    timelineTitle: "日期時間軸",
     timelineIntro: "去回程航班直接列於出發／返台日期，時間為各機場當地時間。灰色僅表示未定行程與住宿；手機可左右滑動。",
     timelineCaption: "2027 年 3 月 · 航班、地點與同行區間",
     timelineDates: ["3/13", "3/14", "3/15", "3/16", "3/17", "3/18", "3/19", "3/20", "3/21", "3/22", "3/23"],
@@ -104,7 +104,7 @@ window.TRIP = {
         { span: 1, kind: "group", blocks: [{ flight: 0 }, { small: "抵達後前往金澤" }] },
         { span: 2, kind: "group", blocks: [{ strong: "金澤", small: "3/15 高山一日遊（預計包車，尚待詢價）<br>3/16 金澤市區" }] },
         { span: 1, kind: "group", blocks: [{ strong: "包車", small: "金澤 → 合掌村<br>→ 名古屋<br>接送時間待確認" }] },
-        { span: 5, kind: "group", blocks: [{ strong: "名古屋", small: "預計租兩台車<br>分組詳見下方" }] },
+        { span: 5, kind: "group", blocks: [{ strong: "名古屋", small: "預計租兩台車<br>分組見旅伴頁「租車」" }] },
         { span: 1, kind: "group", blocks: [{ flight: 1 }] }
       ],
       village: [

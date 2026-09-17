@@ -28,6 +28,7 @@
     "overview-lead": function () { return T.overview.lead; },
     "people-lead": function () { return T.people.lead; },
     "journey-lead": function () { return T.transport.lead; },
+    "timeline-lead": function () { return T.transport.timelineCaption; },
     "stay-lead": function () { return T.stay.lead; },
     "itinerary-lead": function () { return T.itinerary.lead + T.itinerary.legend; },
     "prep-lead": function () { return T.prep.lead; },
@@ -64,11 +65,8 @@
         }) + '</div><p class="note">' + p.carsNote + "</p>";
     },
 
-    journey: function () {
+    timeline: function () {
       var t = T.transport;
-      function end(a, right) {
-        return '<span class="c' + (right ? " r" : "") + '"><span class="tm">' + a[2] + '</span><span class="ap">' + a[1] + " " + a[0] + "</span></span>";
-      }
       function tlFlight(f) {
         return '<div class="tl-flight"><span class="k">' + f.date + " · " + f.label + '</span><span class="rt">' + f.from[0] + " " + f.from[1] + " → " + f.to[0] + " " + f.to[1] +
           '</span><span class="tm">' + f.from[2] + " → " + f.to[2] + "</span>" + (f.note ? '<span class="nt">' + f.note + "</span>" : "") + "</div>";
@@ -85,13 +83,20 @@
             }) + "</td>";
           }) + "</tr>";
       });
-      var timeline = sec("日期時間軸", "", "margin-top:0") + '<p class="fine tl-intro">' + t.timelineIntro + "</p>" +
+      return sec(t.timelineTitle, "", "margin-top:0") + '<p class="fine tl-intro">' + t.timelineIntro + "</p>" +
         '<div class="tl-legend">' + each(T.groups, function (g) { return '<span><i class="tl-' + g.id + '"></i>' + g.label + "</span>"; }) +
         '<span><i class="tl-pending"></i>' + t.pendingLegend + "</span></div>" +
         '<div class="tl-scroll" tabindex="0" role="region" aria-label="三組旅伴的日期、交通與旅行地點"><table class="tl"><caption>' + t.timelineCaption +
         '</caption><thead><tr><th scope="col">旅伴</th>' + each(t.timelineDates, function (d) { return '<th scope="col">' + d + "</th>"; }) +
-        "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="fine">' + t.airportNote + "</p>";
-      return timeline + sec("航班") + '<div class="ledger">' + each(T.groups, function (g) {
+        "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="fine">' + t.airportNote + ' <a class="inline-link" href="#people">查看租車分組 →</a></p>';
+    },
+
+    journey: function () {
+      var t = T.transport;
+      function end(a, right) {
+        return '<span class="c' + (right ? " r" : "") + '"><span class="tm">' + a[2] + '</span><span class="ap">' + a[1] + " " + a[0] + "</span></span>";
+      }
+      return sec("航班", "", "margin-top:0") + '<div class="ledger">' + each(T.groups, function (g) {
         return '<div class="flight"><div class="flight-h"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="ct">' + g.people + '</span></div><div class="legs">' +
           each(t.flights[g.id], function (f) {
             return '<div class="leg"><span class="k">' + f.dir + " · " + f.date + '</span><div class="leg-t">' + end(f.from) + '<span class="dash"></span>' + end(f.to, true) +
@@ -176,7 +181,7 @@
   });
 
   /* ---------- 分頁切換 ---------- */
-  var PAGES = ["overview", "people", "journey", "route", "stay", "itinerary", "prep"];
+  var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep"];
   var routeMap = null;
   var tabs = document.querySelectorAll("#tabs a");
   function route() {

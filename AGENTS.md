@@ -5,7 +5,7 @@
 ## 一、每次改版必做五件事
 
 1. **先拉最新版**　`git pull --rebase`。這個 repo 有多方同時推送，直接推很容易撞號或被拒。
-2. **更新版本號**　以下必須一致：舊版八頁頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、`assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render-v1.js?vX.Y`、`assets/route-map.js?vX.Y` 的快取參數，以及 `v2/index.html` 的版號、`v2/style.css?vX.Y`、`v2/render.js?vX.Y`。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
+2. **更新版本號**　以下必須一致：舊版九頁頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、`assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render-v1.js?vX.Y`、`assets/route-map.js?vX.Y` 的快取參數，以及 `v2/index.html` 的版號、`v2/style.css?vX.Y`、`v2/render.js?vX.Y`。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
 3. **更新 CHANGELOG.md**　最上方新增 `## vX.Y — YYYY-MM-DD`，條列這次改了什麼。
 4. **更新 README.md**　開頭那行「目前版本」同步。
 5. **打上 git tag**　`git tag -a vX.Y -m "簡述"`，推送時加 `--follow-tags`。
@@ -32,9 +32,10 @@
 | 檔案 | 內容 |
 | --- | --- |
 | `index.html` | 總覽 |
-| `journey.html` | 舊航班網址相容：轉至 people.html#travel-timeline |
+| `journey.html` | 交通：航班表、地面交通 |
 | `itinerary.html` | 行程：總表、每天細項、提醒 |
-| `people.html` | 旅伴與交通：名單、航班與地點時間軸、租車分組 |
+| `people.html` | 旅伴：名單、租車分組 |
+| `timeline.html` | 時間軸：三組航班、地點與同行區間 |
 | `stay.html` | 住宿資訊 |
 | `prep.html` | 行前：三月氣溫、穿衣建議、打包清單 |
 | `reminders.html` | 舊網址相容：轉至 itinerary.html#reminders |
@@ -50,4 +51,4 @@
 
 ## 現行頁面與人數
 
-舊版主導覽固定：總覽｜旅伴與交通｜動線｜住宿資訊｜行程｜行前；新版分頁：總覽｜旅伴｜交通｜動線｜住宿資訊｜行程｜行前。網站不顯示費用與分攤資訊。金澤 3/14、3/15 為 14 人（9 大 5 小），3/16 先以 14 人（9 大 5 小）安排，相逢是否同住未定；名古屋 3/17 悠旅 11 人，相逢是否加入未定，3/18 起原安排為 12 人（8 大 4 小）。【鄉】小聚 3/13 另外住宿，3/17 回台；【祈】相逢 3/16、3/17 行程與住宿未定，僅班機時間確定，不預設金澤同住或 3/17 一起包車。待確認事項不可自行補成已確認。
+舊版導覽與新版分頁固定對齊：總覽｜旅伴｜時間軸｜交通｜動線｜住宿資訊｜行程｜行前。新增或調整頁面時兩版一起改。網站不顯示費用與分攤資訊。金澤 3/14、3/15 為 14 人（9 大 5 小），3/16 先以 14 人（9 大 5 小）安排，相逢是否同住未定；名古屋 3/17 悠旅 11 人，相逢是否加入未定，3/18 起原安排為 12 人（8 大 4 小）。【鄉】小聚 3/13 另外住宿，3/17 回台；【祈】相逢 3/16、3/17 行程與住宿未定，僅班機時間確定，不預設金澤同住或 3/17 一起包車。待確認事項不可自行補成已確認。

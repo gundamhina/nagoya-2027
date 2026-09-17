@@ -26,7 +26,7 @@
     }) + "</div>" + groupCards("range");
   }
 
-  /* ---------- 旅伴與交通 ---------- */
+  /* ---------- 旅伴、時間軸、交通 ---------- */
   function flightBlock(f) {
     return '<div class="timeline-flight"><b>' + f.date + " · " + f.label + "</b><span>" + f.from[0] + " " + f.from[1] + " → " + f.to[0] + " " + f.to[1] +
       "</span><strong>" + f.from[2] + " → " + f.to[2] + "</strong>" + (f.note ? "<small>" + f.note + "</small>" : "") + "</div>";
@@ -53,11 +53,11 @@
       }) + '<span><i class="legend-pending"></i>' + t.pendingLegend + "</span></div>" +
       '<div class="timeline-scroll" tabindex="0" role="region" aria-label="三組旅伴的日期、交通與旅行地點"><table class="travel-timeline transport-timeline"><caption class="timeline-caption">' +
       t.timelineCaption + '</caption><thead><tr><th scope="col">旅伴／旅程日期</th>' + each(t.timelineDates, function (d) { return '<th scope="col">' + d + "</th>"; }) +
-      "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="section-note">' + t.airportNote + "</p></section>";
+      "</tr></thead><tbody>" + rows + '</tbody></table></div><p class="section-note">' + t.airportNote + ' <a href="people.html#cars">查看租車分組 →</a></p></section>';
   }
   function people() {
     var p = T.people;
-    return groupCards("range") + timeline() + ground() +
+    return groupCards("range") +
       '<section id="people-list"><h2 class="head">旅伴名單</h2><div class="scroller" tabindex="0"><table><thead><tr><th>家庭</th><th>大人</th><th>小孩</th><th>人數</th><th>同行組別</th></tr></thead><tbody>' +
       each(p.families, function (f, i) {
         return "<tr><th>" + (i + 1) + "</th><td>" + f.adults + "</td><td>" + (f.kids || "—") + "</td><td>" + f.n + "</td><td>" + group(f.group).label + "</td></tr>";
@@ -149,6 +149,20 @@
       '<div class="packing-bar"><span id="pk-count">已完成 0 / 0</span><button type="button" id="pk-reset">全部清除</button></div>' +
       '<div class="packing-grid" id="packs"></div></section>';
   }
+  function flights() {
+    var t = T.transport;
+    return '<section id="flights"><h2 class="head">航班</h2><div class="scroller" tabindex="0"><table class="flight-table"><thead><tr><th>組別</th><th>去回程</th><th>航線</th><th>起降時間</th><th>航空公司／備註</th></tr></thead><tbody>' +
+      each(T.groups, function (g) {
+        return each(t.flights[g.id], function (f) {
+          return "<tr><th>" + g.label + "</th><td>" + f.dir + " · " + f.date + "</td><td>" + f.from[0] + " " + f.from[1] + " → " + f.to[0] + " " + f.to[1] +
+            "</td><td>" + f.from[2] + " → " + f.to[2] + "</td><td>" + (f.v2label || f.label) + (f.note ? "<br><small>" + f.note + "</small>" : "") + "</td></tr>";
+        });
+      }) + '</tbody></table></div><p class="section-note flight-note">' + t.flightTimeNote + "</p></section>";
+  }
+  function transport() {
+    return flights() + ground();
+  }
+
   function routeMap() {
     return '<section id="route-map"><div class="route-map" id="route-map-canvas" role="region" aria-label="動線地圖"></div><div class="group-summary route-legend">' +
       each(T.overview.route, function (r, i) {
@@ -185,10 +199,10 @@
   }
 
   var views = { overview: overview, people: people, stay: stay, itinerary: itinerary,
-    countdown: countdown, route: route, ground: ground, prep: prep, routeMap: routeMap };
+    countdown: countdown, route: route, ground: ground, prep: prep, routeMap: routeMap, transport: transport, timeline: timeline };
   var texts = {
     "people.lead": T.people.lead, "stay.lead": T.stay.lead, "itinerary.lead": T.itinerary.lead,
-    "overview.heroLine": T.overview.heroLine, "prep.lead": T.prep.lead, "overview.mapLead": T.overview.mapLead
+    "overview.heroLine": T.overview.heroLine, "prep.lead": T.prep.lead, "overview.mapLead": T.overview.mapLead, "transport.lead": T.transport.lead, "transport.timelineCaption": T.transport.timelineCaption
   };
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-trip-text]"), function (el) {

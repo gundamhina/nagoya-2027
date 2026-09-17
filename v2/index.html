@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<link rel="stylesheet" href="style.css?v2.2">
+<link rel="stylesheet" href="style.css?v2.3">
 </head>
 <body id="top">
 <div class="wrap">
@@ -19,7 +19,7 @@
   <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
   <div class="mast-meta">
     <span class="lab">2027 SPRING</span>
-    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.2</a>
+    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.3</a>
     <a class="legacy" href="../index.html">回到舊版</a>
   </div>
 </div>
@@ -27,11 +27,12 @@
 <nav class="tabs" id="tabs" aria-label="旅遊資訊導覽">
   <a href="#overview"><span class="n">—</span>總覽</a>
   <a href="#people"><span class="n">01</span>旅伴</a>
-  <a href="#journey"><span class="n">02</span>交通</a>
-  <a href="#route"><span class="n">03</span>動線</a>
-  <a href="#stay"><span class="n">04</span>住宿資訊</a>
-  <a href="#itinerary"><span class="n">05</span>行程</a>
-  <a href="#prep"><span class="n">06</span>行前</a>
+  <a href="#timeline"><span class="n">02</span>時間軸</a>
+  <a href="#journey"><span class="n">03</span>交通</a>
+  <a href="#route"><span class="n">04</span>動線</a>
+  <a href="#stay"><span class="n">05</span>住宿資訊</a>
+  <a href="#itinerary"><span class="n">06</span>行程</a>
+  <a href="#prep"><span class="n">07</span>行前</a>
 </nav>
 <noscript><p class="note">此頁內容需要啟用 JavaScript 才能顯示。</p></noscript>
 
@@ -57,11 +58,12 @@
   <div data-v2="overview"></div>
   <div class="toc">
     <a href="#people"><span class="no">01</span><span class="ti">旅伴</span><span class="nt">三組名單與各段同行人數</span><span class="ar">→</span></a>
-    <a href="#journey"><span class="no">02</span><span class="ti">交通</span><span class="nt">日期時間軸、三組航班、包車與租車</span><span class="ar">→</span></a>
-    <a href="#route"><span class="no">03</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
-    <a href="#stay"><span class="no">04</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
-    <a href="#itinerary"><span class="no">05</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
-    <a href="#prep"><span class="no">06</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
+    <a href="#timeline"><span class="no">02</span><span class="ti">時間軸</span><span class="nt">三組旅伴的航班、地點與同行區間</span><span class="ar">→</span></a>
+    <a href="#journey"><span class="no">03</span><span class="ti">交通</span><span class="nt">三組航班、包車、租車與機場</span><span class="ar">→</span></a>
+    <a href="#route"><span class="no">04</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
+    <a href="#stay"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
+    <a href="#itinerary"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
+    <a href="#prep"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
   </div>
 </section>
 
@@ -74,9 +76,18 @@
   <div data-v2="people"></div>
 </section>
 
+<section id="timeline" hidden>
+  <div class="head">
+    <span class="kicker">02 / TIMELINE</span>
+    <h1>時間軸</h1>
+    <p class="lead" data-v2="timeline-lead"></p>
+  </div>
+  <div data-v2="timeline"></div>
+</section>
+
 <section id="journey" hidden>
   <div class="head">
-    <span class="kicker">02 / TRANSPORT</span>
+    <span class="kicker">03 / TRANSPORT</span>
     <h1>交通</h1>
     <p class="lead" data-v2="journey-lead"></p>
   </div>
@@ -89,7 +100,7 @@
 
 <section id="route" hidden>
   <div class="head">
-    <span class="kicker">03 / ROUTE</span>
+    <span class="kicker">04 / ROUTE</span>
     <h1>動線</h1>
     <p class="lead" data-v2="map-lead"></p>
   </div>
@@ -100,7 +111,7 @@
 
 <section id="stay" hidden>
   <div class="head">
-    <span class="kicker">04 / STAY</span>
+    <span class="kicker">05 / STAY</span>
     <h1>住宿資訊</h1>
     <p class="lead" data-v2="stay-lead"></p>
   </div>
@@ -109,7 +120,7 @@
 
 <section id="itinerary" hidden>
   <div class="head">
-    <span class="kicker">05 / ITINERARY</span>
+    <span class="kicker">06 / ITINERARY</span>
     <h1>行程</h1>
     <p class="lead" data-v2="itinerary-lead"></p>
   </div>
@@ -118,7 +129,7 @@
 
 <section id="prep" hidden>
   <div class="head">
-    <span class="kicker">06 / BEFORE</span>
+    <span class="kicker">07 / BEFORE</span>
     <h1>行前</h1>
     <p class="lead" data-v2="prep-lead"></p>
   </div>
@@ -130,14 +141,14 @@
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.2 · 旅帖版</span>
+  <span class="v">v2.3 · 旅帖版</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
-<script src="../assets/trip-data.js?v2.2"></script>
-<script src="../assets/route-map.js?v2.2"></script>
-<script src="render.js?v2.2"></script>
+<script src="../assets/trip-data.js?v2.3"></script>
+<script src="../assets/route-map.js?v2.3"></script>
+<script src="render.js?v2.3"></script>
 </body>
 </html>

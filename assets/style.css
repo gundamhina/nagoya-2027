@@ -374,3 +374,9 @@ section { scroll-margin-top:90px; }
 .route-legend strong { display:block; font-size:14px; font-weight:600; margin:2px 0 4px; }
 .route-legend p { font-size:13px; line-height:1.8; margin:0; }
 @media(max-width:760px){ .route-legend { grid-template-columns:1fr; } }
+
+/* Transport page flight table */
+.flight-table th:first-child { width:110px; white-space:nowrap; }
+.flight-table td:nth-child(2), .flight-table td:nth-child(4) { white-space:nowrap; }
+.flight-table small { color:var(--muted); font-size:12px; }
+.flight-note { margin:10px 0 0; }
