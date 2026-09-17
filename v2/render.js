@@ -1,0 +1,188 @@
+/*
+ * v2 旅帖版的樣板：讀 ../assets/trip-data.js 產生各分頁內容。
+ * 這裡只管排版；內容請改 assets/trip-data.js。
+ */
+(function (T) {
+  function attr(s) { return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+  function each(list, fn) { return list.map(fn).join(""); }
+  function group(id) { return T.groups.filter(function (g) { return g.id === id; })[0]; }
+  function dash(s) { return s.replace("–", " — "); }
+  function sec(t, n, style) {
+    return '<div class="sec"' + (style ? ' style="' + style + '"' : "") + '><span class="sec-t">' + t + "</span>" +
+      (n ? '<span class="sec-n">' + n + "</span>" : "") + '<span class="bar"></span></div>';
+  }
+  function groupsHtml(style) {
+    return '<div class="groups"' + (style ? ' style="' + style + '"' : "") + ">" + each(T.groups, function (g) {
+      return '<div class="group"><span class="kanji">' + g.tag + '</span><div class="body"><span class="nm">' + g.name +
+        '</span><span class="ct">' + g.count + '</span><span class="rg">' + g.range + "</span></div></div>";
+    }) + "</div>";
+  }
+  /* 每天細項的小標題與清單，在 v2 版面改成段落內換行 */
+  function flatten(html) {
+    return html.replace(/<h3>(.*?)<\/h3><ul>(.*?)<\/ul>/g, function (m, h, ul) {
+      return "<p>" + h + "<br>" + ul.replace(/<li>(.*?)<\/li>/g, "$1<br>").replace(/<br>$/, "") + "</p>";
+    });
+  }
+
+  var views = {
+    "overview-lead": function () { return T.overview.lead; },
+    "people-lead": function () { return T.people.lead; },
+    "journey-lead": function () { return T.transport.lead; },
+    "stay-lead": function () { return T.stay.lead; },
+    "itinerary-lead": function () { return T.itinerary.lead + T.itinerary.legend; },
+    "prep-lead": function () { return T.prep.lead; },
+    "packing-note": function () { return T.prep.packingNote; },
+
+    route: function () {
+      return each(T.overview.route, function (r, i) {
+        return '<div class="route-row"><span class="no">0' + (i + 1) + '</span><span class="pl">' + r.place + '</span><span class="wh">' + r.when + "</span></div>";
+      });
+    },
+
+    overview: function () {
+      return '<div class="stats">' + each(T.overview.stats, function (s) {
+        return '<div class="stat"><span class="k">' + s.k + '</span><span class="v">' + s.v + '</span><span class="n">' + s.n + "</span></div>";
+      }) + '</div><div class="sec"><span class="sec-n">三組旅伴</span><span class="bar"></span></div>' + groupsHtml();
+    },
+
+    people: function () {
+      var p = T.people;
+      return groupsHtml("margin-top:0") + sec("旅伴名單") + '<div class="ledger">' + each(p.families, function (f, i) {
+        return '<div class="row row-people"><span class="no-m">' + (i + 1) + '</span><span class="cell">' + f.adults + '</span><span class="cell-s">' +
+          (f.kids || "—") + '</span><span class="num">' + f.n + '</span><span class="cell-s g-col">' + group(f.group).label + "</span></div>";
+      }) + '</div><div class="prose plain" style="margin-top:clamp(28px,3.4vw,40px)"><div class="blk"><h3>在哪裡一起旅行？</h3><p>' + p.together + "</p></div></div>" +
+        sec(p.carsTitle, p.carsCount) +
+        '<div class="groups" style="margin-top:clamp(20px,2.4vw,28px);grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">' + each(p.cars, function (c) {
+          return '<div class="group"><div class="body"><span class="k lab">' + c.title + '</span><span class="nm" style="font-size:19px;line-height:1.8">' + c.lines.join("<br>") + "</span></div></div>";
+        }) + '</div><p class="note">' + p.carsNote + "</p>";
+    },
+
+    journey: function () {
+      var t = T.transport;
+      function end(a, right) {
+        return '<span class="c' + (right ? " r" : "") + '"><span class="tm">' + a[2] + '</span><span class="ap">' + a[1] + " " + a[0] + "</span></span>";
+      }
+      return sec("航班", "", "margin-top:0") + '<div class="ledger">' + each(T.groups, function (g) {
+        return '<div class="flight"><div class="flight-h"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="ct">' + g.people + '</span></div><div class="legs">' +
+          each(t.flights[g.id], function (f) {
+            return '<div class="leg"><span class="k">' + f.dir + " · " + f.date + '</span><div class="leg-t">' + end(f.from) + '<span class="dash"></span>' + end(f.to, true) +
+              '</div><span class="mt">' + (f.v2label || f.label) + (f.note ? " · " + f.note : "") + "</span></div>";
+          }) + "</div></div>";
+      }) + '</div><p class="fine">' + t.flightTimeNote + t.airportNote + "</p>" +
+        sec("地面交通") + '<div class="ledger">' + each(t.ground, function (x) {
+          return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
+            x.title + "</span><p>" + x.text + '</p><span class="todo">待確認 · ' + x.todo + "</span></div></div>";
+        }) + "</div>";
+    },
+
+    stay: function () {
+      var s = T.stay, k = s.kanazawa, n = s.nagoya, v = s.vjw;
+      var ext = ' target="_blank" rel="noopener noreferrer"';
+      return '<div class="hub"><div class="l"><span class="t">' + s.notion.title + '</span><span class="n">' + s.notion.text + '</span></div><a class="cta" href="' +
+        attr(s.notion.href) + '"' + ext + ">" + s.notion.cta + "</a></div>" +
+        sec(k.place, dash(k.period)) + '<div class="prose">' + each(k.blocks, function (b) { return '<div class="blk"><h3>' + b.title + "</h3>" + b.html + "</div>"; }) + "</div>" +
+        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' + each(T.people.families, function (f) {
+          return '<div class="row row-stay"><span class="cell">' + f.adults + (f.kids ? "、" + f.kids : "") + '</span><span class="num">' + f.n + '</span><span class="cell-s' +
+            (f.pending ? " warnc" : "") + '">' + f.kanazawa + "</span></div>";
+        }) + "</div>" +
+        sec(n.place, dash(n.period)) + '<div class="prose"><a class="linkline" href="' + attr(n.house.href) + '"' + ext + ">" + n.house.text + '</a><div class="blk">' +
+        each(n.paragraphs, function (x) { return "<p>" + x + "</p>"; }) + "</div></div>" +
+        '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' + each(n.rooms, function (r, i) {
+          return '<div class="row row-room"><span class="no-m">' + (i + 1) + '</span><span class="cell">' + r[0] + '</span><span class="cell-s">' + r[1] + "</span></div>";
+        }) + "</div>" +
+        '<div class="prose plain" style="margin-top:clamp(40px,5vw,64px)"><div class="blk"><h3>' + v.title + "</h3><p>" + v.ja + "<br>" + v.en + "</p></div>" +
+        '<div class="ledger thin" style="margin-top:0">' + each(v.fields, function (f) {
+          return '<div class="row row-vjw"><span class="cell-w">' + f[0] + '</span><span class="cell-b">' + f[1] + "</span></div>";
+        }) + '</div><p class="fine" style="margin-top:0">' + v.note + '</p><div class="links">' +
+        each(v.links, function (l) { return '<a href="' + attr(l.href) + '"' + ext + ">" + l.text + "</a>"; }) + "</div></div>" +
+        '<div class="note" style="margin-top:clamp(36px,4.6vw,58px)"><h3>' + s.checklist.title + "</h3>" + s.checklist.text + "</div>";
+    },
+
+    itinerary: function () {
+      var it = T.itinerary;
+      var days = each(it.days, function (d, i) {
+        var chips = [];
+        if (d.choice) chips.push("二擇一");
+        if (d.extra) chips.push(d.extra);
+        if (d.pending) chips.push(group(d.pending).tag + " 住宿未定");
+        return '<div class="day"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
+          '<div class="body"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + '</span><span class="crew">' +
+          each(d.crew, function (c) { return "<span>" + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
+          '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div></div>";
+      });
+      return '<div class="ledger" style="margin-top:0">' + days + "</div>" +
+        '<div class="prose plain" style="margin-top:clamp(30px,3.6vw,44px);gap:12px"><p style="margin:0;font-size:13px;line-height:2.05;color:var(--body)">' + T.people.carsSummary +
+        '</p><a href="#people" style="font-size:12.5px;letter-spacing:.1em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:2px;width:max-content">查看車輛分組 →</a></div>' +
+        sec(it.remindersTitle) + '<div class="ledger">' + each(it.reminders, function (r, i) {
+          return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + r + "</span></div>";
+        }) + "</div>";
+    },
+
+    weather: function () {
+      var p = T.prep;
+      return '<div class="sec" style="margin-top:0"><span class="sec-t">三月氣溫</span><span class="sec-s">' + p.source + '</span><span class="bar"></span></div><div class="wx">' +
+        each(p.weather, function (w) {
+          return '<div class="wx-c"><div class="wx-h"><span class="pl">' + w.place + '</span><span class="tg">' + w.tag + '</span></div><div class="wx-t"><span class="c"><span class="hi">' +
+            w.hi + '</span><span class="k">日最高</span></span><span class="c"><span class="lo">' + w.lo + '</span><span class="k">日最低</span></span></div><span class="n">' + w.note + "</span></div>";
+        }) + '</div><div class="note" style="margin-top:clamp(28px,3.4vw,42px)"><h3>' + p.clothingTitle + "</h3>" + p.clothing + "</div>";
+    }
+  };
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-v2]"), function (el) {
+    var html = views[el.getAttribute("data-v2")]();
+    if (el.tagName === "DIV") el.outerHTML = html; else { el.innerHTML = html; el.removeAttribute("data-v2"); }
+  });
+
+  /* ---------- 分頁切換 ---------- */
+  var PAGES = ["overview", "people", "journey", "stay", "itinerary", "prep"];
+  var tabs = document.querySelectorAll("#tabs a");
+  function route() {
+    var id = (location.hash || "#overview").slice(1);
+    if (PAGES.indexOf(id) < 0) id = "overview";
+    PAGES.forEach(function (p) { document.getElementById(p).hidden = p !== id; });
+    tabs.forEach(function (a) {
+      if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", route);
+
+  /* ---------- 倒數 ---------- */
+  var s = T.start.split("-");
+  var diff = Math.floor((new Date(+s[0], s[1] - 1, +s[2]) - new Date()) / 864e5);
+  var n = document.getElementById("cd-n"), u = document.getElementById("cd-u");
+  if (diff > 0) { n.textContent = String(diff); u.textContent = "天後出發"; }
+  else if (diff > -11) { n.textContent = String(1 - diff); u.textContent = "旅程第幾天"; }
+  else { n.textContent = "—"; u.textContent = "旅程已結束"; }
+
+  /* ---------- 打包清單（與舊版共用同一個瀏覽器儲存鍵） ---------- */
+  var PK = "nagoya2027.packing";
+  var packed = {};
+  try { packed = JSON.parse(localStorage.getItem(PK)) || {}; } catch (e) { packed = {}; }
+  function save() { try { localStorage.setItem(PK, JSON.stringify(packed)); } catch (e) {} }
+  function paint() {
+    var total = 0, done = 0;
+    document.getElementById("packs").innerHTML = each(T.prep.packing, function (g) {
+      return '<div class="pack"><div class="pack-h"><span class="no">' + g[0] + '</span><span class="t">' + g[1] + "</span></div>" +
+        each(g[2], function (t) {
+          var key = g[0] + "-" + t, on = !!packed[key];
+          total += 1; if (on) done += 1;
+          return '<button class="item" type="button" aria-pressed="' + on + '" data-k="' + attr(key) + '"><span class="box" aria-hidden="true">' +
+            (on ? "✓" : "") + '</span><span class="tx">' + t + "</span></button>";
+        }) + "</div>";
+    });
+    document.getElementById("pk-count").textContent = "已完成 " + done + " / " + total;
+  }
+  document.getElementById("packs").addEventListener("click", function (e) {
+    var b = e.target.closest(".item");
+    if (!b) return;
+    var k = b.getAttribute("data-k");
+    if (packed[k]) delete packed[k]; else packed[k] = 1;
+    save(); paint();
+  });
+  document.getElementById("pk-reset").addEventListener("click", function () { packed = {}; save(); paint(); });
+
+  paint();
+  route();
+})(window.TRIP);

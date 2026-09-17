@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>動線地圖｜名古屋・北陸 2027</title>
+<meta name="theme-color" content="#1d2e28">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#efece3; color:#17201c; font-family:"Noto Sans TC","PingFang TC",sans-serif; font-variant-numeric:tabular-nums; }
+  a { color:inherit; text-decoration:none; }
+  a:hover { color:#9c3b26; }
+  .wrap { max-width:1060px; margin:0 auto; padding:0 clamp(20px,5vw,52px) clamp(50px,7vw,90px); }
+  .mast { display:flex; align-items:center; justify-content:space-between; gap:18px 30px; flex-wrap:wrap; padding:clamp(26px,3.5vw,44px) 0 clamp(20px,2.6vw,30px); }
+  .seal { display:grid; place-items:center; width:32px; height:32px; background:#1d2e28; color:#efece3; font-family:"Shippori Mincho",serif; font-size:17px; line-height:1; }
+  .lab { font-size:10px; font-weight:700; letter-spacing:.34em; color:#5b625a; }
+  h1 { margin:0; font-family:"Shippori Mincho",serif; font-size:clamp(42px,8vw,92px); font-weight:500; letter-spacing:.14em; line-height:1.12; }
+  .head { display:flex; flex-direction:column; gap:clamp(18px,2.4vw,26px); padding:clamp(40px,6vw,80px) 0 clamp(30px,4vw,50px); border-top:1px solid #17201c; }
+  .lead { margin:0; max-width:34em; font-size:15px; line-height:2.2; color:#3e463f; text-wrap:pretty; }
+  #map { height:clamp(400px,62vh,620px); border-top:1px solid #17201c; border-bottom:1px solid #17201c; background:#e3dfd3; }
+  .legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(20px,3vw,40px); padding-top:clamp(24px,3vw,34px); }
+  .legend div { display:flex; flex-direction:column; gap:8px; }
+  .legend .k { font-size:10px; font-weight:700; letter-spacing:.3em; color:#5b625a; }
+  .legend .v { font-family:"Shippori Mincho",serif; font-size:19px; font-weight:500; letter-spacing:.08em; }
+  .legend .n { font-size:12px; line-height:1.95; color:#5b625a; text-wrap:pretty; }
+  .note { margin:clamp(26px,3vw,38px) 0 0; max-width:46em; font-size:12.5px; line-height:2; color:#5b625a; border-left:1px solid #9c3b26; padding-left:18px; text-wrap:pretty; }
+  .leaflet-container { font-family:"Noto Sans TC",sans-serif; }
+  .pin { font-family:"Shippori Mincho",serif; font-size:13px; letter-spacing:.06em; color:#efece3; background:#1d2e28; padding:5px 9px; white-space:nowrap; }
+  .pin.air { background:#9c3b26; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mast">
+    <a href="index.html" style="display:flex; align-items:center; gap:14px">
+      <span class="seal">旅</span>
+      <span class="lab">NAGOYA TRAVEL NOTES</span>
+    </a>
+    <span class="lab">2027 SPRING</span>
+  </div>
+
+  <div class="head">
+    <span class="lab" style="color:#9c3b26">動線 · ROUTE MAP</span>
+    <h1>動線地圖</h1>
+    <p class="lead" id="map-lead"></p>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="legend" id="legend"></div>
+
+  <p class="note" id="map-note"></p>
+</div>
+
+<script src="../assets/trip-data.js?v2.0"></script>
+<script>
+  /* 說明文字來自 ../assets/trip-data.js 的 overview */
+  (function (o) {
+    document.getElementById("map-lead").innerHTML = o.mapLead;
+    document.getElementById("map-note").innerHTML = o.mapNote;
+    document.getElementById("legend").innerHTML = o.route.map(function (r, i) {
+      return '<div><span class="k">0' + (i + 1) + " " + r.place + '</span><span class="v">' + r.when + '</span><span class="n">' + r.mapNote + "</span></div>";
+    }).join("");
+  })(window.TRIP.overview);
+
+  var P = {
+    komatsu:  [36.3946, 136.4074, "小松機場 KMQ", "air"],
+    kanazawa: [36.5780, 136.6480, "金澤", ""],
+    takayama: [36.1440, 137.2520, "高山", ""],
+    shirakawa:[36.2570, 136.9060, "白川鄉 · 合掌村", ""],
+    nagoya:   [35.1700, 136.8820, "名古屋", ""],
+    centrair: [34.8583, 136.8053, "中部國際機場 NGO", "air"]
+  };
+
+  var map = L.map('map', { scrollWheelZoom: false });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 18
+  }).addTo(map);
+
+  function line(pts, opts) {
+    L.polyline(pts.map(function (k) { return [P[k][0], P[k][1]]; }), opts).addTo(map);
+  }
+
+  line(['komatsu', 'kanazawa'], { color: '#9c3b26', weight: 2, dashArray: '4 5', opacity: .9 });
+  line(['kanazawa', 'takayama'], { color: '#1d2e28', weight: 2, dashArray: '4 5', opacity: .7 });
+  line(['kanazawa', 'shirakawa', 'nagoya'], { color: '#1d2e28', weight: 3, opacity: .9 });
+  line(['nagoya', 'centrair'], { color: '#9c3b26', weight: 2, dashArray: '4 5', opacity: .9 });
+
+  Object.keys(P).forEach(function (k) {
+    var p = P[k];
+    L.marker([p[0], p[1]], {
+      icon: L.divIcon({
+        className: '',
+        html: '<span class="pin ' + p[3] + '">' + p[2] + '</span>',
+        iconSize: null
+      })
+    }).addTo(map);
+  });
+
+  map.fitBounds(Object.keys(P).map(function (k) { return [P[k][0], P[k][1]]; }), {
+    padding: [56, 56]
+  });
+</script>
+</body>
+</html>
