@@ -250,3 +250,31 @@
 
   .holiday-day .day-mark{background:#7a3b32;}
   .holiday-day .day-mark .w{color:#f0c9bd;font-size:10px;letter-spacing:.08em;}
+
+/* v1.13: four-page navigation and responsive itinerary */
+.group-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.page-jumps { display:flex; flex-wrap:wrap; gap:12px; margin:24px 0; }
+.page-jumps a { padding:8px 14px; border:1px solid var(--rule); border-radius:20px; }
+.schedule-table { min-width:0; table-layout:fixed; width:100%; }
+.schedule-table th, .schedule-table td { white-space:normal; overflow-wrap:anywhere; }
+.schedule-table tbody th { position:static; width:auto; }
+.schedule-table th:first-child { width:110px; }
+.daily-list { display:grid; gap:12px; }
+.daily-detail { border:1px solid var(--rule); border-radius:12px; background:var(--card); scroll-margin-top:90px; }
+.daily-detail summary { cursor:pointer; padding:18px; }
+.daily-detail summary span { margin-right:16px; color:var(--teal); font-weight:700; }
+.daily-content { padding:0 20px 16px; }
+.flight-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.flight-grid .box { margin:0; }
+section { scroll-margin-top:90px; }
+@media(max-width:760px) {
+ .group-summary,.flight-grid { grid-template-columns:1fr; }
+ .schedule-table,.schedule-table tbody { display:block; }
+ .schedule-table thead { display:none; }
+ .schedule-table tr { display:block; margin-bottom:14px; border:1px solid var(--rule); border-radius:12px; overflow:hidden; }
+ .schedule-table th:first-child { display:block; width:auto; background:#edf1e8; padding:14px; }
+ .schedule-table td { display:grid; grid-template-columns:88px minmax(0,1fr); gap:12px; padding:12px 14px; border-bottom:1px solid var(--rule); }
+ .schedule-table td::before { content:attr(data-label); color:var(--teal); font-weight:700; }
+ .schedule-table td:last-child { border:0; }
+ .daily-detail summary strong { display:block; margin-top:8px; }
+}
