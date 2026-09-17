@@ -278,3 +278,23 @@ section { scroll-margin-top:90px; }
  .schedule-table td:last-child { border:0; }
  .daily-detail summary strong { display:block; margin-top:8px; }
 }
+
+/* Compact schedule preview: main plan plus group exceptions */
+.compact-schedule thead th:nth-child(2) { width:62%; }
+.schedule-plan { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.schedule-plan > strong { line-height:1.6; }
+.crew-tags { display:inline-flex; gap:5px; flex-shrink:0; vertical-align:middle; }
+.crew-tag { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:26px; padding:0 6px; border-radius:7px; font-size:12px; font-weight:700; }
+.crew-spring { background:#e5eee3; color:#315b3b; }
+.crew-village { background:#f5ead6; color:#805d25; }
+.crew-meet { background:#eee6f1; color:#725a7e; }
+.schedule-exception { margin:10px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
+.plan-choice { font-weight:400; color:var(--muted); }
+.travel-periods { margin:24px 0; }
+@media(max-width:760px) {
+ .compact-schedule td { grid-template-columns:64px minmax(0,1fr); }
+ .compact-schedule td[data-label="當日安排"] { display:block; }
+ .compact-schedule td[data-label="當日安排"]::before { display:none; }
+ .compact-schedule .schedule-plan { display:block; }
+ .compact-schedule .crew-tags { display:flex; margin-top:9px; }
+}
