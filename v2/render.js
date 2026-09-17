@@ -32,6 +32,13 @@
     "itinerary-lead": function () { return T.itinerary.lead + T.itinerary.legend; },
     "prep-lead": function () { return T.prep.lead; },
     "packing-note": function () { return T.prep.packingNote; },
+    "map-lead": function () { return T.overview.mapLead; },
+    "map-note": function () { return T.overview.mapNote; },
+    legend: function () {
+      return '<div class="legend">' + each(T.overview.route, function (r, i) {
+        return '<div><span class="k">0' + (i + 1) + " " + r.place + '</span><span class="v">' + r.when + '</span><span class="n">' + r.mapNote + "</span></div>";
+      }) + "</div>";
+    },
 
     route: function () {
       return each(T.overview.route, function (r, i) {
@@ -169,7 +176,8 @@
   });
 
   /* ---------- 分頁切換 ---------- */
-  var PAGES = ["overview", "people", "journey", "stay", "itinerary", "prep"];
+  var PAGES = ["overview", "people", "journey", "route", "stay", "itinerary", "prep"];
+  var routeMap = null;
   var tabs = document.querySelectorAll("#tabs a");
   function route() {
     var id = (location.hash || "#overview").slice(1);
@@ -180,6 +188,11 @@
       else a.removeAttribute("aria-current");
     });
     window.scrollTo(0, 0);
+    /* 地圖在分頁顯示後才畫，避免隱藏時量不到尺寸 */
+    if (id === "route") {
+      if (!routeMap && window.drawRouteMap) routeMap = window.drawRouteMap(document.getElementById("map"), T, { air: "#9c3b26", ground: "#1d2e28", pin: "pin" });
+      else if (routeMap) routeMap.invalidateSize();
+    }
   }
   window.addEventListener("hashchange", route);
   document.addEventListener("click", function (e) {

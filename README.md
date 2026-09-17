@@ -1,6 +1,6 @@
 # 名古屋・北陸 2027
 
-目前版本：**v2.1**（2026-09-17）
+目前版本：**v2.2**（2026-09-17）
 
 靜態旅遊資訊統整頁：[開啟網站](https://gundamhina.github.io/nagoya-2027/)
 
@@ -11,9 +11,10 @@
 - `journey.html`：保留舊航班網址，轉至旅伴與交通時間軸。
 - `itinerary.html`：行程總表、每天細項與旅行提醒。
 - `stay.html`：住宿資訊、Notion 入口與 VJW 地址。
+- `route.html`：動線地圖。
 - `prep.html`：行前，三月氣溫、穿衣建議與打包清單。
 - `reminders.html`：保留舊網址並轉到行程頁的旅行提醒。
-- `v2/`：並行上線的新版（v2 旅帖版）（`v2/index.html` 單頁 hash 導覽、`v2/map.html` 動線地圖）。
+- `v2/`：並行上線的新版（v2 旅帖版）（`v2/index.html` 單頁 hash 導覽，含動線分頁）。
 
 ## 內容與排版
 

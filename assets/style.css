@@ -364,3 +364,13 @@ section { scroll-margin-top:90px; }
 .packing-item input:checked + span { color:var(--muted); text-decoration:line-through; }
 @media(max-width:760px){ .weather-cards, .packing-grid { grid-template-columns:1fr; } }
 @media print{ .packing-bar button { display:none; } }
+
+/* Route map page */
+.route-map { height:clamp(380px,60vh,580px); margin-top:26px; border:1px solid var(--rule); border-radius:4px; background:#e8e4d8; }
+.route-map .leaflet-container, .route-map { font-family:"Noto Sans TC","PingFang TC",sans-serif; }
+.route-pin { display:inline-block; font-size:12px; font-weight:600; color:#fff9e9; background:#193d36; padding:4px 9px; border-radius:30px; white-space:nowrap; box-shadow:0 2px 6px #0003; }
+.route-pin.air { background:#b35a45; }
+.route-legend { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.route-legend strong { display:block; font-size:14px; font-weight:600; margin:2px 0 4px; }
+.route-legend p { font-size:13px; line-height:1.8; margin:0; }
+@media(max-width:760px){ .route-legend { grid-template-columns:1fr; } }

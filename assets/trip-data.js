@@ -1,7 +1,7 @@
 /*
  * 名古屋・北陸 2027 — 全站唯一的內容來源
  *
- * 舊版 v1（assets/render-v1.js）與新版 v2（v2/render.js、v2/map.html）都讀這一份。
+ * 舊版 v1（assets/render-v1.js）與新版 v2（v2/render.js）都讀這一份。
  * 改行程、人數、航班、住宿、提醒等內容，只改這個檔案；排版改各自的樣板與 CSS。
  * 字串可含簡單 HTML（<b>、<br>、<p>、<h3>、<ul><li>）。未確認的資訊照寫「待確認／未定」，不要補值。
  */
@@ -34,7 +34,23 @@ window.TRIP = {
       { place: "名古屋", when: "3/17 — 3/23 · 六晚", mapNote: "住六晚，預計租兩台車。3/23 中部國際機場返台。" }
     ],
     mapLead: "小松進、名古屋出。金澤同住三晚（小聚 3/13 另外住宿），中間往返高山一日遊，3/17 包車穿過白川鄉（合掌村）南下名古屋。",
-    mapNote: "地圖僅示意動線與相對位置，實際路線、車程與停留點依包車業者與當日交通狀況為準。"
+    mapNote: "地圖僅示意動線與相對位置，實際路線、車程與停留點依包車業者與當日交通狀況為準。",
+    /* 動線地圖：[緯度, 經度, 標籤, 是否機場] */
+    mapPoints: {
+      komatsu:   [36.3946, 136.4074, "小松機場 KMQ", true],
+      kanazawa:  [36.5780, 136.6480, "金澤", false],
+      takayama:  [36.1440, 137.2520, "高山", false],
+      shirakawa: [36.2570, 136.9060, "白川鄉 · 合掌村", false],
+      nagoya:    [35.1700, 136.8820, "名古屋", false],
+      centrair:  [34.8583, 136.8053, "中部國際機場 NGO", true]
+    },
+    /* kind：air 機場進出、day 一日往返、drive 包車移動 */
+    mapLines: [
+      { path: ["komatsu", "kanazawa"], kind: "air" },
+      { path: ["kanazawa", "takayama"], kind: "day" },
+      { path: ["kanazawa", "shirakawa", "nagoya"], kind: "drive" },
+      { path: ["nagoya", "centrair"], kind: "air" }
+    ]
   },
 
   /* ---------- 旅伴 ---------- */

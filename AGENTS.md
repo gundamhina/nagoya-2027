@@ -5,7 +5,7 @@
 ## 一、每次改版必做五件事
 
 1. **先拉最新版**　`git pull --rebase`。這個 repo 有多方同時推送，直接推很容易撞號或被拒。
-2. **更新版本號**　以下必須一致：舊版七頁頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、`assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render-v1.js?vX.Y` 的快取參數，以及 `v2/index.html` 的版號、`v2/style.css?vX.Y`、`v2/render.js?vX.Y`、`v2/map.html` 裡的 `trip-data.js?vX.Y`。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
+2. **更新版本號**　以下必須一致：舊版八頁頁首的 `ver-badge`、頁尾的 `travel-footer .ver`、`assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render-v1.js?vX.Y`、`assets/route-map.js?vX.Y` 的快取參數，以及 `v2/index.html` 的版號、`v2/style.css?vX.Y`、`v2/render.js?vX.Y`。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
 3. **更新 CHANGELOG.md**　最上方新增 `## vX.Y — YYYY-MM-DD`，條列這次改了什麼。
 4. **更新 README.md**　開頭那行「目前版本」同步。
 5. **打上 git tag**　`git tag -a vX.Y -m "簡述"`，推送時加 `--follow-tags`。
@@ -22,7 +22,7 @@
 - 新舊版只有排版不同：舊版樣板是 `assets/render-v1.js`＋`assets/style.css`，新版樣板是 `v2/render.js`＋`v2/style.css`。改排版改各自的樣板與 CSS，不要在 HTML 內嵌 `<style>`。
 - 新增功能或區塊時，兩版都要做出對應畫面，功能保持一致。
 - 改完內容後，舊版與新版都要打開檢查一次。
-- 新版例外使用 Google Fonts，以及 `v2/map.html` 的 Leaflet（unpkg）與 OpenStreetMap 圖磚；其他頁面仍不引入外部服務。
+- 新版例外使用 Google Fonts，動線地圖（舊版 `route.html`、新版動線分頁）例外使用 Leaflet（unpkg）與 OpenStreetMap 圖磚；其他地方不引入外部服務。
 - 純靜態，不引入 npm、建置工具或外部圖片服務。
 - 繁體中文，金額以新台幣為單位並加千分位。
 - 分組名稱固定為【春】悠旅、【鄉】小聚、【祈】相逢。改名改 `assets/trip-data.js` 的 `groups`，不使用舊名稱與內部代號。
@@ -42,10 +42,12 @@
 | `assets/render-v1.js` | 舊版樣板：依 HTML 裡的 `data-trip` 佔位產生內容 |
 | `assets/style.css` | 舊版共用樣式 |
 | `v2/index.html`、`v2/render.js`、`v2/style.css` | 新版外框、樣板與樣式 |
-| `v2/map.html` | 動線地圖，說明文字讀 `trip-data.js` |
+| `route.html` | 動線地圖（舊版） |
+| `assets/route-map.js` | 動線地圖畫圖程式，新舊版共用 |
+| `v2/map.html` | 舊網址相容：轉至 v2/index.html#route |
 
 部署：GitHub Pages 由 `main` 分支根目錄自動重建，推送後約一分鐘生效。
 
 ## 現行頁面與人數
 
-舊版主導覽固定：總覽｜旅伴與交通｜住宿資訊｜行程｜行前。網站不顯示費用與分攤資訊。金澤 3/14、3/15 為 14 人（9 大 5 小），3/16 先以 14 人（9 大 5 小）安排，相逢是否同住未定；名古屋 3/17 悠旅 11 人，相逢是否加入未定，3/18 起原安排為 12 人（8 大 4 小）。【鄉】小聚 3/13 另外住宿，3/17 回台；【祈】相逢 3/16、3/17 行程與住宿未定，僅班機時間確定，不預設金澤同住或 3/17 一起包車。待確認事項不可自行補成已確認。
+舊版主導覽固定：總覽｜旅伴與交通｜動線｜住宿資訊｜行程｜行前；新版分頁：總覽｜旅伴｜交通｜動線｜住宿資訊｜行程｜行前。網站不顯示費用與分攤資訊。金澤 3/14、3/15 為 14 人（9 大 5 小），3/16 先以 14 人（9 大 5 小）安排，相逢是否同住未定；名古屋 3/17 悠旅 11 人，相逢是否加入未定，3/18 起原安排為 12 人（8 大 4 小）。【鄉】小聚 3/13 另外住宿，3/17 回台；【祈】相逢 3/16、3/17 行程與住宿未定，僅班機時間確定，不預設金澤同住或 3/17 一起包車。待確認事項不可自行補成已確認。

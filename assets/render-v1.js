@@ -124,7 +124,7 @@
     return '<span class="hero-pill countdown">' + text + "</span>";
   }
   function mapBox() {
-    return '<div class="box"><p>' + T.overview.mapNote + ' <a href="v2/map.html">開啟動線地圖 →</a></p></div>';
+    return '<div class="box"><p>' + T.overview.mapNote + ' <a href="route.html">查看動線地圖 →</a></p></div>';
   }
   function route() {
     return '<section id="route"><h2 class="head">動線</h2><div class="scroller" tabindex="0"><table class="route-table"><thead><tr><th>順序</th><th>地點</th><th>日期</th><th>說明</th></tr></thead><tbody>' +
@@ -149,6 +149,13 @@
       '<div class="packing-bar"><span id="pk-count">已完成 0 / 0</span><button type="button" id="pk-reset">全部清除</button></div>' +
       '<div class="packing-grid" id="packs"></div></section>';
   }
+  function routeMap() {
+    return '<section id="route-map"><div class="route-map" id="route-map-canvas" role="region" aria-label="動線地圖"></div><div class="group-summary route-legend">' +
+      each(T.overview.route, function (r, i) {
+        return '<article class="group-card"><h3>0' + (i + 1) + " · " + r.place + "</h3><strong>" + r.when + "</strong><p>" + r.mapNote + "</p></article>";
+      }) + '</div><div class="box"><p>' + T.overview.mapNote + "</p></div></section>";
+  }
+
   /* 與 v2 共用同一個瀏覽器儲存鍵，兩版打勾狀態互通 */
   function packing() {
     var box = document.getElementById("packs");
@@ -178,10 +185,10 @@
   }
 
   var views = { overview: overview, people: people, stay: stay, itinerary: itinerary,
-    countdown: countdown, route: route, ground: ground, prep: prep };
+    countdown: countdown, route: route, ground: ground, prep: prep, routeMap: routeMap };
   var texts = {
     "people.lead": T.people.lead, "stay.lead": T.stay.lead, "itinerary.lead": T.itinerary.lead,
-    "overview.heroLine": T.overview.heroLine, "prep.lead": T.prep.lead
+    "overview.heroLine": T.overview.heroLine, "prep.lead": T.prep.lead, "overview.mapLead": T.overview.mapLead
   };
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-trip-text]"), function (el) {
@@ -192,4 +199,5 @@
     el.outerHTML = views[el.getAttribute("data-trip")]();
   });
   packing();
+  if (window.drawRouteMap) window.drawRouteMap(document.getElementById("route-map-canvas"), T, { air: "#b35a45", ground: "#193d36", pin: "route-pin" });
 })(window.TRIP);
