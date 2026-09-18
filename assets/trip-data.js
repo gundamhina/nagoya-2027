@@ -294,6 +294,18 @@ window.TRIP = {
       { shop: "Alpen 運動用品", off: "免稅 ＋ 5%", where: "Alpen NAGOYA（榮）", url: "" }
     ],
     listNote: "這裡連的是店家官方或官方合作的券頁，不是我們自己存的圖，所以不會過期失效。折扣級距、效期與適用店鋪都以各官網當下顯示為準，出發前一週再點一次確認。Alpen 的官方券頁 2026-09-18 查詢時是失效的，免稅店清單可查 store.alpen-group.jp/campaign/inbound/list.pdf，或到店問櫃檯。另外常見的 LAOX 券只限秋葉原總店、ANA 免稅店券只限羽田與成田，這趟走中部機場與小松，兩種都用不到。",
+    imagesTitle: "存起來的券",
+    images: [
+      { src: "assets/coupons/edion.jpg", shop: "愛電王 EDION", exp: "2027/12/31",
+        note: "結帳要掃兩個條碼：①カウントJAN 與 ②値引JAN，缺一不算。家電相機手錶 7%、食品藥妝化妝品 5%。" },
+      { src: "assets/coupons/daimaru-matsuzakaya.jpg", shop: "大丸・松坂屋", exp: "2027/8/31",
+        note: "滿 3,000 日圓 5%，食品、餐廳、咖啡廳除外。購物與退稅時都要出示，並帶護照。松坂屋名古屋店在榮。" },
+      { src: "assets/coupons/alpen.jpg", shop: "Alpen 運動用品", exp: "2027/6/30",
+        note: "促銷編號 20000682。官方券頁失效時用這張。日本籍人士不適用。" },
+      { src: "assets/coupons/donki-steps.jpg", shop: "唐吉訶德 · 取得步驟", exp: "無期限",
+        note: "這張不是券，是操作說明。要用日本網路掃 QR、選 5% 或 7% 產生動態條碼。" }
+    ],
+    imagesNote: "點圖可放大，存在站內所以離線也看得到。沒放的四張：LAOX 只限秋葉原總店、ANA 免稅店只限羽田與成田，這趟用不到；BicCamera 與 Sundrug 那兩張效期到 2026/12/31，出發時已過期，改用上面表格的官方券頁。",
     whenTitle: "哪幾天用得到",
     when: [
       "3/19 榮商圈：松坂屋名古屋店、Alpen NAGOYA、唐吉訶德都在這一區。",

@@ -191,6 +191,12 @@
             '" target="_blank" rel="noopener noreferrer">開啟優惠券 →</a>' : '<span class="muted-x">官方券頁失效</span>') + "</span></div>";
         }) + "</div>" +
         '<p class="fine">' + c.listNote + "</p>" +
+        sec(c.imagesTitle) + '<div class="maps">' + each(c.images, function (m) {
+          return '<figure class="map-fig"><a href="' + attr(m.src) + '" target="_blank" rel="noopener noreferrer">' +
+            '<img src="' + attr(m.src) + '" alt="' + attr(m.shop) + '優惠券" loading="lazy" decoding="async"></a>' +
+            '<figcaption><span class="mf-t">' + m.shop + '　<span class="mf-e">有效至 ' + m.exp + '</span></span>' +
+            '<span class="mf-n">' + m.note + "</span></figcaption></figure>";
+        }) + '</div><p class="fine">' + c.imagesNote + "</p>" +
         sec(c.whenTitle) + '<div class="ledger">' + each(c.when, function (x, i) {
           return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
         }) + "</div>";

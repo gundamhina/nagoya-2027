@@ -472,12 +472,13 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 }
 
 /* 路線圖 */
-.maps{display:grid;gap:18px;}
+.maps{display:grid;gap:clamp(16px,2vw,22px);margin-top:clamp(20px,2.4vw,28px);}
 @media(min-width:900px){.maps{grid-template-columns:repeat(2,1fr);}}
-.map-fig{margin:0;border:1px solid var(--rule,#313a43);border-radius:4px;overflow:hidden;background:var(--card,#1c2228);}
+.map-fig{margin:0;border:1px solid var(--rule);background:var(--paper);overflow:hidden;}
 .map-fig a{display:block;line-height:0;background:#fff;}
 .map-fig img{width:100%;height:auto;display:block;}
-.map-fig figcaption{padding:12px 14px;display:block;}
-.map-fig .mf-t{display:block;font-weight:600;font-size:13px;margin-bottom:4px;}
-.map-fig .mf-n{display:block;font-size:12px;line-height:1.8;opacity:.75;}
+.map-fig figcaption{padding:13px 15px;border-top:1px solid var(--rule);}
+.map-fig .mf-t{display:block;font-family:var(--mincho);font-size:14px;color:var(--ink);margin-bottom:5px;letter-spacing:.06em;}
+.map-fig .mf-n{display:block;font-size:12px;line-height:1.85;color:var(--body);}
 @media print{.maps{grid-template-columns:1fr;}.map-fig{break-inside:avoid;}}
+.map-fig .mf-e{font-family:inherit;font-size:11px;color:var(--mark);letter-spacing:0;}
