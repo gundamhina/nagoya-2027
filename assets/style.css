@@ -345,3 +345,51 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   body{padding-bottom:0;}
   .day,.flight,.ground,.pack{break-inside:avoid;}
 }
+/* ── v2.7 動效層：接在 assets/style.css 最後面 ────────────── */
+
+/* 導覽列滑動底線與捲動進度線。寬度與位置由 assets/motion.js 寫入。 */
+.tabs{position:relative;}
+.tab-bar{
+  position:absolute;left:0;bottom:-1px;height:1px;width:0;
+  background:var(--mark);pointer-events:none;
+}
+.scroll-prog{
+  position:absolute;left:0;top:-1px;height:1px;width:0;
+  background:var(--gold);pointer-events:none;
+}
+
+/* hover 與按壓回饋 */
+.tabs a:hover{color:var(--ink);}
+.tabs a:hover .n{color:var(--mark);}
+.tabs a[aria-current="page"]:hover{color:var(--ink);}
+.toc a:hover .ti,
+.toc a:hover .nt{color:var(--mark);}
+.item:active,
+.toc a:active,
+.tabs a:active,
+.linkline:active,
+.reset:active{transform:scale(.975);transform-origin:left center;}
+.cta:active{transform:scale(.975);}
+.item,.toc a,.tabs a,.linkline,.reset,.cta{transition:transform .12s ease,color .2s ease;}
+
+/* 打包清單進度條 */
+.pk-track{position:relative;}
+.pk-fill{
+  position:absolute;left:0;top:0;height:1px;width:0;
+  background:var(--mark);pointer-events:none;
+}
+
+/* 時間軸橫捲提示 */
+#timeline{position:relative;}
+.tl-hinted{position:relative;}
+.tl-hinted::after{
+  content:"";position:absolute;right:0;top:0;bottom:0;width:56px;
+  pointer-events:none;
+  background:linear-gradient(to left,var(--paper),transparent);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .tab-bar,.scroll-prog{display:none;}
+  .item,.toc a,.tabs a,.linkline,.reset,.cta{transition:none;}
+  .item:active,.toc a:active,.tabs a:active,.linkline:active,.reset:active,.cta:active{transform:none;}
+}
