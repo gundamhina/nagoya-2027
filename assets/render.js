@@ -186,17 +186,15 @@
         sec(c.listTitle) +
         '<div class="ledger"><div class="row row-coupon row-head"><span class="cell-w">店家</span><span class="cell-w">折扣</span><span class="cell-w">名古屋在哪</span><span class="cell-w">券</span></div>' +
         each(c.list, function (x) {
+          var links = "";
+          if (x.url) links += '<a class="cpn" href="' + attr(x.url) + '" target="_blank" rel="noopener noreferrer">官方券頁 →</a>';
+          else links += '<span class="muted-x">官方券頁失效</span>';
+          if (x.img) links += '<a class="cpn cpn-img" href="' + attr(x.img) + '" target="_blank" rel="noopener noreferrer">' + (x.imgLabel || "券圖") + " →</a>";
           return '<div class="row row-coupon"><span class="cell">' + x.shop + '</span><span class="cell-t">' + x.off +
-            '</span><span class="cell-s">' + x.where + '</span><span class="cell-s">' + (x.url ? '<a class="cpn" href="' + attr(x.url) +
-            '" target="_blank" rel="noopener noreferrer">開啟優惠券 →</a>' : '<span class="muted-x">官方券頁失效</span>') + "</span></div>";
+            (x.note ? '<span class="cpn-note">' + x.note + "</span>" : "") +
+            '</span><span class="cell-s">' + x.where + '</span><span class="cell-s">' + links + "</span></div>";
         }) + "</div>" +
         '<p class="fine">' + c.listNote + "</p>" +
-        sec(c.imagesTitle) + '<div class="maps">' + each(c.images, function (m) {
-          return '<figure class="map-fig"><a href="' + attr(m.src) + '" target="_blank" rel="noopener noreferrer">' +
-            '<img src="' + attr(m.src) + '" alt="' + attr(m.shop) + '優惠券" loading="lazy" decoding="async"></a>' +
-            '<figcaption><span class="mf-t">' + m.shop + '　<span class="mf-e">有效至 ' + m.exp + '</span></span>' +
-            '<span class="mf-n">' + m.note + "</span></figcaption></figure>";
-        }) + '</div><p class="fine">' + c.imagesNote + "</p>" +
         sec(c.whenTitle) + '<div class="ledger">' + each(c.when, function (x, i) {
           return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
         }) + "</div>";
