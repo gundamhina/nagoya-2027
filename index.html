@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<link rel="stylesheet" href="assets/style.css?v2.5">
+<link rel="stylesheet" href="assets/style.css?v2.6">
 </head>
 <body id="top">
 <div class="wrap">
@@ -20,7 +20,7 @@
   <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
   <div class="mast-meta">
     <span class="lab">2027 SPRING</span>
-    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.5</a>
+    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.6</a>
 
   </div>
 </div>
@@ -34,6 +34,7 @@
   <a href="#stay"><span class="n">05</span>住宿資訊</a>
   <a href="#itinerary"><span class="n">06</span>行程</a>
   <a href="#prep"><span class="n">07</span>行前</a>
+  <a href="#coupon"><span class="n">08</span>優惠券</a>
 </nav>
 <noscript><p class="note">此頁內容需要啟用 JavaScript 才能顯示。</p></noscript>
 
@@ -66,6 +67,7 @@
     <a href="#stay"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
     <a href="#itinerary"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
     <a href="#prep"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
+    <a href="#coupon"><span class="no">08</span><span class="ti">優惠券</span><span class="nt">各店給外國旅客的折扣券與使用方式</span><span class="ar">→</span></a>
   </div>
 </section>
 
@@ -137,16 +139,25 @@
   <div class="packs" id="packs"></div>
 </section>
 
+<section id="coupon" hidden>
+  <div class="head">
+    <span class="kicker">08 / COUPONS</span>
+    <h1>優惠券</h1>
+    <p class="lead" data-v2="coupon-lead"></p>
+  </div>
+  <div data-v2="coupon"></div>
+</section>
+
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.5</span>
+  <span class="v">v2.6</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
-<script src="assets/trip-data.js?v2.5"></script>
-<script src="assets/route-map.js?v2.5"></script>
-<script src="assets/render.js?v2.5"></script>
+<script src="assets/trip-data.js?v2.6"></script>
+<script src="assets/route-map.js?v2.6"></script>
+<script src="assets/render.js?v2.6"></script>
 </body>
 </html>

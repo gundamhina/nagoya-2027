@@ -254,6 +254,42 @@ window.TRIP = {
     ]
   },
 
+  /* ---------- 優惠券 ---------- */
+  coupons: {
+    lead: "日本各店發給外國旅客的優惠券，和免稅可以疊加。結帳前用手機打開對應的券，把畫面拿給店員掃。",
+    howTitle: "怎麼用",
+    how: [
+      "結帳前先跟店員說要用優惠券。等他開始刷商品才拿出來，多半就來不及了。",
+      "現場用手機開官網頁面，不要用截圖。條碼是動態的，截圖通常不被接受。",
+      "免稅要帶本人護照，同一家店單筆滿 5,500 日圓（含稅）才算。",
+      "一張券只能用一種折扣，不能和店內特價疊加。",
+      "酒類、菸、遊戲主機、單品 10 萬日圓以上的商品，多半不在折扣範圍。"
+    ],
+    listTitle: "各店優惠券",
+    list: [
+      { shop: "唐吉訶德",      off: "免稅 10% ＋ 滿 1 萬日圓 5%、滿 3 萬日圓 7%", where: "榮、名古屋站周邊",
+        url: "https://livejapan.com/public/operation/coupon/donki/en.html" },
+      { shop: "BicCamera",     off: "免稅 10% ＋ 3～7%", where: "名古屋站西口",
+        url: "https://livejapan.com/public/operation/coupon/biccamera/en.html" },
+      { shop: "Sundrug",       off: "免稅 10% ＋ 3～7%", where: "市區各處",
+        url: "https://livejapan.com/public/operation/coupon/sundrug/en.html" },
+      { shop: "愛電王 EDION",  off: "免稅 10% ＋ 5～7%", where: "市區各處",
+        url: "https://livejapan.com/public/operation/coupon/edion/en.html" },
+      { shop: "松坂屋・大丸",  off: "滿 3,000 日圓 5%；退稅滿 10 萬日圓再送 2,000 日圓餐券", where: "松坂屋名古屋店（榮）",
+        url: "https://dmdepart.jp/fl/coupon/j/" },
+      { shop: "近鐵百貨",      off: "5%", where: "名古屋站（近鐵百貨）",
+        url: "https://livejapan.com/public/operation/coupon/kintetsudepartmentstore/en.html" },
+      { shop: "Alpen 運動用品", off: "免稅 ＋ 5%", where: "Alpen NAGOYA（榮）", url: "" }
+    ],
+    listNote: "這裡連的是店家官方或官方合作的券頁，不是我們自己存的圖，所以不會過期失效。折扣級距、效期與適用店鋪都以各官網當下顯示為準，出發前一週再點一次確認。Alpen 的官方券頁 2026-09-18 查詢時是失效的，到店再問櫃檯，或出發前重查一次。",
+    whenTitle: "哪幾天用得到",
+    when: [
+      "3/19 榮商圈：松坂屋名古屋店、Alpen NAGOYA、唐吉訶德都在這一區。",
+      "3/21 商場日：LaLaport 或 AEON 裡的家電與藥妝櫃位可留意 EDION、Sundrug。",
+      "3/22 輕鬆採買：名古屋站的近鐵百貨與 BicCamera 名古屋站西店。"
+    ]
+  },
+
   /* ---------- 行前 ---------- */
   prep: {
     lead: "三月的北陸還在冬天的尾巴。先看氣溫決定行李，再把清單一項一項打勾。",

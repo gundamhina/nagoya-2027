@@ -33,6 +33,7 @@
     "stay-lead": function () { return T.stay.lead; },
     "itinerary-lead": function () { return T.itinerary.lead + T.itinerary.legend; },
     "prep-lead": function () { return T.prep.lead; },
+    "coupon-lead": function () { return T.coupons.lead; },
     "packing-note": function () { return T.prep.packingNote; },
     "map-lead": function () { return T.overview.mapLead; },
     "map-note": function () { return T.overview.mapNote; },
@@ -172,6 +173,24 @@
         }) + "</div>";
     },
 
+    coupon: function () {
+      var c = T.coupons;
+      return sec(c.howTitle, "", "margin-top:0") + '<div class="ledger">' + each(c.how, function (x, i) {
+          return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
+        }) + "</div>" +
+        sec(c.listTitle) +
+        '<div class="ledger"><div class="row row-coupon row-head"><span class="cell-w">店家</span><span class="cell-w">折扣</span><span class="cell-w">名古屋在哪</span><span class="cell-w">券</span></div>' +
+        each(c.list, function (x) {
+          return '<div class="row row-coupon"><span class="cell">' + x.shop + '</span><span class="cell-t">' + x.off +
+            '</span><span class="cell-s">' + x.where + '</span><span class="cell-s">' + (x.url ? '<a class="cpn" href="' + attr(x.url) +
+            '" target="_blank" rel="noopener noreferrer">開啟優惠券 →</a>' : '<span class="muted-x">官方券頁失效</span>') + "</span></div>";
+        }) + "</div>" +
+        '<p class="fine">' + c.listNote + "</p>" +
+        sec(c.whenTitle) + '<div class="ledger">' + each(c.when, function (x, i) {
+          return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
+        }) + "</div>";
+    },
+
     weather: function () {
       var p = T.prep;
       return '<div class="sec" style="margin-top:0"><span class="sec-t">三月氣溫</span><span class="sec-s">' + p.source + '</span><span class="bar"></span></div><div class="wx">' +
@@ -188,7 +207,7 @@
   });
 
   /* ---------- 分頁切換 ---------- */
-  var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep"];
+  var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep", "coupon"];
   var routeMap = null;
   var tabs = document.querySelectorAll("#tabs a");
   function route() {
