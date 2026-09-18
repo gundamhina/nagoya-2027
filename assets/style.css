@@ -345,6 +345,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   body{padding-bottom:0;}
   .day,.flight,.ground,.pack{break-inside:avoid;}
 }
+
 /* ── v2.7 動效層：接在 assets/style.css 最後面 ────────────── */
 
 /* 導覽列滑動底線與捲動進度線。寬度與位置由 assets/motion.js 寫入。 */
@@ -392,4 +393,70 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   .tab-bar,.scroll-prog{display:none;}
   .item,.toc a,.tabs a,.linkline,.reset,.cta{transition:none;}
   .item:active,.toc a:active,.tabs a:active,.linkline:active,.reset:active,.cta:active{transform:none;}
+}
+
+/* ── 頁首釘住與形態轉換 ───────────────────────────── */
+.stick{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  transition:box-shadow .3s ease;
+}
+.stick.is-cond{box-shadow:0 1px 0 rgba(23,32,28,.08);}
+
+/* 報頭壓縮 */
+.stick .mast{transition:padding .3s var(--ease,cubic-bezier(.2,.7,.25,1));}
+.stick.is-cond .mast{padding-top:10px;padding-bottom:8px;}
+.stick.is-cond .seal{width:24px;height:24px;font-size:13px;transition:all .3s ease;}
+.seal{transition:all .3s ease;}
+
+/* 左右兩側的雙形態堆疊 */
+.lab-stack,.meta-stack{display:grid;align-items:center;}
+.lab-stack > *,.meta-stack > *{grid-area:1/1;}
+.meta-stack{justify-items:end;}
+.lab-mini,.meta-mini{opacity:0;pointer-events:none;white-space:nowrap;}
+.lab-mini.on,.meta-mini.on{opacity:1;pointer-events:auto;}
+.stick.is-cond .lab,
+.stick.is-cond .mast-meta{opacity:0;pointer-events:none;}
+
+.lab-mini{display:flex;align-items:baseline;gap:10px;}
+.lab-mini .no{font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--mark);}
+.lab-mini .ti{font-family:var(--mincho);font-size:19px;font-weight:500;letter-spacing:.14em;color:var(--ink);}
+
+.meta-mini{display:flex;align-items:baseline;gap:16px;}
+.meta-mini .cd{display:flex;align-items:baseline;gap:6px;}
+.meta-mini .cd .k{font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--mark);}
+.meta-mini .cd .n{font-family:var(--mincho);font-size:16px;color:var(--ink);}
+.meta-mini .cd .u{font-size:10px;letter-spacing:.14em;color:var(--muted);}
+.meta-mini .to-top{
+  font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--muted);
+  background:none;border:0;border-bottom:1px solid var(--rule);padding:0 0 2px;
+  font-family:inherit;cursor:pointer;
+}
+.meta-mini .to-top:hover{color:var(--mark);border-color:var(--mark);}
+
+/* 分頁列收成緊湊索引帶 */
+.tabs{transition:padding .3s ease,gap .3s ease;}
+.stick.is-cond .tabs{gap:clamp(14px,2.2vw,24px);padding:8px 0;}
+.stick.is-cond .tabs a{font-size:12px;letter-spacing:.1em;}
+.stick.is-cond .tabs a .n{display:none;}
+
+/* 手機：壓縮後收成單排。
+   兩種形態疊在同一個 grid 格子裡，格寬取兩者較大值，
+   在 375px 會把報頭撐成兩排，所以收起時讓看不見的那層不佔寬。 */
+@media(max-width:600px){
+  .stick.is-cond .mast{flex-wrap:nowrap;gap:12px;padding-top:8px;padding-bottom:6px;}
+  .stick.is-cond .lab-stack > .lab,
+  .stick.is-cond .meta-stack > .mast-meta{width:0;overflow:hidden;white-space:nowrap;}
+  .stick.is-cond .brand{gap:10px;}
+  .stick.is-cond .seal{width:22px;height:22px;font-size:12px;}
+  .stick.is-cond .lab-mini{gap:8px;}
+  .stick.is-cond .lab-mini .ti{font-size:16px;letter-spacing:.1em;}
+  .stick.is-cond .meta-mini{gap:12px;}
+  .stick.is-cond .meta-mini .cd{gap:5px;}
+  .stick.is-cond .meta-mini .cd .n{font-size:14px;}
+  .stick.is-cond .tabs{padding:6px 0;gap:14px;}
+  .stick.is-cond .tabs a{font-size:11.5px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .stick,.stick .mast,.tabs,.seal{transition:none;}
 }

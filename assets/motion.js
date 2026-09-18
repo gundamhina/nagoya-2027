@@ -33,18 +33,21 @@
   ].join(",");
 
   /* 動畫播完就收尾，播不動就取消，絕不把內容留在隱形狀態 */
-  function settle(anim, el, after) {
+  /* keep：照樣強制結束動畫，但不要把停在透明的元素補回不透明。
+     淡出用的動畫本來就該停在透明，補回去會讓新舊兩層疊著看。 */
+  function settle(anim, el, after, keep) {
     setTimeout(function () {
       try { if (anim.playState !== "finished") anim.finish(); } catch (e) { try { anim.cancel(); } catch (e2) {} }
+      if (keep) return;
       if (el && getComputedStyle(el).opacity === "0") { try { anim.cancel(); } catch (e) {} el.style.opacity = "1"; }
     }, after);
   }
 
-  function run(el, frames, opts) {
+  function run(el, frames, opts, keep) {
     if (!can) return null;
     try {
       var a = el.animate(frames, opts);
-      settle(a, el, (opts.delay || 0) + opts.duration + 400);
+      settle(a, el, (opts.delay || 0) + opts.duration + 400, keep);
       return a;
     } catch (e) { return null; }
   }
@@ -71,24 +74,55 @@
          { opacity: 1, transform: "scaleX(1)", transformOrigin: "left center" }]
       : dark
         ? [{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0 0 0)" }]
-        : [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }];
+        : [{ opacity: 0, transform: "translateY(34px)" }, { opacity: 1, transform: "none" }];
     run(el, frames, {
-      duration: lane ? 900 : dark ? 1000 : 560,
+      duration: lane ? 900 : dark ? 1000 : 760,
       delay: delay || 0,
-      easing: lane ? SOFT : EASE
+      easing: lane ? SOFT : SOFT
+    });
+  }
+
+  /* 所有會漸入的元素，離開畫面後可以重來一次 */
+  var watched = [];
+
+  function live(el) {
+    var s = el.closest ? el.closest("section") : null;
+    return el.isConnected && (!s || !s.hidden);
+  }
+
+  /* 整個捲出視窗外（上下各多留 80px）才算離開 */
+  function gone(el, h) {
+    var r = el.getBoundingClientRect();
+    return r.bottom < -80 || r.top > h + 80;
+  }
+
+  function recycle(h) {
+    watched.forEach(function (el) {
+      if (!el.dataset.seen || !live(el)) return;
+      if (pending.indexOf(el) !== -1) return;
+      if (!gone(el, h)) return;
+      var busy = el.getAnimations().some(function (a) { return a.playState === "running"; });
+      if (busy) return;
+      delete el.dataset.seen;
+      el.style.opacity = "";
+      el.style.transform = "";
+      el.style.clipPath = "";
+      pending.push(el);
     });
   }
 
   function sweep() {
     rescue();
-    if (!pending.length) return;
     var h = window.innerHeight || 800;
+    recycle(h);
+    if (!pending.length) return;
     var i = 0;
     pending = pending.filter(function (el) {
-      if (!el.isConnected) return false;
+      if (!live(el)) return el.isConnected;
       var r = el.getBoundingClientRect();
       if (r.top > h - 40 || r.bottom < 0) return true;
-      play(el, i++ * 55);
+      el.dataset.seen = "1";
+      play(el, i++ * 70);
       return false;
     });
   }
@@ -98,10 +132,10 @@
     var h = window.innerHeight || 800;
     var i = 0;
     Array.prototype.forEach.call(scope.querySelectorAll(REVEAL), function (el) {
+      if (watched.indexOf(el) === -1) watched.push(el);
       if (el.dataset.seen) return;
-      el.dataset.seen = "1";
-      if (el.getBoundingClientRect().top < h - 40) play(el, i++ * 55);
-      else pending.push(el);
+      if (el.getBoundingClientRect().top < h - 40) { el.dataset.seen = "1"; play(el, i++ * 70); }
+      else if (pending.indexOf(el) === -1) pending.push(el);
     });
     sweep();
   }
@@ -283,7 +317,106 @@
   }
 
   /* ── 啟動 ───────────────────────────────────────── */
+  function stickyHead() {
+    var mast = document.querySelector(".mast");
+    var tabs = document.getElementById("tabs");
+    if (!mast || !tabs) return;
+
+    var stick = document.createElement("div");
+    stick.className = "stick";
+    mast.parentNode.insertBefore(stick, mast);
+    stick.appendChild(mast);
+    stick.appendChild(tabs);
+
+    /* 收摺後的左側：目前分頁編號＋名稱 */
+    var brand = mast.querySelector(".brand");
+    var labFull = brand && brand.querySelector(".lab");
+    var labMini = document.createElement("span");
+    labMini.className = "lab-mini";
+    labMini.innerHTML = '<span class="no">—</span><span class="ti">總覽</span>';
+    if (labFull) {
+      var stack = document.createElement("span");
+      stack.className = "lab-stack";
+      labFull.parentNode.insertBefore(stack, labFull);
+      stack.appendChild(labFull);
+      stack.appendChild(labMini);
+    }
+
+    /* 收摺後的右側：倒數＋回頂端 */
+    var metaFull = mast.querySelector(".mast-meta");
+    var metaMini = document.createElement("div");
+    metaMini.className = "meta-mini";
+    metaMini.innerHTML = '<span class="cd"><span class="k">倒數</span><span class="n">—</span><span class="u">天</span></span>' +
+      '<button type="button" class="to-top">↑ 頂端</button>';
+    if (metaFull) {
+      var mstack = document.createElement("div");
+      mstack.className = "meta-stack";
+      metaFull.parentNode.insertBefore(mstack, metaFull);
+      mstack.appendChild(metaFull);
+      mstack.appendChild(metaMini);
+    }
+    metaMini.querySelector(".to-top").addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+    });
+
+    function syncMini() {
+      var link = tabs.querySelector('a[aria-current="page"]');
+      if (!link) return;
+      var n = link.querySelector(".n");
+      var no = n ? n.textContent : "—";
+      var ti = link.textContent.replace(no, "").trim();
+      var tiEl = labMini.querySelector(".ti");
+      var cd = document.getElementById("cd-n");
+      if (cd) metaMini.querySelector(".n").textContent = cd.textContent;
+      if (tiEl.textContent === ti) return;
+      labMini.querySelector(".no").textContent = no;
+      tiEl.textContent = ti;
+      run(tiEl, [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }],
+        { duration: 300, easing: SOFT });
+    }
+
+    function crossfade(out, into) {
+      if (!out || !into) return;
+      /* 兩邊最終的顯示與否交給 CSS（.on 與 .is-cond）決定，
+         清掉可能被 settle 寫進來的 inline opacity，否則兩層會疊著看。 */
+      out.style.opacity = "";
+      into.style.opacity = "";
+      out.classList.remove("on");
+      into.classList.add("on");
+      run(out, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-8px)" }], { duration: 240, easing: EASE }, true);
+      run(into, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: 90, easing: SOFT }, true);
+    }
+
+    var cond = false;
+
+    /* 頁首一律固定在上方，只在完整與壓縮兩種形態之間切換。
+       120 與 96 之間留一段緩衝，避免在臨界點來回抖動。 */
+    function apply(next) {
+      if (next === cond) return;
+      cond = next;
+      stick.classList.toggle("is-cond", next);
+      syncMini();
+      crossfade(next ? labFull : labMini, next ? labMini : labFull);
+      crossfade(next ? metaFull : metaMini, next ? metaMini : metaFull);
+      setTimeout(function () { moveBar(true); }, 300);
+    }
+
+    function onScroll() {
+      var y = window.scrollY;
+      if (!cond && y > 120) apply(true);
+      else if (cond && y < 96) apply(false);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("click", function (e) { if (e.target.closest(".tabs a")) setTimeout(syncMini, 60); });
+    window.addEventListener("hashchange", function () { setTimeout(syncMini, 60); });
+    onScroll();
+    syncMini();
+  }
+
+  /* ── 啟動 ───────────────────────────────────────── */
   function start() {
+    stickyHead();
     makeBar();
     makeProgress();
     wireToc();
