@@ -219,7 +219,32 @@
   var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep", "coupon"];
   var routeMap = null;
   var tabs = document.querySelectorAll("#tabs a");
-  function route() {
+  /* 切頁一律瞬間回到頂端：用平滑捲動的話，中途會經過頁首壓縮的門檻，
+     頁首就會在完整與壓縮兩種形態之間來回切。順便蓋掉瀏覽器對 hash 的定位捲動。 */
+  function toTop() {
+    var root = document.documentElement;
+    var prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    requestAnimationFrame(function () {
+      window.scrollTo(0, 0);
+      requestAnimationFrame(function () {
+        window.scrollTo(0, 0);
+        root.style.scrollBehavior = prev;
+      });
+    });
+  }
+
+  /* 用 hash 換頁時，瀏覽器會自己捲到同名的區塊，而且吃 scroll-behavior:smooth，
+     一路捲過頁首壓縮的門檻，頁首就會來回切形態。改成自己換網址再重畫。 */
+  function go(id, keepScroll) {
+    if (("#" + id) !== location.hash) {
+      try { history.pushState(null, "", "#" + id); } catch (e) { location.hash = "#" + id; }
+    }
+    route(keepScroll);
+  }
+
+  function route(keepScroll) {
     var id = (location.hash || "#overview").slice(1);
     if (PAGES.indexOf(id) < 0) id = "overview";
     PAGES.forEach(function (p) { document.getElementById(p).hidden = p !== id; });
@@ -227,7 +252,7 @@
       if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
-    window.scrollTo(0, 0);
+    if (!keepScroll) toTop();
     /* 地圖在分頁顯示後才畫，避免隱藏時量不到尺寸 */
     if (id === "route") {
       if (!routeMap && window.drawRouteMap) routeMap = window.drawRouteMap(document.getElementById("map"), T, { air: "#9c3b26", ground: "#1d2e28", pin: "pin" });
@@ -348,7 +373,7 @@
           closePeek(false);
           clearCur();
           ROOT.dataset.swipe = "none";       /* 已經滑進來了，動效層不用再播入場 */
-          location.hash = "#" + target;
+          go(target);
           showHint((dirSign > 0 ? "→ " : "← ") + nameOf(target));
         }
         reset();
@@ -406,16 +431,26 @@
   })();
 
   window.addEventListener("hashchange", route);
+  window.addEventListener("popstate", route);
   document.addEventListener("click", function (e) {
     /* 跨分頁跳到某個區塊：先切分頁，再捲到該區塊 */
     var j = e.target.closest("[data-jump]");
     if (j) {
       e.preventDefault();
-      history.pushState(null, "", j.getAttribute("href"));
-      route();
+      go(j.getAttribute("href").slice(1), true);
       var target = document.getElementById(j.getAttribute("data-jump"));
       if (target) target.scrollIntoView();
       return;
+    }
+    /* 導覽列與目次：同樣自己換頁，不要讓瀏覽器捲 */
+    var nav = e.target.closest('a[href^="#"]');
+    if (nav && !nav.hasAttribute("data-day")) {
+      var id = nav.getAttribute("href").slice(1);
+      if (PAGES.indexOf(id) >= 0) {
+        e.preventDefault();
+        go(id);
+        return;
+      }
     }
     var a = e.target.closest("[data-day]");
     if (!a) return;
