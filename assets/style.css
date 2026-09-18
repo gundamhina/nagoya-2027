@@ -524,12 +524,14 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 /* 滑動切頁：拖曳時兩頁一起移動，隔壁那頁從旁邊跟著進來 */
 /* 拖曳中的位移不該讓整頁多出可橫捲的空白；clip 不會建立捲動容器，釘住的頁首照常 */
 html,body{overflow-x:clip;}
-/* 蓋過 #timeline 等 ID 規則的 position，預覽層一定要是固定定位 */
-section[id].swipe-peek{
+/* 拖曳中的兩頁都是固定圖層；蓋過 #timeline 等 ID 規則的 position。
+   左右內距與 .wrap 一致，落點才會跟切完後完全一樣，兩頁之間也不留分隔線。 */
+section[id].swipe-pane{
   position:fixed!important;left:0!important;right:0!important;bottom:0!important;
   z-index:12;overflow:hidden;background:var(--paper);
-  padding:14px clamp(20px,5vw,52px) 0;box-shadow:0 0 24px rgba(23,32,28,.16);
+  padding:0 clamp(20px,5vw,52px);
 }
-section[id].swipe-peek > .head{padding-top:clamp(20px,4vw,34px);}
+/* 拖曳期間頁首直接切換形態，不跑轉場，免得高度一直在變 */
+.swipe-freeze .stick,.swipe-freeze .stick *{transition:none!important;}
 .swipe-live{cursor:grabbing;}
 .swipe-live section[id]{will-change:transform;}

@@ -222,17 +222,19 @@
   /* 切頁一律瞬間回到頂端：用平滑捲動的話，中途會經過頁首壓縮的門檻，
      頁首就會在完整與壓縮兩種形態之間來回切。順便蓋掉瀏覽器對 hash 的定位捲動。 */
   function toTop() {
-    var root = document.documentElement;
-    var prev = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-    window.scrollTo(0, 0);
-    requestAnimationFrame(function () {
-      window.scrollTo(0, 0);
-      requestAnimationFrame(function () {
+    var jump = function () {
+      try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
+      catch (e) {
+        var root = document.documentElement;
+        var prev = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        void root.offsetHeight;
         window.scrollTo(0, 0);
         root.style.scrollBehavior = prev;
-      });
-    });
+      }
+    };
+    jump();
+    requestAnimationFrame(jump);
   }
 
   /* 用 hash 換頁時，瀏覽器會自己捲到同名的區塊，而且吃 scroll-behavior:smooth，
@@ -244,6 +246,8 @@
     route(keepScroll);
   }
 
+  var flowTop = 0;   /* 捲到頂端時，分頁區塊在畫面上的位置（頁首完整形態的高度） */
+
   function route(keepScroll) {
     var id = (location.hash || "#overview").slice(1);
     if (PAGES.indexOf(id) < 0) id = "overview";
@@ -253,6 +257,14 @@
       else a.removeAttribute("aria-current");
     });
     if (!keepScroll) toTop();
+    if (!keepScroll) {
+      requestAnimationFrame(function () {
+        var s = document.querySelector("section[id]:not([hidden])");
+        if (s && !document.documentElement.dataset.swipe && (window.scrollY || 0) === 0) {
+          flowTop = Math.round(s.getBoundingClientRect().top);
+        }
+      });
+    }
     /* 地圖在分頁顯示後才畫，避免隱藏時量不到尺寸 */
     if (id === "route") {
       if (!routeMap && window.drawRouteMap) routeMap = window.drawRouteMap(document.getElementById("map"), T, { air: "#9c3b26", ground: "#1d2e28", pin: "pin" });
@@ -296,7 +308,7 @@
     var W = function () { return window.innerWidth || 375; };
 
     var x0 = 0, y0 = 0, t0 = 0, tracking = false, axis = null, busy = false;
-    var cur = null, peek = null, peekId = "", dirSign = 0, dx = 0;
+    var cur = null, peek = null, peekId = "", dirSign = 0, dx = 0, prevY = 0;
 
     function current() { return document.querySelector("section[id]:not([hidden])"); }
     function neighbour(sign) {
@@ -305,22 +317,56 @@
       var n = i + sign;
       return n >= 0 && n < PAGES.length ? PAGES[n] : "";
     }
-    /* 釘住的頁首之下才是內容區，隔壁頁從那裡開始露出來 */
-    function topEdge() {
+    /* 隔壁頁要停在「切過去之後該在的位置」，也就是捲到頂端時區塊的位置 */
+    function landing() {
+      if (flowTop) return flowTop;
       var st = document.querySelector(".stick");
-      var b = st ? st.getBoundingClientRect().bottom : 0;
-      return Math.max(0, Math.round(b));
+      return st ? Math.max(0, Math.round(st.getBoundingClientRect().bottom)) : 0;
     }
 
-    function openPeek(sign) {
+    /* 站台設了 scroll-behavior:smooth，一般的 scrollTo 不會立刻生效，
+       量位置會量到舊的；這裡明確要求立即捲動。 */
+    function scrollNow(y) {
+      try { window.scrollTo({ top: y, left: 0, behavior: "instant" }); }
+      catch (e) {
+        var root = document.documentElement;
+        var prev = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        void root.offsetHeight;
+        window.scrollTo(0, y);
+        root.style.scrollBehavior = prev;
+      }
+      /* 頁首靠捲動事件切換形態，這裡同步觸發，之後量到的位置才是最終的 */
+      try { window.dispatchEvent(new Event("scroll")); } catch (e2) {}
+    }
+
+    /*
+     * 拖曳一開始就把目前這頁釘在它現在的視覺位置，然後把捲軸拉回頂端。
+     * 畫面上什麼都沒動，但切頁完成時頁面已經在頂端，不會再跳一下。
+     * 隔壁那頁釘在「切過去之後該在的位置」，落點與拖曳中完全一致。
+     */
+    function beginDrag(sign) {
       peekId = neighbour(sign);
-      if (!peekId) return false;
-      peek = document.getElementById(peekId);
-      if (!peek || peek === cur) { peek = null; return false; }
+      peek = peekId ? document.getElementById(peekId) : null;
+      if (peek === cur) peek = null;
       dirSign = sign;
+      prevY = window.scrollY || 0;
+
       ROOT.dataset.swipe = "peek";           /* 讓動效層知道這是預覽，不要跑入場動畫 */
-      peek.classList.add("swipe-peek");
-      peek.style.top = topEdge() + "px";
+      ROOT.classList.add("swipe-freeze");    /* 頁首形態直接切換，不跑轉場 */
+
+      /* 先記下現在看到的位置，捲回頂端後量出落點，再把目前這頁釘回原本的視覺位置 */
+      var seenTop = cur ? Math.round(cur.getBoundingClientRect().top) : 0;
+      scrollNow(0);
+      var land = cur ? Math.round(cur.getBoundingClientRect().top) : landing();
+      if (cur) {
+        cur.classList.add("swipe-pane");
+        cur.style.top = seenTop + "px";
+      }
+
+      if (!peek) return false;
+      peek.classList.add("swipe-pane");
+      peek.style.top = land + "px";
       peek.hidden = false;
       peek.style.transform = "translateX(" + (sign > 0 ? W() : -W()) + "px)";
       return true;
@@ -334,7 +380,7 @@
 
     function closePeek(keepShown) {
       if (!peek) return;
-      peek.classList.remove("swipe-peek");
+      peek.classList.remove("swipe-pane");
       peek.style.transform = "";
       peek.style.top = "";
       peek.style.transition = "";
@@ -343,14 +389,22 @@
     }
     function clearCur() {
       if (!cur) return;
+      cur.classList.remove("swipe-pane");
       cur.style.transform = "";
       cur.style.transition = "";
+      cur.style.top = "";
       cur = null;
     }
-    function reset() {
+    function reset(restoreScroll) {
       delete ROOT.dataset.swipe;
       document.body.classList.remove("swipe-live");
       closePeek(false); clearCur();
+      if (restoreScroll) {
+        /* 沒切成就回到原本看的位置；頁首形態變回來會改變版面高度，再校正一次 */
+        scrollNow(prevY);
+        scrollNow(prevY);
+      }
+      ROOT.classList.remove("swipe-freeze");
       dx = 0; axis = null; busy = false;
     }
 
@@ -369,14 +423,14 @@
       var target = peekId;
       setTimeout(function () {
         if (commit && target) {
-          /* 先收回 hidden，再換 hash：route() 重新顯示，導覽列底線才會跟著跑 */
+          /* 先收回 hidden，再換頁：route() 重新顯示，導覽列底線才會跟著跑 */
           closePeek(false);
           clearCur();
           ROOT.dataset.swipe = "none";       /* 已經滑進來了，動效層不用再播入場 */
           go(target);
           showHint((dirSign > 0 ? "→ " : "← ") + nameOf(target));
         }
-        reset();
+        reset(!commit);
       }, ms + 20);
     }
 
@@ -396,7 +450,7 @@
         axis = "x";
         cur = current();
         document.body.classList.add("swipe-live");
-        openPeek(mx < 0 ? 1 : -1);
+        beginDrag(mx < 0 ? 1 : -1);
       }
       if (axis !== "x") return;
 
@@ -408,7 +462,7 @@
     document.addEventListener("touchend", function (e) {
       if (!tracking) return;
       tracking = false;
-      if (axis !== "x") { reset(); return; }
+      if (axis !== "x") { reset(true); return; }
 
       var t = e.changedTouches[0];
       var mx = t.clientX - x0, dt = Date.now() - t0;
@@ -426,7 +480,7 @@
 
     document.addEventListener("touchcancel", function () {
       tracking = false;
-      if (axis === "x" && peek) settle(false); else reset();
+      if (axis === "x" && peek) settle(false); else reset(true);
     }, { passive: true });
   })();
 
