@@ -266,10 +266,73 @@
       return false;
     }
 
-    var x0 = 0, y0 = 0, t0 = 0, tracking = false;
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var x0 = 0, y0 = 0, t0 = 0, tracking = false, axis = null, sec = null, shift = 0;
+
+    function current() { return document.querySelector("section[id]:not([hidden])"); }
+    /* 拖到底的阻尼：越拉越沉，最多 96px */
+    function damp(dx) {
+      var m = Math.min(Math.abs(dx) * 0.42, 96);
+      return dx < 0 ? -m : m;
+    }
+    function follow(px) {
+      if (!sec) return;
+      shift = px;
+      sec.style.transform = px ? "translateX(" + px + "px)" : "";
+      sec.style.opacity = px ? String(1 - Math.min(Math.abs(px) / 340, 0.3)) : "";
+    }
+    function release() {
+      if (!sec) return;
+      var el = sec;
+      el.classList.add("swiping");
+      follow(0);
+      setTimeout(function () { el.classList.remove("swiping"); el.style.opacity = ""; }, 220);
+      sec = null; shift = 0;
+    }
+    /* 往目的地方向滑出，結束後才換頁；新頁由 motion.js 從另一側滑入 */
+    function leave(dx, go) {
+      var el = sec;
+      sec = null; shift = 0;
+      document.documentElement.dataset.swipe = dx < 0 ? "next" : "prev";
+      if (!el || reduced || typeof el.animate !== "function") {
+        if (el) { el.style.transform = ""; el.style.opacity = ""; }
+        go();
+        return;
+      }
+      var out = el.animate(
+        [{ transform: "translateX(" + shift + "px)", opacity: el.style.opacity || 1 },
+         { transform: "translateX(" + (dx < 0 ? -34 : 34) + "px)", opacity: 0 }],
+        { duration: 170, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" }
+      );
+      var done = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        try { out.cancel(); } catch (e) {}
+        el.style.transform = ""; el.style.opacity = "";
+        go();
+      }
+      out.onfinish = finish;
+      setTimeout(finish, 260);
+    }
+
     document.addEventListener("touchstart", function (e) {
       if (e.touches.length !== 1 || window.innerWidth > 700) { tracking = false; return; }
-      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); tracking = true;
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+      tracking = true; axis = null; sec = null; shift = 0;
+    }, { passive: true });
+
+    document.addEventListener("touchmove", function (e) {
+      if (!tracking || e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+      if (axis === null) {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        /* 直向捲動優先；起點在可橫捲的容器內也交給容器 */
+        axis = Math.abs(dx) > Math.abs(dy) * 1.4 && !inScroller(e.target, dx) ? "x" : "y";
+        if (axis === "x") sec = current();
+      }
+      if (axis !== "x") return;
+      follow(damp(dx));
     }, { passive: true });
 
     document.addEventListener("touchend", function (e) {
@@ -277,9 +340,8 @@
       tracking = false;
       var t = e.changedTouches[0];
       var dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
-      if (dt > 700) return;
-      if (Math.abs(dx) < 64 || Math.abs(dx) < Math.abs(dy) * 1.7) return;
-      if (inScroller(e.target, dx)) return;
+      var ok = dt <= 700 && Math.abs(dx) >= 64 && Math.abs(dx) >= Math.abs(dy) * 1.7 && !inScroller(e.target, dx);
+      if (!ok) { release(); return; }
 
       var cur = (location.hash || "#overview").slice(1);
       var i = PAGES.indexOf(cur);
@@ -287,11 +349,16 @@
       var next = i + (dx < 0 ? 1 : -1);
       if (next < 0 || next >= PAGES.length) {
         showHint(dx < 0 ? "已是最後一頁" : "已是第一頁");
+        release();
         return;
       }
-      location.hash = "#" + PAGES[next];
-      showHint((dx < 0 ? "→ " : "← ") + nameOf(PAGES[next]));
+      leave(dx, function () {
+        location.hash = "#" + PAGES[next];
+        showHint((dx < 0 ? "→ " : "← ") + nameOf(PAGES[next]));
+      });
     }, { passive: true });
+
+    document.addEventListener("touchcancel", function () { tracking = false; release(); }, { passive: true });
   })();
 
   window.addEventListener("hashchange", route);

@@ -148,6 +148,16 @@
     collect(section);
     if (section.id === "timeline") { markLanes(); setTimeout(hintScroll, 500); }
     if (!can) return;
+    /* 手機滑動切頁：順著手指方向左右滑入，取代預設的上推 */
+    var swipe = document.documentElement.dataset.swipe;
+    if (swipe) {
+      delete document.documentElement.dataset.swipe;
+      run(section, [
+        { opacity: 0, transform: "translateX(" + (swipe === "next" ? 38 : -38) + "px)", filter: "blur(4px)" },
+        { opacity: 1, transform: "none", filter: "blur(0px)" }
+      ], { duration: 360, easing: SOFT });
+      return;
+    }
     var back = dir === -1;
     run(section, [
       { opacity: 0, clipPath: back ? "inset(0 0 26px 0)" : "inset(26px 0 0 0)",
