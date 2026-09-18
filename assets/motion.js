@@ -33,21 +33,18 @@
   ].join(",");
 
   /* 動畫播完就收尾，播不動就取消，絕不把內容留在隱形狀態 */
-  /* keep：照樣強制結束動畫，但不要把停在透明的元素補回不透明。
-     淡出用的動畫本來就該停在透明，補回去會讓新舊兩層疊著看。 */
-  function settle(anim, el, after, keep) {
+  function settle(anim, el, after) {
     setTimeout(function () {
       try { if (anim.playState !== "finished") anim.finish(); } catch (e) { try { anim.cancel(); } catch (e2) {} }
-      if (keep) return;
       if (el && getComputedStyle(el).opacity === "0") { try { anim.cancel(); } catch (e) {} el.style.opacity = "1"; }
     }, after);
   }
 
-  function run(el, frames, opts, keep) {
+  function run(el, frames, opts) {
     if (!can) return null;
     try {
       var a = el.animate(frames, opts);
-      settle(a, el, (opts.delay || 0) + opts.duration + 400, keep);
+      settle(a, el, (opts.delay || 0) + opts.duration + 400);
       return a;
     } catch (e) { return null; }
   }
@@ -375,16 +372,15 @@
         { duration: 300, easing: SOFT });
     }
 
+    /* 只切 class，淡入淡出交給 CSS transition。
+       用 JS 動畫的話，分頁被瀏覽器節流時動畫不會前進，
+       兩種形態就會卡在中間同時顯示。 */
     function crossfade(out, into) {
       if (!out || !into) return;
-      /* 兩邊最終的顯示與否交給 CSS（.on 與 .is-cond）決定，
-         清掉可能被 settle 寫進來的 inline opacity，否則兩層會疊著看。 */
       out.style.opacity = "";
       into.style.opacity = "";
       out.classList.remove("on");
       into.classList.add("on");
-      run(out, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-8px)" }], { duration: 240, easing: EASE }, true);
-      run(into, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: 90, easing: SOFT }, true);
     }
 
     var cond = false;

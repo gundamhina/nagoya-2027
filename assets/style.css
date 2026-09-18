@@ -412,8 +412,18 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 .lab-stack,.meta-stack{display:grid;align-items:center;}
 .lab-stack > *,.meta-stack > *{grid-area:1/1;}
 .meta-stack{justify-items:end;}
-.lab-mini,.meta-mini{opacity:0;pointer-events:none;white-space:nowrap;}
-.lab-mini.on,.meta-mini.on{opacity:1;pointer-events:auto;}
+/* 兩種形態疊在同一格，同時淡入淡出會看到兩層字重疊，
+   所以消失的一層直接隱藏，只有出現的那層做位移。 */
+.lab-mini,.meta-mini{opacity:0;transform:translateY(6px);pointer-events:none;white-space:nowrap;transition:none;}
+.lab-mini.on,.meta-mini.on{
+  opacity:1;transform:none;pointer-events:auto;
+  /* 透明度瞬間切換，只有位移做動畫：過渡停在中途時，
+     最多是位置差 6px，不會整段字都看不見。 */
+  transition:transform .24s cubic-bezier(.16,1,.3,1) .04s;
+}
+/* 完整那層不做過渡：瀏覽器把分頁節流時過渡會停在中途，
+   站名整個消失比少一段淡入嚴重得多。 */
+.stick .lab,.stick .mast-meta{transition:none;}
 .stick.is-cond .lab,
 .stick.is-cond .mast-meta{opacity:0;pointer-events:none;}
 
@@ -458,5 +468,5 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 }
 
 @media(prefers-reduced-motion:reduce){
-  .stick,.stick .mast,.tabs,.seal{transition:none;}
+  .stick,.stick .mast,.tabs,.seal,.lab-mini,.meta-mini,.lab-mini.on,.meta-mini.on,.stick .lab,.stick .mast-meta{transition:none;}
 }
