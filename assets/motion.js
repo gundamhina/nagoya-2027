@@ -144,16 +144,36 @@
   /* ── 分頁轉場 ───────────────────────────────────── */
   var dir = 1;
 
+  /* 滑動切頁時整頁已經跟著手指進場，裡面的區塊不該再各自漸入一次。
+     元素本來就沒有被預先隱藏，標成看過就好。 */
+  function markSeen(scope) {
+    Array.prototype.forEach.call(scope.querySelectorAll(REVEAL), function (el) {
+      el.dataset.seen = "1";
+      if (watched.indexOf(el) === -1) watched.push(el);
+      var i = pending.indexOf(el);
+      if (i !== -1) pending.splice(i, 1);
+      el.style.opacity = "";
+      el.style.transform = "";
+      el.style.clipPath = "";
+    });
+  }
+
   function enter(section) {
-    collect(section);
-    if (section.id === "timeline") { markLanes(); setTimeout(hintScroll, 500); }
-    if (!can) return;
-    /* 手機滑動切頁：頁面已經跟著手指滑進來，這裡不再重播入場 */
     var swipe = document.documentElement.dataset.swipe;
     if (swipe) {
       if (swipe !== "peek") delete document.documentElement.dataset.swipe;
+      if (section.id === "timeline") {
+        Array.prototype.forEach.call(
+          document.querySelectorAll(".tl tbody td:not(.tl-empty)"),
+          function (td) { td.classList.add("tl-lane"); td.dataset.seen = "1"; }
+        );
+      }
+      markSeen(section);
       return;
     }
+    collect(section);
+    if (section.id === "timeline") { markLanes(); setTimeout(hintScroll, 500); }
+    if (!can) return;
     var back = dir === -1;
     run(section, [
       { opacity: 0, clipPath: back ? "inset(0 0 26px 0)" : "inset(26px 0 0 0)",
@@ -394,6 +414,8 @@
     /* 頁首一律固定在上方，只在完整與壓縮兩種形態之間切換。
        120 與 96 之間留一段緩衝，避免在臨界點來回抖動。 */
     function apply(next) {
+      /* 滑動切頁期間把頁首鎖在當下的形態：捲軸歸零會讓它展開，看起來像亂跳 */
+      if (document.documentElement.dataset.headHold) return;
       if (next === cond) return;
       cond = next;
       stick.classList.toggle("is-cond", next);
@@ -412,6 +434,9 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("click", function (e) { if (e.target.closest(".tabs a")) setTimeout(syncMini, 60); });
     window.addEventListener("hashchange", function () { setTimeout(syncMini, 60); });
+    /* 換頁不一定會發 hashchange（滑動切頁用 pushState），改看導覽列目前是哪一頁 */
+    new MutationObserver(function () { syncMini(); })
+      .observe(tabs, { subtree: true, attributes: true, attributeFilter: ["aria-current"] });
     onScroll();
     syncMini();
   }

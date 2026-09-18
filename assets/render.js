@@ -317,6 +317,21 @@
       var n = i + sign;
       return n >= 0 && n < PAGES.length ? PAGES[n] : "";
     }
+    /*
+     * 頁首縮起來之後再左右滑，捲軸歸零會讓它展開，等於每滑一次就變一次形態。
+     * 滑動期間鎖住形態，之後等使用者自己捲動才解鎖。
+     */
+    function holdHeader() {
+      var st = document.querySelector(".stick");
+      if (st && st.classList.contains("is-cond")) ROOT.dataset.headHold = "1";
+    }
+    /* 只有使用者自己捲動才解鎖；切頁時我們自己捲的不算 */
+    window.addEventListener("scroll", function () {
+      if (!ROOT.dataset.headHold) return;
+      if (Date.now() - lastSelfScroll < 400) return;
+      delete ROOT.dataset.headHold;
+    }, { passive: true });
+
     /* 隔壁頁要停在「切過去之後該在的位置」，也就是捲到頂端時區塊的位置 */
     function landing() {
       if (flowTop) return flowTop;
@@ -326,7 +341,10 @@
 
     /* 站台設了 scroll-behavior:smooth，一般的 scrollTo 不會立刻生效，
        量位置會量到舊的；這裡明確要求立即捲動。 */
+    var lastSelfScroll = 0;
+
     function scrollNow(y) {
+      lastSelfScroll = Date.now();
       try { window.scrollTo({ top: y, left: 0, behavior: "instant" }); }
       catch (e) {
         var root = document.documentElement;
@@ -354,6 +372,7 @@
 
       ROOT.dataset.swipe = "peek";           /* 讓動效層知道這是預覽，不要跑入場動畫 */
       ROOT.classList.add("swipe-freeze");    /* 頁首形態直接切換，不跑轉場 */
+      holdHeader();                          /* 頁首已經縮起來的話，滑動時維持壓縮 */
 
       /* 先記下現在看到的位置，捲回頂端後量出落點，再把目前這頁釘回原本的視覺位置 */
       var seenTop = cur ? Math.round(cur.getBoundingClientRect().top) : 0;
