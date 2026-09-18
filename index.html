@@ -1,41 +1,152 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>總覽｜名古屋・北陸 2027</title><meta name="description" content="三組旅伴的北陸與名古屋行程、航班與住宿資訊。"><meta name="theme-color" content="#193d36"><link rel="stylesheet" href="assets/style.css?v2.4"></head>
-<body><main class="wrap" id="top"><div class="masthead">
-  <a class="brand" href="#top"><span class="brand-seal" aria-hidden="true">旅</span> NAGOYA TRAVEL NOTES</a>
-  <div class="masthead-meta">
-    <span class="edition">2027 · SPRING JOURNEY</span>
-    <a class="ver-badge" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="最後更新 2026-09-17　·　點擊查看更新紀錄">v2.4</a>
-    <a class="try-v2" href="v2/index.html">試試新版 →</a>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>名古屋・北陸 2027 · 我們的春日旅帖</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="description" content="三組旅伴的北陸與名古屋行程、航班、住宿與行前準備。">
+<meta name="theme-color" content="#1d2e28">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/style.css?v2.5">
+</head>
+<body id="top">
+<div class="wrap">
+
+<div class="mast">
+  <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
+  <div class="mast-meta">
+    <span class="lab">2027 SPRING</span>
+    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.5</a>
+
   </div>
 </div>
-<header>
-  <div class="hero-copy">
-    <p class="eyebrow">名古屋から、旅がはじまる。</p>
-    <h1>名古屋・北陸<small>2027 年 3 月 · 我們的春日旅帖</small></h1>
-    <p class="sub">從金澤的町家，到名古屋的街角。</p>
+
+<nav class="tabs" id="tabs" aria-label="旅遊資訊導覽">
+  <a href="#overview"><span class="n">—</span>總覽</a>
+  <a href="#people"><span class="n">01</span>旅伴</a>
+  <a href="#timeline"><span class="n">02</span>時間軸</a>
+  <a href="#journey"><span class="n">03</span>交通</a>
+  <a href="#route"><span class="n">04</span>動線</a>
+  <a href="#stay"><span class="n">05</span>住宿資訊</a>
+  <a href="#itinerary"><span class="n">06</span>行程</a>
+  <a href="#prep"><span class="n">07</span>行前</a>
+</nav>
+<noscript><p class="note">此頁內容需要啟用 JavaScript 才能顯示。</p></noscript>
+
+<!-- 內容全部來自 assets/trip-data.js，樣板在 assets/render.js -->
+<section id="overview">
+  <div class="hero">
+    <span class="jp">名古屋から、旅がはじまる。</span>
+    <h1>名古屋<br>・北陸</h1>
+    <div class="dates">
+      <span class="big">三月十三日 — 二十三日</span>
+      <span class="sm">2027 年 3 月 · 我們的春日旅帖</span>
+      <span class="sm" data-v2="hero-line"></span>
+    </div>
+    <div class="count"><span class="k">倒數</span><span class="n" id="cd-n">—</span><span class="u" id="cd-u">計算中</span></div>
+    <p class="lead" data-v2="overview-lead"></p>
   </div>
-  <svg class="castle" viewBox="0 0 350 280" fill="none" aria-hidden="true">
-    <circle cx="230" cy="92" r="72" fill="#d9bb6c" opacity=".09"/>
-    <path d="M25 257H337M50 265H313" stroke="#d9bb6c" opacity=".35"/>
-    <path d="M105 244L115 214H267L280 244Z" fill="#526c56" stroke="#bba571"/>
-    <path d="M124 214V172H255V214M140 171V137H240V171M155 137V105H225V137M167 105V76H213V105" fill="#dce1c2" fill-opacity=".1" stroke="#c6b784"/>
-    <path d="M93 178Q132 165 145 151H235Q250 165 286 178Z M126 139Q148 132 161 119H220Q231 132 253 139Z M146 106Q165 98 174 87H208Q218 99 238 106Z M154 78Q176 70 190 49Q204 70 226 78Z" fill="#193d36" stroke="#d7bc7d" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M146 197H155M174 197H183M202 197H211M230 197H239M160 155H169M187 155H196M215 155H224M177 121H185M199 121H207M180 92H199" stroke="#d7bc7d" stroke-width="5"/>
-    <path d="M168 66Q151 58 153 44Q161 51 165 45Q173 39 169 29Q182 38 178 50L171 64M212 66Q229 58 227 44Q219 51 215 45Q207 39 211 29Q198 38 202 50L209 64" fill="#d7bc7d"/>
-    <path d="M27 247Q51 222 64 247M45 236V207M304 247Q326 221 339 247M320 237V216" stroke="#88a17b" opacity=".7"/>
-    <path d="M48 209Q37 201 44 194Q29 184 43 177Q39 162 52 166Q59 151 66 169Q82 167 75 182Q89 191 75 200Q79 215 63 211Z M310 215Q299 205 311 197Q300 186 314 182Q321 170 328 185Q343 185 335 199Q344 211 330 216Z" fill="#88a17b" opacity=".25"/>
-    <text x="305" y="98" fill="#d7bc7d" font-size="13" font-family="serif" style="writing-mode:vertical-rl;letter-spacing:7px;">名古屋の春</text>
-  </svg>
-  <div class="hero-bottom"><span class="hero-pill">03.13 — 03.23</span><span data-trip="countdown"></span><span data-trip-text="overview.heroLine"></span><span>金澤 → 名古屋</span></div>
-</header>
-<nav class="quick-nav" aria-label="旅遊資訊導覽"><a href="index.html" aria-current="page">總覽</a>
-<a href="people.html">旅伴</a>
-<a href="timeline.html">時間軸</a>
-<a href="journey.html">交通</a>
-<a href="route.html">動線</a>
-<a href="stay.html">住宿資訊</a>
-<a href="itinerary.html">行程</a>
-<a href="prep.html">行前</a></nav>
-<div data-trip="overview"></div><div data-trip="route"></div><div class="toc"><a href="people.html"><span class="no">01 /</span><strong>旅伴</strong><small>三組名單、同行地點與租車分組</small></a><a href="timeline.html"><span class="no">02 /</span><strong>時間軸</strong><small>三組旅伴的航班、地點與同行區間</small></a><a href="journey.html"><span class="no">03 /</span><strong>交通</strong><small>三組航班、包車、租車與機場</small></a><a href="route.html"><span class="no">04 /</span><strong>動線</strong><small>金澤、高山、白川鄉到名古屋的動線地圖</small></a><a href="stay.html"><span class="no">05 /</span><strong>住宿資訊</strong><small>金澤與名古屋住宿、房間配置及 Notion 筆記</small></a><a href="itinerary.html"><span class="no">06 /</span><strong>行程</strong><small>總表、每天細項與旅行提醒</small></a><a href="prep.html"><span class="no">07 /</span><strong>行前</strong><small>三月氣溫、穿衣建議與可打勾的打包清單</small></a></div><noscript><div class="box warn"><p>此頁內容需要啟用 JavaScript 才能顯示。</p></div></noscript><script src="assets/trip-data.js?v2.4"></script><script src="assets/render-v1.js?v2.4"></script>
-<footer class="travel-footer"><span>名古屋・北陸 2027 · 我們的春日旅帖</span><span class="ver" title="最後更新 2026-09-17">v2.4 · 2026-09-17</span><span>待確認安排請以訂房確認信與出發前官方資訊為準。　<a href="#top">回到頁首 ↑</a></span></footer></main></body></html>
+  <div class="route">
+    <div class="route-body">
+      <span class="k">動線 · ROUTE</span>
+      <div data-v2="route"></div>
+    </div>
+    <span class="vert">名古屋の春</span>
+  </div>
+  <div data-v2="overview"></div>
+  <div class="toc">
+    <a href="#people"><span class="no">01</span><span class="ti">旅伴</span><span class="nt">三組名單與各段同行人數</span><span class="ar">→</span></a>
+    <a href="#timeline"><span class="no">02</span><span class="ti">時間軸</span><span class="nt">三組旅伴的航班、地點與同行區間</span><span class="ar">→</span></a>
+    <a href="#journey"><span class="no">03</span><span class="ti">交通</span><span class="nt">三組航班、包車、租車與機場</span><span class="ar">→</span></a>
+    <a href="#route"><span class="no">04</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
+    <a href="#stay"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
+    <a href="#itinerary"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
+    <a href="#prep"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
+  </div>
+</section>
+
+<section id="people" hidden>
+  <div class="head">
+    <span class="kicker">01 / PEOPLE</span>
+    <h1>旅伴</h1>
+    <p class="lead" data-v2="people-lead"></p>
+  </div>
+  <div data-v2="people"></div>
+</section>
+
+<section id="timeline" hidden>
+  <div class="head">
+    <span class="kicker">02 / TIMELINE</span>
+    <h1>時間軸</h1>
+    <p class="lead" data-v2="timeline-lead"></p>
+  </div>
+  <div data-v2="timeline"></div>
+</section>
+
+<section id="journey" hidden>
+  <div class="head">
+    <span class="kicker">03 / TRANSPORT</span>
+    <h1>交通</h1>
+    <p class="lead" data-v2="journey-lead"></p>
+  </div>
+  <div data-v2="journey"></div>
+</section>
+
+<section id="route" hidden>
+  <div class="head">
+    <span class="kicker">04 / ROUTE</span>
+    <h1>動線</h1>
+    <p class="lead" data-v2="map-lead"></p>
+  </div>
+  <div id="map" role="region" aria-label="動線地圖"></div>
+  <div class="legend" data-v2="legend"></div>
+  <p class="note" data-v2="map-note"></p>
+</section>
+
+<section id="stay" hidden>
+  <div class="head">
+    <span class="kicker">05 / STAY</span>
+    <h1>住宿資訊</h1>
+    <p class="lead" data-v2="stay-lead"></p>
+  </div>
+  <div data-v2="stay"></div>
+</section>
+
+<section id="itinerary" hidden>
+  <div class="head">
+    <span class="kicker">06 / ITINERARY</span>
+    <h1>行程</h1>
+    <p class="lead" data-v2="itinerary-lead"></p>
+  </div>
+  <div data-v2="itinerary"></div>
+</section>
+
+<section id="prep" hidden>
+  <div class="head">
+    <span class="kicker">07 / BEFORE</span>
+    <h1>行前</h1>
+    <p class="lead" data-v2="prep-lead"></p>
+  </div>
+  <div data-v2="weather"></div>
+  <div class="sec"><span class="sec-t">打包清單</span><span class="sec-s" id="pk-count">已完成 0 / 0</span><span class="bar"></span><button class="reset" type="button" id="pk-reset">全部清除</button></div>
+  <p class="fine" data-v2="packing-note"></p>
+  <div class="packs" id="packs"></div>
+</section>
+
+<footer class="foot">
+  <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
+  <span class="v">v2.5</span>
+  <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
+</footer>
+
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<script src="assets/trip-data.js?v2.5"></script>
+<script src="assets/route-map.js?v2.5"></script>
+<script src="assets/render.js?v2.5"></script>
+</body>
+</html>

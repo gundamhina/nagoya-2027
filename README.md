@@ -1,25 +1,19 @@
 # 名古屋・北陸 2027
 
-目前版本：**v2.4**（2026-09-17）
+目前版本：**v2.5**（2026-09-18）
 
 靜態旅遊資訊統整頁：[開啟網站](https://gundamhina.github.io/nagoya-2027/)
 
-## 頁面
+## 結構
 
-- `index.html`：總覽。
-- `people.html`：旅伴，三組名單與租車分組。
-- `timeline.html`：時間軸，三組旅伴的航班、地點與同行區間。
-- `journey.html`：交通，三組航班與地面交通。
-- `itinerary.html`：行程總表、每天細項與旅行提醒。
-- `stay.html`：住宿資訊、Notion 入口與 VJW 地址。
-- `route.html`：動線地圖。
-- `prep.html`：行前，三月氣溫、穿衣建議與打包清單。
-- `reminders.html`：保留舊網址並轉到行程頁的旅行提醒。
-- `v2/`：並行上線的新版（v2 旅帖版）（`v2/index.html` 單頁 hash 導覽，含動線分頁）。
+單頁站台。`index.html` 一個外框，八個分頁用網址片段切換：總覽、旅伴、時間軸、交通、動線、住宿資訊、行程、行前。
 
-## 內容與排版
+- `assets/trip-data.js`：全站唯一內容來源。
+- `assets/render.js`：樣板。
+- `assets/style.css`：樣式。
+- `assets/route-map.js`：動線地圖。
 
-所有內容都在 `assets/trip-data.js`，新舊版共用；改內容只改這個檔案。舊版排版在 `assets/render-v1.js`＋`assets/style.css`，新版排版在 `v2/render.js`＋`v2/style.css`。頁面需要啟用 JavaScript。
+v2.5 之前的多頁網址與 `v2/` 網址都保留成轉址頁，對照表在 [AGENTS.md](AGENTS.md)。
 
 ## 同行安排
 

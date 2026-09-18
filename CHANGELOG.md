@@ -1,6 +1,14 @@
 # 更新紀錄
 
-版本號顯示在每一頁的頁首右上角，點擊即可開啟這份清單。改版規則見 [AGENTS.md](AGENTS.md)。
+版本號顯示在頁首右上角，點擊即可開啟這份清單。改版規則見 [AGENTS.md](AGENTS.md)。
+
+## v2.5 — 2026-09-18
+
+- 單頁版升為預設：原 `v2/index.html` 移到根目錄 `index.html`，網址不再帶 `v2/`。
+- 只維護單頁版。舊的多頁網址與 `v2/` 網址全部改成轉址頁，對照表寫進 AGENTS.md，書籤與舊連結都還會通。
+- `v2/style.css` 與 `v2/render.js` 移到 `assets/style.css`、`assets/render.js`；移除舊版樣板 `assets/render-v1.js` 與舊版樣式。
+- 新增 `assets/favicon.svg`，瀏覽器分頁顯示深綠底金色「旅」字。
+- AGENTS.md 改寫：拿掉兩版並行的規則，版號同步從九處減為六處；補上主版號只有人能決定。
 
 ## v2.4 — 2026-09-18
 

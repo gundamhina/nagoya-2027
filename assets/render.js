@@ -1,5 +1,5 @@
 /*
- * v2 旅帖版的樣板：讀 ../assets/trip-data.js 產生各分頁內容。
+ * 旅帖樣板：讀 assets/trip-data.js 產生各分頁內容。
  * 這裡只管排版；內容請改 assets/trip-data.js。
  */
 (function (T) {
