@@ -234,6 +234,66 @@
       else if (routeMap) routeMap.invalidateSize();
     }
   }
+  /* ---------- 手機左右滑切換分頁 ---------- */
+  (function () {
+    if (!("ontouchstart" in window)) return;
+    var hint = document.createElement("div");
+    hint.className = "swipe-hint";
+    document.body.appendChild(hint);
+    var hintTimer = null;
+    function showHint(text) {
+      hint.textContent = text;
+      hint.classList.add("on");
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(function () { hint.classList.remove("on"); }, 900);
+    }
+
+    var TABS = document.querySelectorAll("#tabs a");
+    function nameOf(id) {
+      var a = document.querySelector('#tabs a[href="#' + id + '"]');
+      return a ? a.textContent.replace(/^[—\d]+/, "").trim() : id;
+    }
+
+    /* 起點若在可橫向捲動的容器內，且該方向還捲得動，就讓容器自己處理 */
+    function inScroller(node, dx) {
+      for (var el = node; el && el !== document.body; el = el.parentElement) {
+        if (!el.scrollWidth || el.scrollWidth <= el.clientWidth + 2) continue;
+        var s = getComputedStyle(el).overflowX;
+        if (s !== "auto" && s !== "scroll") continue;
+        if (dx < 0 && el.scrollLeft < el.scrollWidth - el.clientWidth - 2) return true;
+        if (dx > 0 && el.scrollLeft > 2) return true;
+      }
+      return false;
+    }
+
+    var x0 = 0, y0 = 0, t0 = 0, tracking = false;
+    document.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1 || window.innerWidth > 700) { tracking = false; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); tracking = true;
+    }, { passive: true });
+
+    document.addEventListener("touchend", function (e) {
+      if (!tracking) return;
+      tracking = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
+      if (dt > 700) return;
+      if (Math.abs(dx) < 64 || Math.abs(dx) < Math.abs(dy) * 1.7) return;
+      if (inScroller(e.target, dx)) return;
+
+      var cur = (location.hash || "#overview").slice(1);
+      var i = PAGES.indexOf(cur);
+      if (i < 0) i = 0;
+      var next = i + (dx < 0 ? 1 : -1);
+      if (next < 0 || next >= PAGES.length) {
+        showHint(dx < 0 ? "已是最後一頁" : "已是第一頁");
+        return;
+      }
+      location.hash = "#" + PAGES[next];
+      showHint((dx < 0 ? "→ " : "← ") + nameOf(PAGES[next]));
+    }, { passive: true });
+  })();
+
   window.addEventListener("hashchange", route);
   document.addEventListener("click", function (e) {
     /* 跨分頁跳到某個區塊：先切分頁，再捲到該區塊 */
