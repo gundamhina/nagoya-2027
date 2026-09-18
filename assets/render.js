@@ -237,6 +237,7 @@
   /* ---------- 手機左右滑切換分頁 ---------- */
   (function () {
     if (!("ontouchstart" in window)) return;
+
     var hint = document.createElement("div");
     hint.className = "swipe-hint";
     document.body.appendChild(hint);
@@ -248,7 +249,6 @@
       hintTimer = setTimeout(function () { hint.classList.remove("on"); }, 900);
     }
 
-    var TABS = document.querySelectorAll("#tabs a");
     function nameOf(id) {
       var a = document.querySelector('#tabs a[href="#' + id + '"]');
       return a ? a.textContent.replace(/^[—\d]+/, "").trim() : id;
@@ -267,98 +267,142 @@
     }
 
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var x0 = 0, y0 = 0, t0 = 0, tracking = false, axis = null, sec = null, shift = 0;
+    var ROOT = document.documentElement;
+    var W = function () { return window.innerWidth || 375; };
+
+    var x0 = 0, y0 = 0, t0 = 0, tracking = false, axis = null, busy = false;
+    var cur = null, peek = null, peekId = "", dirSign = 0, dx = 0;
 
     function current() { return document.querySelector("section[id]:not([hidden])"); }
-    /* 拖到底的阻尼：越拉越沉，最多 96px */
-    function damp(dx) {
-      var m = Math.min(Math.abs(dx) * 0.42, 96);
-      return dx < 0 ? -m : m;
+    function neighbour(sign) {
+      var i = PAGES.indexOf((location.hash || "#overview").slice(1));
+      if (i < 0) i = 0;
+      var n = i + sign;
+      return n >= 0 && n < PAGES.length ? PAGES[n] : "";
     }
-    function follow(px) {
-      if (!sec) return;
-      shift = px;
-      sec.style.transform = px ? "translateX(" + px + "px)" : "";
-      sec.style.opacity = px ? String(1 - Math.min(Math.abs(px) / 340, 0.3)) : "";
+    /* 釘住的頁首之下才是內容區，隔壁頁從那裡開始露出來 */
+    function topEdge() {
+      var st = document.querySelector(".stick");
+      var b = st ? st.getBoundingClientRect().bottom : 0;
+      return Math.max(0, Math.round(b));
     }
-    function release() {
-      if (!sec) return;
-      var el = sec;
-      el.classList.add("swiping");
-      follow(0);
-      setTimeout(function () { el.classList.remove("swiping"); el.style.opacity = ""; }, 220);
-      sec = null; shift = 0;
+
+    function openPeek(sign) {
+      peekId = neighbour(sign);
+      if (!peekId) return false;
+      peek = document.getElementById(peekId);
+      if (!peek || peek === cur) { peek = null; return false; }
+      dirSign = sign;
+      ROOT.dataset.swipe = "peek";           /* 讓動效層知道這是預覽，不要跑入場動畫 */
+      peek.classList.add("swipe-peek");
+      peek.style.top = topEdge() + "px";
+      peek.hidden = false;
+      peek.style.transform = "translateX(" + (sign > 0 ? W() : -W()) + "px)";
+      return true;
     }
-    /* 往目的地方向滑出，結束後才換頁；新頁由 motion.js 從另一側滑入 */
-    function leave(dx, go) {
-      var el = sec;
-      sec = null; shift = 0;
-      document.documentElement.dataset.swipe = dx < 0 ? "next" : "prev";
-      if (!el || reduced || typeof el.animate !== "function") {
-        if (el) { el.style.transform = ""; el.style.opacity = ""; }
-        go();
-        return;
-      }
-      var out = el.animate(
-        [{ transform: "translateX(" + shift + "px)", opacity: el.style.opacity || 1 },
-         { transform: "translateX(" + (dx < 0 ? -34 : 34) + "px)", opacity: 0 }],
-        { duration: 170, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" }
-      );
-      var done = false;
-      function finish() {
-        if (done) return;
-        done = true;
-        try { out.cancel(); } catch (e) {}
-        el.style.transform = ""; el.style.opacity = "";
-        go();
-      }
-      out.onfinish = finish;
-      setTimeout(finish, 260);
+
+    function move(px) {
+      dx = px;
+      if (cur) cur.style.transform = px ? "translateX(" + px + "px)" : "";
+      if (peek) peek.style.transform = "translateX(" + ((dirSign > 0 ? W() : -W()) + px) + "px)";
+    }
+
+    function closePeek(keepShown) {
+      if (!peek) return;
+      peek.classList.remove("swipe-peek");
+      peek.style.transform = "";
+      peek.style.top = "";
+      peek.style.transition = "";
+      if (!keepShown) peek.hidden = true;
+      peek = null; peekId = ""; dirSign = 0;
+    }
+    function clearCur() {
+      if (!cur) return;
+      cur.style.transform = "";
+      cur.style.transition = "";
+      cur = null;
+    }
+    function reset() {
+      delete ROOT.dataset.swipe;
+      document.body.classList.remove("swipe-live");
+      closePeek(false); clearCur();
+      dx = 0; axis = null; busy = false;
+    }
+
+    /* 收尾：滑回原位，或滑到底後換頁 */
+    function settle(commit) {
+      var ms = reduced ? 0 : 230;
+      var curEnd = commit ? (dirSign > 0 ? -W() : W()) : 0;
+      var peekEnd = commit ? 0 : (dirSign > 0 ? W() : -W());
+      busy = true;
+
+      if (ms && cur) { cur.style.transition = "transform " + ms + "ms cubic-bezier(.2,.7,.25,1)"; }
+      if (ms && peek) { peek.style.transition = "transform " + ms + "ms cubic-bezier(.2,.7,.25,1)"; }
+      if (cur) cur.style.transform = curEnd ? "translateX(" + curEnd + "px)" : "";
+      if (peek) peek.style.transform = peekEnd ? "translateX(" + peekEnd + "px)" : "translateX(0px)";
+
+      var target = peekId;
+      setTimeout(function () {
+        if (commit && target) {
+          /* 先收回 hidden，再換 hash：route() 重新顯示，導覽列底線才會跟著跑 */
+          closePeek(false);
+          clearCur();
+          ROOT.dataset.swipe = "none";       /* 已經滑進來了，動效層不用再播入場 */
+          location.hash = "#" + target;
+          showHint((dirSign > 0 ? "→ " : "← ") + nameOf(target));
+        }
+        reset();
+      }, ms + 20);
     }
 
     document.addEventListener("touchstart", function (e) {
-      if (e.touches.length !== 1 || window.innerWidth > 700) { tracking = false; return; }
+      if (busy || e.touches.length !== 1 || window.innerWidth > 700) { tracking = false; return; }
       x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
-      tracking = true; axis = null; sec = null; shift = 0;
+      tracking = true; axis = null; dx = 0;
     }, { passive: true });
 
     document.addEventListener("touchmove", function (e) {
-      if (!tracking || e.touches.length !== 1) return;
-      var dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+      if (!tracking || busy || e.touches.length !== 1) return;
+      var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+
       if (axis === null) {
-        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
-        /* 直向捲動優先；起點在可橫捲的容器內也交給容器 */
-        axis = Math.abs(dx) > Math.abs(dy) * 1.4 && !inScroller(e.target, dx) ? "x" : "y";
-        if (axis === "x") sec = current();
+        if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
+        if (Math.abs(mx) <= Math.abs(my) * 1.4 || inScroller(e.target, mx)) { axis = "y"; return; }
+        axis = "x";
+        cur = current();
+        document.body.classList.add("swipe-live");
+        openPeek(mx < 0 ? 1 : -1);
       }
       if (axis !== "x") return;
-      follow(damp(dx));
-    }, { passive: true });
+
+      e.preventDefault();                    /* 橫向拖曳期間不要同時上下捲 */
+      if (peek) move(mx);
+      else move(mx < 0 ? -Math.min(-mx * 0.35, 84) : Math.min(mx * 0.35, 84));  /* 到頭到尾的阻尼 */
+    }, { passive: false });
 
     document.addEventListener("touchend", function (e) {
       if (!tracking) return;
       tracking = false;
-      var t = e.changedTouches[0];
-      var dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
-      var ok = dt <= 700 && Math.abs(dx) >= 64 && Math.abs(dx) >= Math.abs(dy) * 1.7 && !inScroller(e.target, dx);
-      if (!ok) { release(); return; }
+      if (axis !== "x") { reset(); return; }
 
-      var cur = (location.hash || "#overview").slice(1);
-      var i = PAGES.indexOf(cur);
-      if (i < 0) i = 0;
-      var next = i + (dx < 0 ? 1 : -1);
-      if (next < 0 || next >= PAGES.length) {
-        showHint(dx < 0 ? "已是最後一頁" : "已是第一頁");
-        release();
+      var t = e.changedTouches[0];
+      var mx = t.clientX - x0, dt = Date.now() - t0;
+      var fast = dt < 300 && Math.abs(mx) > 70;   /* 快速輕滑 */
+      var far = Math.abs(mx) > W() * 0.28;
+
+      if (!peek) {
+        showHint(mx < 0 ? "已是最後一頁" : "已是第一頁");
+        dirSign = mx < 0 ? 1 : -1;
+        settle(false);
         return;
       }
-      leave(dx, function () {
-        location.hash = "#" + PAGES[next];
-        showHint((dx < 0 ? "→ " : "← ") + nameOf(PAGES[next]));
-      });
+      settle(fast || far);
     }, { passive: true });
 
-    document.addEventListener("touchcancel", function () { tracking = false; release(); }, { passive: true });
+    document.addEventListener("touchcancel", function () {
+      tracking = false;
+      if (axis === "x" && peek) settle(false); else reset();
+    }, { passive: true });
   })();
 
   window.addEventListener("hashchange", route);

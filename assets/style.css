@@ -521,9 +521,15 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 }
 .swipe-hint.on{opacity:.94;}
 @media(max-width:700px){.swipe-hint{display:block;}}
-/* 滑動切頁：拖曳時跟著手指，沒切成就彈回 */
+/* 滑動切頁：拖曳時兩頁一起移動，隔壁那頁從旁邊跟著進來 */
 /* 拖曳中的位移不該讓整頁多出可橫捲的空白；clip 不會建立捲動容器，釘住的頁首照常 */
 html,body{overflow-x:clip;}
-.swiping{transition:transform .2s cubic-bezier(.2,.7,.25,1),opacity .2s ease-out;}
-section[id]{will-change:auto;}
-@media(prefers-reduced-motion:reduce){.swiping{transition:none;}}
+/* 蓋過 #timeline 等 ID 規則的 position，預覽層一定要是固定定位 */
+section[id].swipe-peek{
+  position:fixed!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:12;overflow:hidden;background:var(--paper);
+  padding:14px clamp(20px,5vw,52px) 0;box-shadow:0 0 24px rgba(23,32,28,.16);
+}
+section[id].swipe-peek > .head{padding-top:clamp(20px,4vw,34px);}
+.swipe-live{cursor:grabbing;}
+.swipe-live section[id]{will-change:transform;}
