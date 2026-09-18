@@ -73,7 +73,7 @@
       var t = T.transport;
       function tlFlight(f) {
         return '<div class="tl-flight"><span class="k">' + f.date + " · " + f.label + '</span><span class="rt">' + f.from[0] + " " + f.from[1] + " → " + f.to[0] + " " + f.to[1] +
-          '</span><span class="tm">' + f.from[2] + " → " + f.to[2] + "</span>" + (f.note ? '<span class="nt">' + f.note + "</span>" : "") + "</div>";
+          '</span><span class="tm"><span>' + f.from[2] + '</span><span>→ ' + f.to[2] + "</span></span>" + (f.note ? '<span class="nt">' + f.note + "</span>" : "") + "</div>";
       }
       var rows = each(T.groups, function (g) {
         return '<tr><th scope="row"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="rg">' + g.period + "<br>" + g.count + "</span></th>" +

@@ -281,7 +281,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 .tl-flight{display:flex;flex-direction:column;gap:4px;padding:9px 9px 10px;background:var(--paper);border-left:2px solid var(--mark);}
 .tl-flight .k{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mark);}
 .tl-flight .rt{font-size:11px;line-height:1.7;color:var(--body);}
-.tl-flight .tm{font-family:var(--mincho);font-size:15px;font-weight:500;white-space:nowrap;}
+.tl-flight .tm{font-family:var(--mincho);font-size:15px;font-weight:500;white-space:nowrap;display:inline-flex;gap:4px;}
 .tl-flight .nt{font-size:10.5px;line-height:1.7;color:var(--muted);}
 .tl-unknown{margin-top:10px;padding:8px 9px;outline:1px dashed #9c9788;outline-offset:-1px;color:var(--muted);}
 .tl-unknown b{font-size:14px!important;}
@@ -500,10 +500,14 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   .tl-flight{padding:6px 5px 7px;gap:3px;}
   .tl-flight .k{font-size:9px;letter-spacing:.06em;}
   .tl-flight .rt,.tl-flight .nt{font-size:9.5px;line-height:1.6;}
-  .tl-flight .tm{font-size:12px;}
+  /* 欄位只有約 64px，起降時間不能不換行，否則會壓到隔壁欄 */
+  /* 欄位只有約 64px，起降時間改成上下兩行，不再壓到隔壁欄 */
+  .tl-flight .tm{font-size:11.5px;line-height:1.45;flex-direction:column;gap:0;}
+  .tl-flight .tm span{white-space:nowrap;}
   .tl-unknown{margin-top:7px;padding:6px 5px;}
   .tl-unknown b{font-size:11px!important;}
-  .tl-scroll{scroll-snap-type:x proximity;}
+  /* 捲動對齊要扣掉固定的組別欄，否則永遠對齊到第二天，3/13 會被壓在底下 */
+  .tl-scroll{scroll-snap-type:x proximity;scroll-padding-left:58px;}
   .tl thead th:not(:first-child){scroll-snap-align:start;}
   .tl caption{font-size:10px;letter-spacing:.08em;}
 }
