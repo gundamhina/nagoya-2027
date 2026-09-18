@@ -110,7 +110,12 @@
         sec("地面交通") + '<div class="ledger">' + each(t.ground, function (x) {
           return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
             x.title + "</span><p>" + x.text + '</p><span class="todo">待確認 · ' + x.todo + "</span></div></div>";
-        }) + "</div>";
+        }) + "</div>" +
+        sec(t.mapsTitle) + '<div class="maps">' + each(t.maps, function (m) {
+          return '<figure class="map-fig"><a href="' + attr(m.src) + '" target="_blank" rel="noopener noreferrer">' +
+            '<img src="' + attr(m.src) + '" alt="' + attr(m.file) + '路線圖" loading="lazy" decoding="async"></a>' +
+            '<figcaption><span class="mf-t">' + m.file + '</span><span class="mf-n">' + m.note + "</span></figcaption></figure>";
+        }) + '</div><p class="fine">' + t.mapsNote + "</p>";
     },
 
     stay: function () {
