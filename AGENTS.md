@@ -5,7 +5,7 @@
 ## 一、每次改版必做五件事
 
 1. **先拉最新版**　`git pull --rebase`。這個 repo 有多方同時推送，直接推很容易撞號或被拒。
-2. **更新版本號**　以下必須一致：`index.html` 頁首的 `.ver`、頁尾的 `.foot .v`，以及 `assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/route-map.js?vX.Y`、`assets/render.js?vX.Y` 的快取參數。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
+2. **更新版本號**　以下必須一致：`index.html` 頁首的 `.ver`、頁尾的 `.foot .v`，以及 `assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render.js?vX.Y`、`assets/motion.js?vX.Y` 的快取參數。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
 3. **更新 CHANGELOG.md**　最上方新增 `## vX.Y — YYYY-MM-DD`，條列這次改了什麼。
 4. **更新 README.md**　開頭那行「目前版本」同步。
 5. **打上 git tag**　`git tag -a vX.Y -m "簡述"`，推送時加 `--follow-tags`。
@@ -23,7 +23,7 @@
 - **內容只有一份：`assets/trip-data.js`。** 行程、人數、航班、住宿、提醒、氣溫、打包清單都在這裡。改內容只改這個檔案，**不要把文字直接寫進 HTML 或樣板**。
 - 排版分兩層：`assets/render.js` 產生各分頁內容，`assets/style.css` 管樣式。不要在 HTML 內嵌 `<style>`。
 - 全站是單頁：`index.html` 一個外框，八個 `<section>` 用網址片段切換。新增分頁要同時加 `<section>`、導覽列項目與總覽目次三處。
-- 例外的外部服務只有兩個：Google Fonts 提供字型，動線區塊用 Leaflet（unpkg）與 OpenStreetMap 圖磚。其他地方不引入外部服務。
+- 外部服務只有 Google Fonts 提供字型；其他地方不引入外部服務。
 - 純靜態，不引入 npm、建置工具或外部圖片服務。
 - 繁體中文，金額以新台幣為單位並加千分位。
 - 分組名稱固定為【春】悠旅、【鄉】小聚、【祈】相逢。改名改 `assets/trip-data.js` 的 `groups`，不使用舊名稱與內部代號。
@@ -36,7 +36,8 @@
 | `assets/trip-data.js` | **全站唯一內容來源** |
 | `assets/render.js` | 樣板：依 `data-v2` 佔位產生內容 |
 | `assets/style.css` | 全站樣式 |
-| `assets/route-map.js` | 動線地圖畫圖程式 |
+| `assets/cover-2027.png` | 首頁封面 |
+| `assets/route-2027.png` | 動線頁路線圖 |
 | `assets/favicon.svg` | 瀏覽器分頁圖示 |
 
 分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#route` 動線、`#stay` 住宿資訊、`#itinerary` 行程、`#prep` 行前。

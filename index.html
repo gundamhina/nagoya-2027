@@ -10,8 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<link rel="stylesheet" href="assets/style.css?v2.20">
+<link rel="stylesheet" href="assets/style.css?v2.21">
 </head>
 <body id="top">
 <div class="wrap">
@@ -20,7 +19,7 @@
   <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
   <div class="mast-meta">
     <span class="lab">2027 SPRING</span>
-    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.20</a>
+    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.21</a>
 
   </div>
 </div>
@@ -41,15 +40,10 @@
 <!-- 內容全部來自 assets/trip-data.js，樣板在 assets/render.js -->
 <section id="overview">
   <div class="hero">
-    <span class="jp">名古屋から、旅がはじまる。</span>
-    <h1>名古屋<br>・北陸</h1>
-    <div class="dates">
-      <span class="big">三月十三日 — 二十三日</span>
-      <span class="sm">2027 年 3 月 · 我們的春日旅帖</span>
-      <span class="sm" data-v2="hero-line"></span>
-    </div>
+    <figure class="hero-image">
+      <img src="assets/cover-2027.png" alt="北陸・名古屋 2027 春日旅程封面，包含金澤町家、合掌村、名古屋城、飛驒牛與樂高樂園" width="1672" height="941">
+    </figure>
     <div class="count"><span class="k">倒數</span><span class="n" id="cd-n">—</span><span class="u" id="cd-u">計算中</span></div>
-    <p class="lead" data-v2="overview-lead"></p>
   </div>
   <div class="route">
     <div class="route-body">
@@ -98,15 +92,13 @@
   <div data-v2="journey"></div>
 </section>
 
-<section id="route" hidden>
-  <div class="head">
-    <span class="kicker">04 / ROUTE</span>
-    <h1>動線</h1>
-    <p class="lead" data-v2="map-lead"></p>
-  </div>
-  <div id="map" role="region" aria-label="動線地圖"></div>
-  <div class="legend" data-v2="legend"></div>
-  <p class="note" data-v2="map-note"></p>
+<section id="route" hidden aria-label="動線">
+  <figure class="route-image">
+    <a href="assets/route-2027.png" target="_blank" rel="noopener noreferrer" title="開啟原尺寸動線圖">
+      <img src="assets/route-2027.png" alt="北陸到名古屋的十一日移動軌跡：金澤、高山、白川鄉、名古屋與進出機場" width="1672" height="941" loading="lazy">
+    </a>
+    <figcaption>點圖開啟原尺寸</figcaption>
+  </figure>
 </section>
 
 <section id="stay" hidden>
@@ -150,15 +142,13 @@
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.20</span>
+  <span class="v">v2.21</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
-<script src="assets/trip-data.js?v2.20"></script>
-<script src="assets/route-map.js?v2.20"></script>
-<script src="assets/render.js?v2.20"></script>
-<script src="assets/motion.js?v2.20"></script>
+<script src="assets/trip-data.js?v2.21"></script>
+<script src="assets/render.js?v2.21"></script>
+<script src="assets/motion.js?v2.21"></script>
 </body>
 </html>
