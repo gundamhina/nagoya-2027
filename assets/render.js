@@ -27,6 +27,10 @@
   var views = {
     "overview-lead": function () { return T.overview.lead; },
     "hero-line": function () { return T.overview.heroLine; },
+    "hero-jp": function () { return T.overview.hero.jp; },
+    "hero-title": function () { return T.overview.hero.title; },
+    "hero-dates": function () { return T.overview.hero.dates; },
+    "hero-tagline": function () { return T.overview.hero.line; },
     "people-lead": function () { return T.people.lead; },
     "journey-lead": function () { return T.transport.lead; },
     "timeline-lead": function () { return T.transport.timelineCaption; },

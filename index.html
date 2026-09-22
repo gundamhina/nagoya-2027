@@ -9,8 +9,8 @@
 <meta name="theme-color" content="#1d2e28" id="theme-color">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v2.26">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&family=Zen+Old+Mincho:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v2.28">
 </head>
 <body id="top" x-data="app" x-init="init()" :class="{ 'is-cond': cond }">
 <div class="wrap">
@@ -29,7 +29,7 @@
     <div class="mast-meta">
       <div class="meta-full full">
         <span class="lab">2027 SPRING</span>
-        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.26</a>
+        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.28</a>
       </div>
       <div class="meta-mini mini">
         <span class="cd"><span class="k">倒數</span><span class="n" x-text="$refs.cdn ? $refs.cdn.textContent : '—'">—</span><span class="u">天</span></span>
@@ -65,10 +65,25 @@
 
 <section id="overview" :class="{ 'is-active': page === 'overview' }">
   <div class="hero">
-    <figure class="hero-image">
-      <img src="assets/cover-2027.png?v2.22" alt="北陸・名古屋 2027 春日旅程封面，包含金澤町家、合掌村、名古屋城、飛驒牛與樂高樂園" width="1672" height="941">
+    <!-- 封面：圖沒有文字，標題、日期由這裡疊上去，內容在 trip-data.js 的 overview.hero -->
+    <figure class="hero-image plate">
+      <div class="hero-title">
+        <span class="jp" data-v2="hero-jp"></span>
+        <h1 data-v2="hero-title">北陸・名古屋</h1>
+        <span class="dt" data-v2="hero-dates"></span>
+        <span class="ln" data-v2="hero-tagline"></span>
+      </div>
+      <!-- 倒數做成朱印，蓋在圖右上角。#cd-n／#cd-u 由 render.js 更新，頁首壓縮列也讀這裡 -->
+      <div class="hero-seal" aria-label="倒數">
+        <span class="k">倒數</span>
+        <span class="n" id="cd-n" x-ref="cdn">—</span>
+        <span class="u" id="cd-u">計算中</span>
+      </div>
+      <a href="assets/cover-2027-wide.webp?v2.28" target="_blank" rel="noopener noreferrer" title="開啟完整封面">
+        <img src="assets/cover-2027-wide.webp?v2.28" alt="北陸・名古屋 2027 春日封面：金澤茶屋街、白川鄉合掌村、名古屋城與樂高樂園，膠彩風格" width="1672" height="941">
+      </a>
+      <figcaption><span class="k">封面 · COVER</span><span>點圖看完整版</span></figcaption>
     </figure>
-    <div class="count"><span class="k">倒數</span><span class="n" id="cd-n" x-ref="cdn">—</span><span class="u" id="cd-u">計算中</span></div>
   </div>
   <div class="route">
     <div class="route-body">
@@ -118,11 +133,11 @@
 </section>
 
 <section id="route" :class="{ 'is-active': page === 'route' }" aria-label="動線">
-  <figure class="route-image">
+  <figure class="route-image plate">
     <a href="assets/route-2027.png?v2.22" target="_blank" rel="noopener noreferrer" title="開啟原尺寸動線圖">
       <img src="assets/route-2027.png?v2.22" alt="北陸到名古屋的十一日移動軌跡：金澤、高山、白川鄉、名古屋與進出機場" width="1672" height="941" loading="lazy">
     </a>
-    <figcaption>點圖開啟原尺寸</figcaption>
+    <figcaption><span class="k">動線 · ROUTE</span><span>各段日期見總覽的動線區塊 · 點圖開啟原尺寸</span></figcaption>
   </figure>
 </section>
 
@@ -169,14 +184,14 @@
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.26</span>
+  <span class="v">v2.28</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
-<script src="assets/trip-data.js?v2.26"></script>
-<script src="assets/render.js?v2.26"></script>
-<script src="assets/app.js?v2.26"></script>
-<script src="assets/alpine.min.js?v2.26" defer></script>
+<script src="assets/trip-data.js?v2.28"></script>
+<script src="assets/render.js?v2.28"></script>
+<script src="assets/app.js?v2.28"></script>
+<script src="assets/alpine.min.js?v2.28" defer></script>
 </body>
 </html>

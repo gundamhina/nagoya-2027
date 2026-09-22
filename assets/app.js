@@ -87,7 +87,7 @@ document.addEventListener("alpine:init", function () {
             if (id !== self.page) self.land(id);
           }
           clearTimeout(settle);
-          settle = setTimeout(function () { self._aligning = false; self.reveal(); }, 80);
+          settle = setTimeout(function () { self._aligning = false; self.reveal(); self.fit(); }, 80);
         }, { passive: true });
         if ("onscrollend" in window) {
           track.addEventListener("scrollend", function () { clearTimeout(settle); self._aligning = false; self.reveal(); }, { passive: true });
@@ -129,6 +129,7 @@ document.addEventListener("alpine:init", function () {
           if (on) unlockTimer = setTimeout(function () { lockTrack(false); }, 2000);  /* 沒收到 touchend 的保險 */
         }
         track.addEventListener("touchstart", function (e) {
+          self.fit();   /* 手指一碰就重量目前那頁，隔壁頁的限高在露出來之前一定是對的 */
           var box = e.target.closest ? e.target.closest(HSCROLL) : null;
           if (!box || box.scrollWidth <= box.clientWidth + 2) { lockTrack(false); return; }
           var atStart = box.scrollLeft <= 2;
@@ -139,10 +140,22 @@ document.addEventListener("alpine:init", function () {
         document.addEventListener("touchcancel", function () { lockTrack(false); }, { passive: true });
 
         /* 自動模式下系統換了深淺色，狀態列顏色也跟著換 */
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { applyTheme(self.theme); });
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+        var onScheme = function () { applyTheme(self.theme); };
+        if (mq.addEventListener) mq.addEventListener("change", onScheme); else if (mq.addListener) mq.addListener(onScheme);
 
         /* 手機轉直橫或桌機縮放時，把軌道對回目前那頁，並重量頁首佔位 */
-        window.addEventListener("resize", function () { self.align(false); self.measure(); });
+        window.addEventListener("resize", function () { self.align(false); self.measure(); self.fit(); });
+
+        /* 目前那頁的高度寫進 --page-h，隔壁頁的限高跟著它。內容高度會變（圖片載入、打包清單展開），用 ResizeObserver 盯著 */
+        if ("ResizeObserver" in window) {
+          this._ro = new ResizeObserver(function () { self.fit(); });
+        }
+        this.$watch("page", function () { self.$nextTick(function () { self.fit(); }); });
+        /* x-init 跑的時候 :class 還沒套上，section 量到 0；等 Alpine 套完、字型與圖片載好再量 */
+        this.$nextTick(function () { self.fit(); });
+        window.addEventListener("load", function () { self.fit(); });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { self.fit(); });
 
         this.reveal();
         this.align(false);
@@ -156,6 +169,18 @@ document.addEventListener("alpine:init", function () {
         if (this.cond) { this._dirty = true; return; }
         this._dirty = false;
         document.documentElement.style.setProperty("--head-h", bar.offsetHeight + "px");
+      },
+
+      /* 量目前那頁的高度，寫進 --page-h；換頁時改盯新的那頁 */
+      fit: function () {
+        var sec = document.getElementById(this.page);
+        if (!sec) return;
+        if (this._ro && this._fitted !== sec) {
+          if (this._fitted) this._ro.unobserve(this._fitted);
+          this._ro.observe(sec);
+          this._fitted = sec;
+        }
+        document.documentElement.style.setProperty("--page-h", sec.offsetHeight + "px");
       },
 
       /* 點分頁列、目次、連結：換網址、換頁、回到頂端 */

@@ -12,7 +12,7 @@
 python -m http.server 8777
 ```
 
-開 `http://localhost:8777/index.html`。改檔案後重整即可；瀏覽器可能快取 `assets/` 下的檔案，網址加個亂數參數（例如 `?r=1`）繞過。
+開 `http://localhost:8777/index.html`。伺服器用 `python tools/serve.py`（同 `http.server`，多送 `Cache-Control: no-store`），改檔案後重整就是新的。用 `python -m http.server` 也行，但手機瀏覽器會把 `assets/` 下同一個 `?vX.Y` 的檔案快取起來，改了 app.js、style.css 重整仍是舊的，看起來像沒修好；網址加 `?r=1` 只繞過 index.html，繞不過 assets。
 
 手機連不到 localhost。需要手機實測的改動，先講清楚這個限制，問維護者要不要先發一版上去測，等他答應再推。不要替他決定。
 

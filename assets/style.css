@@ -71,78 +71,69 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 /* 首頁封面 */
 .hero{display:flex;flex-direction:column;gap:clamp(22px,3vw,34px);
   padding:clamp(34px,5vw,68px) 0 clamp(40px,6vw,74px);}
-.hero-image{width:100%;min-width:0;max-width:100%;margin:0;overflow:hidden;border:1px solid #b9954d;background:#f3efe3;
-  box-shadow:0 24px 60px rgba(23,32,28,.16);}
-.hero-image img{display:block;width:100%;max-width:100%;height:auto;}
-.hero-cover{position:relative;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(260px,.82fr);
-  min-height:clamp(560px,73vw,700px);overflow:hidden;color:#f6f0dd;background:
-  radial-gradient(circle at 16% 8%,rgba(255,255,255,.08),transparent 24%),
-  linear-gradient(135deg,#244d3d 0%,#15372d 48%,#0d2822 100%);
-  border:1px solid #b9954d;box-shadow:0 24px 60px rgba(23,32,28,.16);isolation:isolate;}
-.hero-cover::before{content:"";position:absolute;inset:14px;border:1px solid rgba(218,185,108,.38);pointer-events:none;z-index:3;}
-.hero-cover::after{content:"";position:absolute;inset:0;opacity:.18;pointer-events:none;background-image:
-  repeating-linear-gradient(7deg,transparent 0 9px,rgba(255,255,255,.06) 10px,transparent 11px),
-  repeating-linear-gradient(93deg,transparent 0 15px,rgba(255,255,255,.04) 16px,transparent 17px);mix-blend-mode:soft-light;}
-.hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(56px,8vw,98px) clamp(34px,6vw,74px);}
-.hero .jp{font-family:var(--mincho);font-size:clamp(12px,1.4vw,15px);letter-spacing:.42em;
-  line-height:2;color:#dfc477;}
-.hero-edition{margin-top:12px;font-size:9px;font-weight:700;letter-spacing:.34em;color:rgba(246,240,221,.58);}
-.hero h1{display:block;margin-top:clamp(45px,7vw,76px);font-size:clamp(60px,9vw,104px);
-  letter-spacing:.12em;line-height:.92;color:#f7f1de;text-shadow:0 3px 22px rgba(0,0,0,.16);}
-.hero h1 .hero-dot{display:inline-block;margin:.14em 0 .12em .18em;font-size:.46em;line-height:1;color:#d9b45f;}
-.hero-rule{display:flex;align-items:center;width:min(280px,76%);margin:clamp(30px,5vw,52px) 0 0;color:#d9b45f;}
-.hero-rule::before{content:"";width:8px;height:8px;border:1px solid currentColor;transform:rotate(45deg);}
-.hero-rule::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,currentColor,transparent);}
-.hero-rule span{width:32px;height:1px;background:currentColor;}
-.hero .dates{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:24px;}
-.hero .dates .big{font-family:var(--mincho);font-size:clamp(18px,2.3vw,27px);font-weight:500;letter-spacing:.12em;color:#efd89b;}
-.hero .dates .sm{font-size:10px;font-weight:700;letter-spacing:.26em;color:rgba(246,240,221,.62);}
-.hero .dates .hero-tagline{font-family:var(--mincho);font-size:clamp(12px,1.35vw,15px);font-weight:500;
-  line-height:1.8;letter-spacing:.14em;color:rgba(246,240,221,.82);}
-.hero-art{position:relative;z-index:1;min-height:100%;overflow:hidden;}
-.hero-art svg{position:absolute;width:116%;height:94%;right:-10%;bottom:-2%;overflow:visible;}
-.hero-sun{fill:none;stroke:#d9b45f;stroke-width:2;opacity:.9;}
-.hero-cow,.hero-gassho,.hero-bricks{fill:none;stroke:#e0bd67;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.hero-cow{stroke-width:1.7;opacity:.92;}
-.hero-gassho{fill:#14372e;opacity:.9;}
-.hero-bricks{fill:#173b30;opacity:.96;}
-.hero-mountain-back{fill:#1c4337;stroke:#d7b35d;stroke-width:1.2;opacity:.9;}
-.hero-mountain{fill:#102f27;stroke:url(#mountain-gold);stroke-width:2;}
-.hero-snow{fill:#d6c899;opacity:.34;}
-.hero-castle{fill:#173b30;stroke:#e0bd67;stroke-width:2;stroke-linejoin:round;}
-.hero-shachi{fill:#e0bd67;}
-.hero-water{fill:none;stroke:#d9b45f;stroke-width:1.4;opacity:.64;}
-.hero-stamp{position:absolute;right:clamp(28px,4vw,44px);top:clamp(32px,5vw,54px);display:grid;place-items:center;
-  width:54px;height:54px;border:1px solid #d9b45f;color:#e6c873;font-family:var(--mincho);font-size:12px;
-  line-height:1.45;letter-spacing:.2em;text-align:center;transform:rotate(3deg);}
-.hero-place{position:absolute;right:clamp(27px,4vw,43px);bottom:clamp(30px,4vw,45px);
-  font-size:9px;font-weight:700;line-height:1.8;letter-spacing:.28em;text-align:right;color:rgba(246,240,221,.48);}
-.count{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;
-  border-top:1px solid var(--rule);padding-top:clamp(14px,2vw,20px);}
-.count .k{font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--mark);}
-.count .n{font-family:var(--mincho);font-size:clamp(24px,3vw,34px);font-weight:500;line-height:1;}
-.count .u{font-size:12px;letter-spacing:.14em;color:var(--muted);}
+/* 兩張大圖（封面、動線）當「圖版」處理，讓它們服從版面而不是反過來：
+   1. 裁切：封面只留中段的標題與山景，動線圖裁掉圖內的日程卡（資料在頁面上已經有）。手機另一組比例，只看得到中央。
+   2. 降飽和：粉櫻、藍玻璃、全彩招牌壓回全站的綠棕金。
+   3. 紙感：疊一層紙色 multiply，圖像印在同一張紙上，不是貼上去的亮面照片。
+   4. 裝裱：細墨線、不加投影、有圖說。點圖開原尺寸看完整版。 */
+.plate{width:100%;min-width:0;max-width:100%;margin:0;}
+.plate a{position:relative;display:block;overflow:hidden;border:1px solid var(--ink);background:var(--paper);}
+.plate a::after{content:"";position:absolute;inset:0;background:#efece3;mix-blend-mode:multiply;opacity:.32;pointer-events:none;}
+.plate img{display:block;width:100%;max-width:100%;height:auto;object-fit:cover;
+  filter:saturate(.62) contrast(.96);transition:filter .4s ease;}
+.plate a:hover img{filter:saturate(.85) contrast(.98);}
+.plate figcaption{display:flex;justify-content:space-between;gap:16px;margin-top:12px;
+  font-size:11px;letter-spacing:.18em;color:var(--muted);}
+.plate figcaption .k{font-weight:700;letter-spacing:.3em;}
+/* 封面：新圖本身是紙色低飽和、沒有文字，只微調；標題疊在中上方的霧和天空上。
+   字固定墨綠，不跟深色模式換，因為圖永遠是淺的；紙色光暈讓字在遠山上也讀得清。 */
+.hero-image img{aspect-ratio:16/9;filter:saturate(.9);}
+.hero-image{position:relative;}
+.hero-image a::after{opacity:.12;}
+/* 標題直排（縦書き），從右往左讀：引言、書名、日期、副標四欄，壓在圖中央的霧和天空上、村子上方停住。
+   書名用 Zen Old Mincho 900，只有這五個字換字型，其他仍是 Shippori。 */
+.hero-title{position:absolute;z-index:1;top:clamp(20px,3vw,34px);right:50%;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  display:flex;flex-direction:column;align-items:flex-start;gap:clamp(10px,1.5vw,20px);
+  color:#1d2e28;text-shadow:0 0 22px rgba(239,236,227,.95),0 0 6px rgba(239,236,227,.9);}
+.hero-title .jp{font-family:var(--mincho);font-size:clamp(10px,1.2vw,14px);letter-spacing:.34em;padding-top:.3em;}
+.hero-title h1{margin:0;font-family:"Zen Old Mincho",var(--mincho);font-weight:900;font-size:clamp(32px,4vw,48px);letter-spacing:.12em;line-height:1;}
+.hero-title .dt{font-family:var(--mincho);font-size:clamp(12px,1.4vw,16px);letter-spacing:.22em;padding-top:.2em;}
+.hero-title .ln{font-size:clamp(10px,1.05vw,12px);letter-spacing:.24em;padding-top:.3em;}
+.route-image img{aspect-ratio:1672/672;object-position:50% 0;}  /* 日程卡帶從第 680 列開始，留 8px 餘裕 */
+:root[data-theme="dark"] .plate img{filter:saturate(.55) contrast(.96) brightness(.82);}
+:root[data-theme="dark"] .plate a::after{opacity:.18;}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .plate img{filter:saturate(.55) contrast(.96) brightness(.82);}
+  :root:not([data-theme="light"]) .plate a::after{opacity:.18;}
+}
+@media(max-width:700px){
+  /* 手機：圖改 4:3 靠右對齊，合掌村、名古屋城、樂高都在；標題橫排、縮小，疊在左上角的天空上，
+     不佔圖外的版面。字仍固定墨綠加紙色光暈。 */
+  .hero-image img{aspect-ratio:4/3;object-position:100% 50%;}
+  .hero-title{top:12px;right:auto;left:14px;writing-mode:horizontal-tb;align-items:flex-start;text-align:left;gap:5px;}
+  .hero-title .jp{font-size:9px;letter-spacing:.2em;}
+  .hero-title h1{font-size:clamp(26px,8vw,32px);letter-spacing:.1em;}
+  .hero-title .dt{font-size:11px;letter-spacing:.16em;}
+  .hero-title .ln{font-size:9.5px;letter-spacing:.14em;}
+  .hero-title .jp,.hero-title .dt,.hero-title .ln{padding-top:0;}
+  .hero-seal{right:10px;top:10px;width:56px;gap:2px;}
+  .hero-seal .k{font-size:8px;letter-spacing:.2em;}
+  .hero-seal .n{font-size:20px;}
+  .hero-seal .u{font-size:8px;}
+  /* 動線圖：4:3 框裡把圖放大到 941/690 倍高，下排日程卡落在框外，橫向對到地名密集的那一段 */
+  .route-image a{aspect-ratio:4/3;}
+  .route-image img{aspect-ratio:auto;height:140%;width:auto;max-width:none;position:relative;left:50%;transform:translateX(-56%);}
+  .plate figcaption{flex-direction:column;gap:4px;}
+}
+/* 倒數：朱印，蓋在圖右上角、日輪旁邊。顏色固定朱紅，底下一層半透明紙色，深色模式圖壓暗後仍看得清。 */
+.hero-seal{position:absolute;z-index:1;right:clamp(14px,3vw,34px);top:clamp(14px,3vw,34px);
+  width:clamp(64px,7.6vw,84px);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  border:1.5px solid #9c3b26;color:#9c3b26;background:rgba(239,236,227,.6);transform:rotate(-3deg);}
+.hero-seal .k{font-size:9px;font-weight:700;letter-spacing:.3em;}
+.hero-seal .n{font-family:var(--mincho);font-size:clamp(22px,2.8vw,30px);font-weight:500;line-height:1;}
+.hero-seal .u{font-size:8.5px;letter-spacing:.1em;white-space:nowrap;}
 
-@media(max-width:720px){
-  .hero-cover{grid-template-columns:1fr;min-height:720px;}
-  .hero-copy{justify-content:flex-start;padding:58px 38px 300px;}
-  .hero h1{margin-top:40px;font-size:clamp(58px,20vw,88px);}
-  .hero-art{position:absolute;inset:auto 0 0 22%;height:390px;min-height:0;}
-  .hero-art svg{width:112%;height:108%;right:-8%;bottom:-6%;}
-  .hero-stamp{top:18px;right:28px;}
-  .hero-place{bottom:25px;right:28px;}
-}
-@media(max-width:430px){
-  .hero-cover{min-height:680px;}
-  .hero-copy{padding:52px 29px 280px;}
-  .hero .jp{font-size:9.5px;letter-spacing:.18em;white-space:nowrap;}
-  .hero h1{font-size:clamp(54px,19vw,76px);}
-  .hero .dates .big{font-size:17px;}
-  .hero .dates .sm{font-size:9px;letter-spacing:.18em;}
-  .hero-art{left:0;height:350px;}
-  .hero-art svg{width:100%;right:-3%;}
-}
 
 /* 動線區塊 */
 .route{display:flex;gap:clamp(20px,4vw,56px);background:var(--dark);color:var(--on-dark);
@@ -388,11 +379,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 }
 
 /* 動線地圖 */
-.route-image{width:100%;min-width:0;max-width:100%;margin:clamp(34px,5vw,68px) 0 0;}
-.route-image a{display:block;overflow:hidden;border:1px solid #b9954d;background:#f3efe3;
-  box-shadow:0 24px 60px rgba(23,32,28,.16);}
-.route-image img{display:block;width:100%;max-width:100%;height:auto;}
-.route-image figcaption{margin-top:14px;font-size:11px;letter-spacing:.18em;color:var(--muted);text-align:right;}
+.route-image{margin-top:clamp(34px,5vw,68px);}
 #map{position:relative;z-index:0;isolation:isolate;height:clamp(400px,62vh,620px);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);background:#e3dfd3;}
 #map.leaflet-container{font-family:"Noto Sans TC",sans-serif;}
 .legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(20px,3vw,40px);padding-top:clamp(24px,3vw,34px);}
@@ -540,8 +527,10 @@ body.is-cond .tabs a .n{display:none;}
   }
   /* 手指按在表格上時鎖住軌道（app.js 加 body.track-lock），表格捲到底也不會切頁 */
   body.track-lock .pages{overflow-x:hidden;}
-  /* 隔壁頁在滑動中會露出來，先限高不撐開軌道；停下變成 .is-active 後才展開全高 */
-  .pages > section:not(.is-active){display:block;max-height:100vh;overflow:hidden;}
+  /* 隔壁頁在滑動中會露出來，先限高不撐開軌道；停下變成 .is-active 後才展開全高。
+     上限跟著目前那頁的高度（app.js 量好寫進 --page-h），不是固定一個螢幕高：
+     往下捲了一段再滑，隔壁頁才不會在螢幕中間被截掉一截、底下露出空白。 */
+  .pages > section:not(.is-active){display:block;max-height:max(100vh,var(--page-h,100vh));overflow:hidden;}
   .pages > section.is-active{animation:none;}
 }
 
