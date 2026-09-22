@@ -92,6 +92,22 @@ document.addEventListener("alpine:init", function () {
           }
         });
 
+        /* 手機：手指按在會橫向捲的內容（時間軸表格）上時，鎖住分頁軌道。
+           內容捲到底時再起手，瀏覽器會在起手那刻就把手勢交給外層軌道，
+           overscroll-behavior 攔不到，所以按著的期間乾脆讓軌道不能橫捲。 */
+        var HSCROLL = ".tl-scroll";
+        var unlockTimer = null;
+        function lockTrack(on) {
+          document.body.classList.toggle("track-lock", on);
+          clearTimeout(unlockTimer);
+          if (on) unlockTimer = setTimeout(function () { lockTrack(false); }, 2000);  /* 沒收到 touchend 的保險 */
+        }
+        track.addEventListener("touchstart", function (e) {
+          lockTrack(!!(e.target.closest && e.target.closest(HSCROLL)));
+        }, { passive: true });
+        document.addEventListener("touchend", function () { lockTrack(false); }, { passive: true });
+        document.addEventListener("touchcancel", function () { lockTrack(false); }, { passive: true });
+
         /* 手機轉直橫或桌機縮放時，把軌道對回目前那頁，並重量頁首佔位 */
         window.addEventListener("resize", function () { self.align(false); self.measure(); });
 

@@ -506,9 +506,12 @@ body.is-cond .tabs a .n{display:none;}
   .pages::-webkit-scrollbar{display:none;}
   .pages > section{
     flex:0 0 100%;box-sizing:border-box;
+    min-width:0;   /* flex 子項預設不能比內容窄，時間軸表格會把整頁撐到 768px，表格就變成不會自己捲 */
     scroll-snap-align:start;scroll-snap-stop:always;
     padding:0 clamp(20px,5vw,52px);
   }
+  /* 手指按在表格上時鎖住軌道（app.js 加 body.track-lock），表格捲到底也不會切頁 */
+  body.track-lock .pages{overflow-x:hidden;}
   /* 隔壁頁在滑動中會露出來，先限高不撐開軌道；停下變成 .is-active 後才展開全高 */
   .pages > section:not(.is-active){display:block;max-height:100vh;overflow:hidden;}
   .pages > section.is-active{animation:none;}
@@ -561,7 +564,9 @@ body.is-cond .tabs a .n{display:none;}
   .tl-unknown{margin-top:7px;padding:6px 5px;}
   .tl-unknown b{font-size:11px!important;}
   /* 捲動對齊要扣掉固定的組別欄，否則永遠對齊到第二天，3/13 會被壓在底下 */
-  .tl-scroll{scroll-snap-type:x proximity;scroll-padding-left:58px;}
+  /* overscroll-behavior-x：表格自己橫向捲動，滑到邊界時不要把手勢接力給外層的分頁軌道，
+     否則時間軸還沒看完就切頁了。要切頁就在表格以外的地方滑。 */
+  .tl-scroll{scroll-snap-type:x proximity;scroll-padding-left:58px;overscroll-behavior-x:contain;}
   .tl thead th:not(:first-child){scroll-snap-align:start;}
   .tl caption{font-size:10px;letter-spacing:.08em;}
 }
