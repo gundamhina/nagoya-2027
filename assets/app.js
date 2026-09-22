@@ -8,7 +8,23 @@
  *
  * 動畫全部交給 CSS。手機左右滑切頁用 scroll-snap，交給瀏覽器。
  * 內容渲染仍在 assets/render.js，這個檔案不碰內容。
+ *
+ * 深淺色是第三個狀態 theme（auto / light / dark），記在 localStorage。
+ * 它在 Alpine 起來之前就先套到 <html>，不然選了深色的人每次開頁都會先閃一下淺色。
  */
+var THEME_KEY = "nagoya2027.theme";
+function readTheme() {
+  try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : "auto"; } catch (e) { return "auto"; }
+}
+function applyTheme(t) {
+  var root = document.documentElement;
+  if (t === "auto") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", t);
+  var dark = t === "dark" || (t === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  var meta = document.getElementById("theme-color");
+  if (meta) meta.setAttribute("content", dark ? "#1a1d1b" : "#1d2e28");
+}
+applyTheme(readTheme());
+
 document.addEventListener("alpine:init", function () {
   var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep", "coupon"];
   var NAMES = { overview: "總覽", people: "旅伴", timeline: "時間軸", journey: "交通", route: "動線", stay: "住宿資訊", itinerary: "行程", prep: "行前", coupon: "優惠券" };
@@ -24,7 +40,17 @@ document.addEventListener("alpine:init", function () {
     return {
       page: fromHash(),
       cond: false,
+      theme: readTheme(),
       pages: PAGES,
+
+      /* 自動 → 淺色 → 深色 → 自動 */
+      cycleTheme: function () {
+        var order = ["auto", "light", "dark"];
+        this.theme = order[(order.indexOf(this.theme) + 1) % order.length];
+        applyTheme(this.theme);
+        try { if (this.theme === "auto") localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, this.theme); } catch (e) {}
+      },
+      themeLabel: function () { return { auto: "深淺色：跟系統", light: "深淺色：淺色", dark: "深淺色：深色" }[this.theme]; },
 
       no: function (id) { var i = PAGES.indexOf(id); return i > 0 ? (i < 10 ? "0" + i : "" + i) : "—"; },
       name: function (id) { return NAMES[id] || id; },
@@ -92,9 +118,9 @@ document.addEventListener("alpine:init", function () {
           }
         });
 
-        /* 手機：手指按在會橫向捲的內容（時間軸表格）上時，鎖住分頁軌道。
-           內容捲到底時再起手，瀏覽器會在起手那刻就把手勢交給外層軌道，
-           overscroll-behavior 攔不到，所以按著的期間乾脆讓軌道不能橫捲。 */
+        /* 手機：手指按在會橫向捲的內容（時間軸表格）上時，看表格捲到哪。
+           還沒到邊：鎖住分頁軌道，這一下只能捲表格，不會中途誤切頁。
+           已在最左或最右：不鎖，再往外滑一次就切頁，看完表格自然接到隔壁頁。 */
         var HSCROLL = ".tl-scroll";
         var unlockTimer = null;
         function lockTrack(on) {
@@ -103,10 +129,17 @@ document.addEventListener("alpine:init", function () {
           if (on) unlockTimer = setTimeout(function () { lockTrack(false); }, 2000);  /* 沒收到 touchend 的保險 */
         }
         track.addEventListener("touchstart", function (e) {
-          lockTrack(!!(e.target.closest && e.target.closest(HSCROLL)));
+          var box = e.target.closest ? e.target.closest(HSCROLL) : null;
+          if (!box || box.scrollWidth <= box.clientWidth + 2) { lockTrack(false); return; }
+          var atStart = box.scrollLeft <= 2;
+          var atEnd = box.scrollLeft >= box.scrollWidth - box.clientWidth - 2;
+          lockTrack(!(atStart || atEnd));
         }, { passive: true });
         document.addEventListener("touchend", function () { lockTrack(false); }, { passive: true });
         document.addEventListener("touchcancel", function () { lockTrack(false); }, { passive: true });
+
+        /* 自動模式下系統換了深淺色，狀態列顏色也跟著換 */
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { applyTheme(self.theme); });
 
         /* 手機轉直橫或桌機縮放時，把軌道對回目前那頁，並重量頁首佔位 */
         window.addEventListener("resize", function () { self.align(false); self.measure(); });

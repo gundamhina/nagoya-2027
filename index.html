@@ -6,11 +6,11 @@
 <title>名古屋・北陸 2027 · 我們的春日旅帖</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta name="description" content="三組旅伴的北陸與名古屋行程、航班、住宿與行前準備。">
-<meta name="theme-color" content="#1d2e28">
+<meta name="theme-color" content="#1d2e28" id="theme-color">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v2.24">
+<link rel="stylesheet" href="assets/style.css?v2.26">
 </head>
 <body id="top" x-data="app" x-init="init()" :class="{ 'is-cond': cond }">
 <div class="wrap">
@@ -29,13 +29,19 @@
     <div class="mast-meta">
       <div class="meta-full full">
         <span class="lab">2027 SPRING</span>
-        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.24</a>
+        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.26</a>
       </div>
       <div class="meta-mini mini">
         <span class="cd"><span class="k">倒數</span><span class="n" x-text="$refs.cdn ? $refs.cdn.textContent : '—'">—</span><span class="u">天</span></span>
         <button type="button" class="to-top" @click="window.scrollTo({ top: 0, behavior: 'smooth' })">↑ 頂端</button>
       </div>
     </div>
+    <!-- 深淺色：只有圖示，直接掛在 .mast 下，不在 .full/.mini 裡。桌機在最右邊；手機完整形態排在章印那一行的右上角，壓縮後回到最右邊（見 style.css .theme） -->
+    <button type="button" class="theme" @click="cycleTheme()" :title="themeLabel()" :aria-label="themeLabel()">
+      <svg x-show="theme === 'auto'" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+      <svg x-show="theme === 'light'" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></svg>
+      <svg x-show="theme === 'dark'" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M14.5 3.2a8.8 8.8 0 1 0 6.3 12.9A9.6 9.6 0 0 1 14.5 3.2z" fill="currentColor"/></svg>
+    </button>
   </div>
 
   <nav class="tabs" id="tabs" aria-label="旅遊資訊導覽">
@@ -163,14 +169,14 @@
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.24</span>
+  <span class="v">v2.26</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
-<script src="assets/trip-data.js?v2.24"></script>
-<script src="assets/render.js?v2.24"></script>
-<script src="assets/app.js?v2.24"></script>
-<script src="assets/alpine.min.js?v2.24" defer></script>
+<script src="assets/trip-data.js?v2.26"></script>
+<script src="assets/render.js?v2.26"></script>
+<script src="assets/app.js?v2.26"></script>
+<script src="assets/alpine.min.js?v2.26" defer></script>
 </body>
 </html>
