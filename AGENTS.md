@@ -5,7 +5,7 @@
 ## 一、每次改版必做五件事
 
 1. **先拉最新版**　`git pull --rebase`。這個 repo 有多方同時推送，直接推很容易撞號或被拒。
-2. **更新版本號**　以下必須一致：`index.html` 頁首的 `.ver`、頁尾的 `.foot .v`，以及 `assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render.js?vX.Y`、`assets/motion.js?vX.Y` 的快取參數。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
+2. **更新版本號**　以下必須一致：`index.html` 頁首的 `.ver`、頁尾的 `.foot .v`，以及 `assets/style.css?vX.Y`、`assets/trip-data.js?vX.Y`、`assets/render.js?vX.Y`、`assets/app.js?vX.Y`、`assets/alpine.min.js?vX.Y` 的快取參數，共七處。漏掉快取參數，團員的瀏覽器會繼續用舊內容或舊樣式。
 3. **更新 CHANGELOG.md**　最上方新增 `## vX.Y — YYYY-MM-DD`，條列這次改了什麼。
 4. **更新 README.md**　開頭那行「目前版本」同步。
 5. **打上 git tag**　`git tag -a vX.Y -m "簡述"`，推送時加 `--follow-tags`。
@@ -22,7 +22,9 @@
 - 航班、票價、人數、分攤金額都是真實資料，**不要臆測或自行補值**。數字不確定就標「待確認」，不要填推估值而不註明。
 - **內容只有一份：`assets/trip-data.js`。** 行程、人數、航班、住宿、提醒、氣溫、打包清單都在這裡。改內容只改這個檔案，**不要把文字直接寫進 HTML 或樣板**。
 - 排版分兩層：`assets/render.js` 產生各分頁內容，`assets/style.css` 管樣式。不要在 HTML 內嵌 `<style>`。
-- 全站是單頁：`index.html` 一個外框，八個 `<section>` 用網址片段切換。新增分頁要同時加 `<section>`、導覽列項目與總覽目次三處。
+- 互動用 Alpine.js（`assets/alpine.min.js`，內嵌在 repo，不走 CDN）。狀態只有兩個，都在 `body` 的 `x-data="app"`：`page` 目前分頁、`cond` 頁首是否壓縮。改狀態只透過 `assets/app.js` 的 `go()` 與捲動監聽；畫面怎麼跟著變寫在 `index.html` 的 `:class`、`x-text`、`@click` 屬性上。
+- 動態一律用 CSS：class 切換配 transition 或 keyframes。不要用 Web Animations API，不要用 setInterval 輪詢，不要在 JS 裡直接寫 style。手機左右滑切頁靠 `scroll-snap`，交給瀏覽器。
+- 全站是單頁：`index.html` 一個外框，九個 `<section>` 排在 `.pages` 軌道裡，用網址片段切換。新增分頁要同時加 `<section>`、導覽列項目、總覽目次，以及 `assets/app.js` 的 `PAGES` 與 `NAMES`。
 - 外部服務只有 Google Fonts 提供字型；其他地方不引入外部服務。
 - 純靜態，不引入 npm、建置工具或外部圖片服務。
 - 繁體中文，金額以新台幣為單位並加千分位。
@@ -34,13 +36,15 @@
 | --- | --- |
 | `index.html` | 單頁外框：八個分頁的 `<section>` 與導覽 |
 | `assets/trip-data.js` | **全站唯一內容來源** |
-| `assets/render.js` | 樣板：依 `data-v2` 佔位產生內容 |
+| `assets/render.js` | 樣板：依 `data-v2` 佔位產生內容，加上倒數與打包清單 |
+| `assets/app.js` | 互動層：分頁切換、頁首壓縮、區塊漸入（Alpine 元件） |
+| `assets/alpine.min.js` | Alpine.js 3，內嵌 |
 | `assets/style.css` | 全站樣式 |
 | `assets/cover-2027.png` | 首頁封面 |
 | `assets/route-2027.png` | 動線頁路線圖 |
 | `assets/favicon.svg` | 瀏覽器分頁圖示 |
 
-分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#route` 動線、`#stay` 住宿資訊、`#itinerary` 行程、`#prep` 行前。
+分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#route` 動線、`#stay` 住宿資訊、`#itinerary` 行程、`#prep` 行前、`#coupon` 優惠券。
 
 ## 四、舊網址轉址
 

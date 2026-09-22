@@ -10,40 +10,59 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v2.22">
+<link rel="stylesheet" href="assets/style.css?v2.23">
 </head>
-<body id="top">
+<body id="top" x-data="app" x-init="init()" :class="{ 'is-cond': cond }">
 <div class="wrap">
 
-<div class="mast">
-  <a class="brand" href="#overview"><span class="seal" aria-hidden="true">旅</span><span class="lab">NAGOYA TRAVEL NOTES</span></a>
-  <div class="mast-meta">
-    <span class="lab">2027 SPRING</span>
-    <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.22</a>
-
+<!-- 頁首：捲過門檻後 body 帶 .is-cond，.full 收起、.mini 出現。
+     .stick 在版面上的高度固定（app.js 量好寫進 --head-h），縮的只有裡面的 .head-bar，
+     內容才不會跟著上下移、觸發瀏覽器捲動錨定而來回切換。 -->
+<header class="stick">
+ <div class="head-bar">
+  <div class="mast">
+    <a class="brand" href="#overview" @click.prevent="go('overview')">
+      <span class="seal" aria-hidden="true">旅</span>
+      <span class="lab full">NAGOYA TRAVEL NOTES</span>
+      <span class="lab-mini mini"><span class="no" x-text="no(page)">—</span><span class="ti" x-text="name(page)">總覽</span></span>
+    </a>
+    <div class="mast-meta">
+      <div class="meta-full full">
+        <span class="lab">2027 SPRING</span>
+        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.23</a>
+      </div>
+      <div class="meta-mini mini">
+        <span class="cd"><span class="k">倒數</span><span class="n" x-text="$refs.cdn ? $refs.cdn.textContent : '—'">—</span><span class="u">天</span></span>
+        <button type="button" class="to-top" @click="window.scrollTo({ top: 0, behavior: 'smooth' })">↑ 頂端</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<nav class="tabs" id="tabs" aria-label="旅遊資訊導覽">
-  <a href="#overview"><span class="n">—</span>總覽</a>
-  <a href="#people"><span class="n">01</span>旅伴</a>
-  <a href="#timeline"><span class="n">02</span>時間軸</a>
-  <a href="#journey"><span class="n">03</span>交通</a>
-  <a href="#route"><span class="n">04</span>動線</a>
-  <a href="#stay"><span class="n">05</span>住宿資訊</a>
-  <a href="#itinerary"><span class="n">06</span>行程</a>
-  <a href="#prep"><span class="n">07</span>行前</a>
-  <a href="#coupon"><span class="n">08</span>優惠券</a>
-</nav>
+  <nav class="tabs" id="tabs" aria-label="旅遊資訊導覽">
+    <a href="#overview"  @click.prevent="go('overview')"  :aria-current="page === 'overview'  ? 'page' : null"><span class="n">—</span>總覽</a>
+    <a href="#people"    @click.prevent="go('people')"    :aria-current="page === 'people'    ? 'page' : null"><span class="n">01</span>旅伴</a>
+    <a href="#timeline"  @click.prevent="go('timeline')"  :aria-current="page === 'timeline'  ? 'page' : null"><span class="n">02</span>時間軸</a>
+    <a href="#journey"   @click.prevent="go('journey')"   :aria-current="page === 'journey'   ? 'page' : null"><span class="n">03</span>交通</a>
+    <a href="#route"     @click.prevent="go('route')"     :aria-current="page === 'route'     ? 'page' : null"><span class="n">04</span>動線</a>
+    <a href="#stay"      @click.prevent="go('stay')"      :aria-current="page === 'stay'      ? 'page' : null"><span class="n">05</span>住宿資訊</a>
+    <a href="#itinerary" @click.prevent="go('itinerary')" :aria-current="page === 'itinerary' ? 'page' : null"><span class="n">06</span>行程</a>
+    <a href="#prep"      @click.prevent="go('prep')"      :aria-current="page === 'prep'      ? 'page' : null"><span class="n">07</span>行前</a>
+    <a href="#coupon"    @click.prevent="go('coupon')"    :aria-current="page === 'coupon'    ? 'page' : null"><span class="n">08</span>優惠券</a>
+  </nav>
+ </div>
+</header>
 <noscript><p class="note">此頁內容需要啟用 JavaScript 才能顯示。</p></noscript>
 
-<!-- 內容全部來自 assets/trip-data.js，樣板在 assets/render.js -->
-<section id="overview">
+<!-- 內容全部來自 assets/trip-data.js，樣板在 assets/render.js。
+     九個 section 排在同一條軌道：桌機只顯示目前那頁，手機左右滑用 scroll-snap 切頁。 -->
+<div class="pages" x-ref="pages" x-cloak>
+
+<section id="overview" :class="{ 'is-active': page === 'overview' }">
   <div class="hero">
     <figure class="hero-image">
       <img src="assets/cover-2027.png?v2.22" alt="北陸・名古屋 2027 春日旅程封面，包含金澤町家、合掌村、名古屋城、飛驒牛與樂高樂園" width="1672" height="941">
     </figure>
-    <div class="count"><span class="k">倒數</span><span class="n" id="cd-n">—</span><span class="u" id="cd-u">計算中</span></div>
+    <div class="count"><span class="k">倒數</span><span class="n" id="cd-n" x-ref="cdn">—</span><span class="u" id="cd-u">計算中</span></div>
   </div>
   <div class="route">
     <div class="route-body">
@@ -54,18 +73,18 @@
   </div>
   <div data-v2="overview"></div>
   <div class="toc">
-    <a href="#people"><span class="no">01</span><span class="ti">旅伴</span><span class="nt">三組名單與各段同行人數</span><span class="ar">→</span></a>
-    <a href="#timeline"><span class="no">02</span><span class="ti">時間軸</span><span class="nt">三組旅伴的航班、地點與同行區間</span><span class="ar">→</span></a>
-    <a href="#journey"><span class="no">03</span><span class="ti">交通</span><span class="nt">三組航班、包車、租車與機場</span><span class="ar">→</span></a>
-    <a href="#route"><span class="no">04</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
-    <a href="#stay"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
-    <a href="#itinerary"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
-    <a href="#prep"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
-    <a href="#coupon"><span class="no">08</span><span class="ti">優惠券</span><span class="nt">各店給外國旅客的折扣券與使用方式</span><span class="ar">→</span></a>
+    <a href="#people"    @click.prevent="go('people')"><span class="no">01</span><span class="ti">旅伴</span><span class="nt">三組名單與各段同行人數</span><span class="ar">→</span></a>
+    <a href="#timeline"  @click.prevent="go('timeline')"><span class="no">02</span><span class="ti">時間軸</span><span class="nt">三組旅伴的航班、地點與同行區間</span><span class="ar">→</span></a>
+    <a href="#journey"   @click.prevent="go('journey')"><span class="no">03</span><span class="ti">交通</span><span class="nt">三組航班、包車、租車與機場</span><span class="ar">→</span></a>
+    <a href="#route"     @click.prevent="go('route')"><span class="no">04</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
+    <a href="#stay"      @click.prevent="go('stay')"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
+    <a href="#itinerary" @click.prevent="go('itinerary')"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
+    <a href="#prep"      @click.prevent="go('prep')"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
+    <a href="#coupon"    @click.prevent="go('coupon')"><span class="no">08</span><span class="ti">優惠券</span><span class="nt">各店給外國旅客的折扣券與使用方式</span><span class="ar">→</span></a>
   </div>
 </section>
 
-<section id="people" hidden>
+<section id="people" :class="{ 'is-active': page === 'people' }">
   <div class="head">
     <span class="kicker">01 / PEOPLE</span>
     <h1>旅伴</h1>
@@ -74,7 +93,7 @@
   <div data-v2="people"></div>
 </section>
 
-<section id="timeline" hidden>
+<section id="timeline" :class="{ 'is-active': page === 'timeline' }">
   <div class="head">
     <span class="kicker">02 / TIMELINE</span>
     <h1>時間軸</h1>
@@ -83,7 +102,7 @@
   <div data-v2="timeline"></div>
 </section>
 
-<section id="journey" hidden>
+<section id="journey" :class="{ 'is-active': page === 'journey' }">
   <div class="head">
     <span class="kicker">03 / TRANSPORT</span>
     <h1>交通</h1>
@@ -92,7 +111,7 @@
   <div data-v2="journey"></div>
 </section>
 
-<section id="route" hidden aria-label="動線">
+<section id="route" :class="{ 'is-active': page === 'route' }" aria-label="動線">
   <figure class="route-image">
     <a href="assets/route-2027.png?v2.22" target="_blank" rel="noopener noreferrer" title="開啟原尺寸動線圖">
       <img src="assets/route-2027.png?v2.22" alt="北陸到名古屋的十一日移動軌跡：金澤、高山、白川鄉、名古屋與進出機場" width="1672" height="941" loading="lazy">
@@ -101,7 +120,7 @@
   </figure>
 </section>
 
-<section id="stay" hidden>
+<section id="stay" :class="{ 'is-active': page === 'stay' }">
   <div class="head">
     <span class="kicker">05 / STAY</span>
     <h1>住宿資訊</h1>
@@ -110,7 +129,7 @@
   <div data-v2="stay"></div>
 </section>
 
-<section id="itinerary" hidden>
+<section id="itinerary" :class="{ 'is-active': page === 'itinerary' }">
   <div class="head">
     <span class="kicker">06 / ITINERARY</span>
     <h1>行程</h1>
@@ -119,7 +138,7 @@
   <div data-v2="itinerary"></div>
 </section>
 
-<section id="prep" hidden>
+<section id="prep" :class="{ 'is-active': page === 'prep' }">
   <div class="head">
     <span class="kicker">07 / BEFORE</span>
     <h1>行前</h1>
@@ -131,7 +150,7 @@
   <div class="packs" id="packs"></div>
 </section>
 
-<section id="coupon" hidden>
+<section id="coupon" :class="{ 'is-active': page === 'coupon' }">
   <div class="head">
     <span class="kicker">08 / COUPONS</span>
     <h1>優惠券</h1>
@@ -140,15 +159,18 @@
   <div data-v2="coupon"></div>
 </section>
 
+</div>
+
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.22</span>
+  <span class="v">v2.23</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
-<script src="assets/trip-data.js?v2.22"></script>
-<script src="assets/render.js?v2.22"></script>
-<script src="assets/motion.js?v2.22"></script>
+<script src="assets/trip-data.js?v2.23"></script>
+<script src="assets/render.js?v2.23"></script>
+<script src="assets/app.js?v2.23"></script>
+<script src="assets/alpine.min.js?v2.23" defer></script>
 </body>
 </html>

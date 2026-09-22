@@ -412,18 +412,11 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   .day,.flight,.ground,.pack{break-inside:avoid;}
 }
 
-/* ── v2.7 動效層：接在 assets/style.css 最後面 ────────────── */
-
-/* 導覽列滑動底線與捲動進度線。寬度與位置由 assets/motion.js 寫入。 */
-.tabs{position:relative;}
-.tab-bar{
-  position:absolute;left:0;bottom:-1px;height:1px;width:0;
-  background:var(--mark);pointer-events:none;
-}
-.scroll-prog{
-  position:absolute;left:0;top:-1px;height:1px;width:0;
-  background:var(--gold);pointer-events:none;
-}
+/* ── 互動層（Alpine）：頁首釘住、分頁切換、區塊漸入 ──────────
+   狀態在 body：.is-cond 表示頁首壓縮。分頁用 section.is-active。
+   所有動態都是 class 切換配 CSS 過渡或 keyframes，沒有 JS 動畫。 */
+[x-cloak]{display:none!important;}
+html,body{overflow-x:clip;}
 
 /* hover 與按壓回饋 */
 .tabs a:hover{color:var(--ink);}
@@ -439,65 +432,35 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 .cta:active{transform:scale(.975);}
 .item,.toc a,.tabs a,.linkline,.reset,.cta{transition:transform .12s ease,color .2s ease;}
 
-/* 打包清單進度條 */
-.pk-track{position:relative;}
-.pk-fill{
-  position:absolute;left:0;top:0;height:1px;width:0;
-  background:var(--mark);pointer-events:none;
+
+/* 頁首釘住。
+   .stick 是版面上的佔位，高度由 app.js 量好寫進 --head-h，壓縮時不變，
+   下面的內容就不會被推上推下、觸發瀏覽器捲動錨定而來回切換形態。
+   看得見的那條是 .head-bar，縮的是它；.stick 本身透明、不吃點擊。 */
+.stick{position:sticky;top:0;z-index:20;height:var(--head-h,auto);pointer-events:none;overflow-anchor:none;}
+.head-bar{pointer-events:auto;background:var(--paper);transition:box-shadow .3s ease;}
+/* 手機的分頁軌道撐到螢幕邊（見下方 .pages），頁首底色也要跟著撐，不然左右溝會透出內容 */
+@media(max-width:700px){
+  .head-bar{margin:0 calc(-1 * clamp(20px,5vw,52px));padding:0 clamp(20px,5vw,52px);}
 }
+body.is-cond .head-bar{box-shadow:0 1px 0 rgba(23,32,28,.08);}
+.stick .mast{transition:padding .3s cubic-bezier(.2,.7,.25,1);}
+body.is-cond .mast{padding-top:10px;padding-bottom:8px;}
+.seal{transition:width .3s ease,height .3s ease,font-size .3s ease;}
+body.is-cond .seal{width:24px;height:24px;font-size:13px;}
 
-/* 時間軸橫捲提示 */
-#timeline{position:relative;}
-.tl-hinted{position:relative;}
-.tl-hinted::after{
-  content:"";position:absolute;right:0;top:0;bottom:0;width:56px;
-  pointer-events:none;
-  background:linear-gradient(to left,var(--paper),transparent);
-}
+/* 兩種形態：同一時間只顯示一層，出現的那層做位移。
+   用 display 切換而不是 opacity 交叉淡入，過渡被打斷也不會兩層疊著。 */
+.mini{display:none;}
+body.is-cond .full{display:none;}
+body.is-cond .mini{display:flex;animation:rise .24s cubic-bezier(.16,1,.3,1) both;}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-@media(prefers-reduced-motion:reduce){
-  .tab-bar,.scroll-prog{display:none;}
-  .item,.toc a,.tabs a,.linkline,.reset,.cta{transition:none;}
-  .item:active,.toc a:active,.tabs a:active,.linkline:active,.reset:active,.cta:active{transform:none;}
-}
-
-/* ── 頁首釘住與形態轉換 ───────────────────────────── */
-.stick{
-  position:sticky;top:0;z-index:20;background:var(--paper);
-  transition:box-shadow .3s ease;
-}
-.stick.is-cond{box-shadow:0 1px 0 rgba(23,32,28,.08);}
-
-/* 報頭壓縮 */
-.stick .mast{transition:padding .3s var(--ease,cubic-bezier(.2,.7,.25,1));}
-.stick.is-cond .mast{padding-top:10px;padding-bottom:8px;}
-.stick.is-cond .seal{width:24px;height:24px;font-size:13px;transition:all .3s ease;}
-.seal{transition:all .3s ease;}
-
-/* 左右兩側的雙形態堆疊 */
-.lab-stack,.meta-stack{display:grid;align-items:center;}
-.lab-stack > *,.meta-stack > *{grid-area:1/1;}
-.meta-stack{justify-items:end;}
-/* 兩種形態疊在同一格，同時淡入淡出會看到兩層字重疊，
-   所以消失的一層直接隱藏，只有出現的那層做位移。 */
-.lab-mini,.meta-mini{opacity:0;transform:translateY(6px);pointer-events:none;white-space:nowrap;transition:none;}
-.lab-mini.on,.meta-mini.on{
-  opacity:1;transform:none;pointer-events:auto;
-  /* 透明度瞬間切換，只有位移做動畫：過渡停在中途時，
-     最多是位置差 6px，不會整段字都看不見。 */
-  transition:transform .24s cubic-bezier(.16,1,.3,1) .04s;
-}
-/* 完整那層不做過渡：瀏覽器把分頁節流時過渡會停在中途，
-   站名整個消失比少一段淡入嚴重得多。 */
-.stick .lab,.stick .mast-meta{transition:none;}
-.stick.is-cond .lab,
-.stick.is-cond .mast-meta{opacity:0;pointer-events:none;}
-
-.lab-mini{display:flex;align-items:baseline;gap:10px;}
+.meta-full{display:flex;align-items:center;gap:14px;}
+.lab-mini{align-items:baseline;gap:10px;white-space:nowrap;}
 .lab-mini .no{font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--mark);}
 .lab-mini .ti{font-family:var(--mincho);font-size:19px;font-weight:500;letter-spacing:.14em;color:var(--ink);}
-
-.meta-mini{display:flex;align-items:baseline;gap:16px;}
+.meta-mini{align-items:baseline;gap:16px;white-space:nowrap;}
 .meta-mini .cd{display:flex;align-items:baseline;gap:6px;}
 .meta-mini .cd .k{font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--mark);}
 .meta-mini .cd .n{font-family:var(--mincho);font-size:16px;color:var(--ink);}
@@ -511,30 +474,55 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 
 /* 分頁列收成緊湊索引帶 */
 .tabs{transition:padding .3s ease,gap .3s ease;}
-.stick.is-cond .tabs{gap:clamp(14px,2.2vw,24px);padding:8px 0;}
-.stick.is-cond .tabs a{font-size:12px;letter-spacing:.1em;}
-.stick.is-cond .tabs a .n{display:none;}
+body.is-cond .tabs{gap:clamp(14px,2.2vw,24px);padding:8px 0;}
+body.is-cond .tabs a{font-size:12px;letter-spacing:.1em;}
+body.is-cond .tabs a .n{display:none;}
 
-/* 手機：壓縮後收成單排。
-   兩種形態疊在同一個 grid 格子裡，格寬取兩者較大值，
-   在 375px 會把報頭撐成兩排，所以收起時讓看不見的那層不佔寬。 */
 @media(max-width:600px){
-  .stick.is-cond .mast{flex-wrap:nowrap;gap:12px;padding-top:8px;padding-bottom:6px;}
-  .stick.is-cond .lab-stack > .lab,
-  .stick.is-cond .meta-stack > .mast-meta{width:0;overflow:hidden;white-space:nowrap;}
-  .stick.is-cond .brand{gap:10px;}
-  .stick.is-cond .seal{width:22px;height:22px;font-size:12px;}
-  .stick.is-cond .lab-mini{gap:8px;}
-  .stick.is-cond .lab-mini .ti{font-size:16px;letter-spacing:.1em;}
-  .stick.is-cond .meta-mini{gap:12px;}
-  .stick.is-cond .meta-mini .cd{gap:5px;}
-  .stick.is-cond .meta-mini .cd .n{font-size:14px;}
-  .stick.is-cond .tabs{padding:6px 0;gap:14px;}
-  .stick.is-cond .tabs a{font-size:11.5px;}
+  body.is-cond .mast{flex-wrap:nowrap;gap:12px;padding-top:8px;padding-bottom:6px;}
+  body.is-cond .brand{gap:10px;}
+  body.is-cond .seal{width:22px;height:22px;font-size:12px;}
+  .lab-mini{gap:8px;}
+  .lab-mini .ti{font-size:16px;letter-spacing:.1em;}
+  .meta-mini{gap:12px;}
+  .meta-mini .cd{gap:5px;}
+  .meta-mini .cd .n{font-size:14px;}
+  body.is-cond .tabs{padding:6px 0;gap:14px;}
+  body.is-cond .tabs a{font-size:11.5px;}
 }
 
+/* 分頁：桌機只顯示目前那頁，進場用 keyframes（重新加 class 就重播，不怕被打斷） */
+.pages > section:not(.is-active){display:none;}
+.pages > section.is-active{animation:page-in .42s cubic-bezier(.16,1,.3,1) both;}
+@keyframes page-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* 手機：九頁排成橫向軌道，左右滑靠 scroll-snap，瀏覽器自己處理拖曳、慣性與回彈 */
+@media(max-width:700px){
+  .pages{
+    display:flex;overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;scrollbar-width:none;
+    margin:0 calc(-1 * clamp(20px,5vw,52px));         /* 撐到螢幕邊，抵掉 .wrap 的內距 */
+  }
+  .pages::-webkit-scrollbar{display:none;}
+  .pages > section{
+    flex:0 0 100%;box-sizing:border-box;
+    scroll-snap-align:start;scroll-snap-stop:always;
+    padding:0 clamp(20px,5vw,52px);
+  }
+  /* 隔壁頁在滑動中會露出來，先限高不撐開軌道；停下變成 .is-active 後才展開全高 */
+  .pages > section:not(.is-active){display:block;max-height:100vh;overflow:hidden;}
+  .pages > section.is-active{animation:none;}
+}
+
+/* 區塊漸入：.reveal 只由 app.js 對「還在畫面外」的元素加上，藏是瞬間、出現才過渡；
+   沒有 JS、觀察器沒觸發時內容照常顯示 */
+.reveal{opacity:0;transform:translateY(24px);}
+.reveal.in{opacity:1;transform:none;transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);}
+
 @media(prefers-reduced-motion:reduce){
-  .stick,.stick .mast,.tabs,.seal,.lab-mini,.meta-mini,.lab-mini.on,.meta-mini.on,.stick .lab,.stick .mast-meta{transition:none;}
+  .stick,.stick .mast,.tabs,.seal{transition:none;}
+  body.is-cond .mini,.pages > section.is-active{animation:none;}
+  .reveal{opacity:1;transform:none;transition:none;}
 }
 
 /* 路線圖 */
@@ -578,26 +566,3 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   .tl caption{font-size:10px;letter-spacing:.08em;}
 }
 
-/* ── 手機：左右滑切換分頁 ─────────────────────────── */
-.swipe-hint{
-  display:none;position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
-  z-index:40;background:var(--dark);color:var(--paper);
-  font-size:12px;letter-spacing:.08em;padding:7px 15px;border-radius:30px;
-  opacity:0;transition:opacity .25s ease;pointer-events:none;white-space:nowrap;
-}
-.swipe-hint.on{opacity:.94;}
-@media(max-width:700px){.swipe-hint{display:block;}}
-/* 滑動切頁：拖曳時兩頁一起移動，隔壁那頁從旁邊跟著進來 */
-/* 拖曳中的位移不該讓整頁多出可橫捲的空白；clip 不會建立捲動容器，釘住的頁首照常 */
-html,body{overflow-x:clip;}
-/* 拖曳中的兩頁都是固定圖層；蓋過 #timeline 等 ID 規則的 position。
-   左右內距與 .wrap 一致，落點才會跟切完後完全一樣，兩頁之間也不留分隔線。 */
-section[id].swipe-pane{
-  position:fixed!important;left:0!important;right:0!important;bottom:0!important;
-  z-index:12;overflow:hidden;background:var(--paper);
-  padding:0 clamp(20px,5vw,52px);
-}
-/* 拖曳期間頁首直接切換形態，不跑轉場，免得高度一直在變 */
-.swipe-freeze .stick,.swipe-freeze .stick *{transition:none!important;}
-.swipe-live{cursor:grabbing;}
-.swipe-live section[id]{will-change:transform;}
