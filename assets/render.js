@@ -13,7 +13,7 @@
   }
   function groupsHtml(style) {
     return '<div class="groups"' + (style ? ' style="' + style + '"' : "") + ">" + each(T.groups, function (g) {
-      return '<div class="group"><span class="kanji">' + g.tag + '</span><div class="body"><span class="nm">' + g.name +
+      return '<div class="group"><span class="kanji g-' + g.id + '">' + g.tag + '</span><div class="body"><span class="nm">' + g.name +
         '</span><span class="ct">' + g.count + '</span><span class="rg">' + g.range + "</span></div></div>";
     }) + "</div>";
   }
@@ -80,7 +80,7 @@
           '</span><span class="tm"><span>' + f.from[2] + '</span><span>→ ' + f.to[2] + "</span></span>" + (f.note ? '<span class="nt">' + f.note + "</span>" : "") + "</div>";
       }
       var rows = each(T.groups, function (g) {
-        return '<tr><th scope="row"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="rg">' + g.period + "<br>" + g.count + "</span></th>" +
+        return '<tr><th scope="row"><span class="kanji g-' + g.id + '">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="rg">' + g.period + "<br>" + g.count + "</span></th>" +
           each(t.timeline[g.id], function (c) {
             var span = c.span > 1 ? ' colspan="' + c.span + '"' : "";
             if (c.kind === "empty") return "<td" + span + ' class="tl-empty" aria-label="非旅行區間"></td>';
@@ -105,7 +105,7 @@
         return '<span class="c' + (right ? " r" : "") + '"><span class="tm">' + a[2] + '</span><span class="ap">' + a[1] + " " + a[0] + "</span></span>";
       }
       return sec("航班", "", "margin-top:0") + '<div class="ledger">' + each(T.groups, function (g) {
-        return '<div class="flight"><div class="flight-h"><span class="kanji">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="ct">' + g.people + '</span></div><div class="legs">' +
+        return '<div class="flight"><div class="flight-h"><span class="kanji g-' + g.id + '">' + g.tag + '</span><span class="nm">' + g.name + '</span><span class="ct">' + g.people + '</span></div><div class="legs">' +
           each(t.flights[g.id], function (f) {
             return '<div class="leg"><span class="k">' + f.dir + " · " + f.date + '</span><div class="leg-t">' + end(f.from) + '<span class="dash"></span>' + end(f.to, true) +
               '</div><span class="mt">' + (f.v2label || f.label) + (f.note ? " · " + f.note : "") + "</span></div>";
@@ -158,12 +158,12 @@
         if (d.pending) chips.push(group(d.pending).tag + " 住宿未定");
         return '<div class="day" id="v2-day-' + d.date.replace("/", "-") + '"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
           '<div class="body"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + '</span><span class="crew">' +
-          each(d.crew, function (c) { return "<span>" + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
+          each(d.crew, function (c) { return '<span class="g-' + c + '">' + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
           '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div></div>";
       });
-      function crew(ids) { return '<span class="crew">' + each(ids, function (c) { return "<span>" + group(c).tag + "</span>"; }) + "</span>"; }
+      function crew(ids) { return '<span class="crew">' + each(ids, function (c) { return '<span class="g-' + c + '">' + group(c).tag + "</span>"; }) + "</span>"; }
       var periods = '<div class="groups" style="margin-top:0">' + each(T.groups, function (g) {
-        return '<div class="group"><span class="kanji">' + g.tag + '</span><div class="body"><span class="nm">' + g.name + '</span><span class="ct">' + g.period +
+        return '<div class="group"><span class="kanji g-' + g.id + '">' + g.tag + '</span><div class="body"><span class="nm">' + g.name + '</span><span class="ct">' + g.period +
           '</span><span class="rg">' + g.brief + "</span></div></div>";
       }) + "</div>";
       var summary = sec("行程總表") + '<p class="fine tl-intro">' + it.tableHint + "</p>" +
@@ -223,9 +223,27 @@
   var s = T.start.split("-");
   var diff = Math.floor((new Date(+s[0], s[1] - 1, +s[2]) - new Date()) / 864e5);
   var n = document.getElementById("cd-n"), u = document.getElementById("cd-u");
-  if (diff > 0) { n.textContent = String(diff); u.textContent = "天後出發"; }
-  else if (diff > -11) { n.textContent = String(1 - diff); u.textContent = "旅程第幾天"; }
-  else { n.textContent = "—"; u.textContent = "旅程已結束"; }
+  var days = diff > 0 ? diff : diff > -11 ? 1 - diff : 0;
+  u.textContent = diff > 0 ? "天後出發" : diff > -11 ? "旅程第幾天" : "旅程已結束";
+  /* 最終值另外記在 data-final：頁首壓縮列的倒數在 Alpine 初始化時讀一次，不能讀到跑動中的數字 */
+  n.dataset.final = days ? String(days) : "—";
+  /* 數字從 0 跑到目標，1.6 秒、五次方 ease-out：前半秒衝到 150 以上，後面一秒慢慢一格一格停在目標，
+     像里程表落定。這是唯一一個用 JS 跑的動態：改的是文字內容，CSS 動不了。
+     使用者關掉動態、或是數字是「—」，直接顯示。 */
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!days || still || document.hidden || !window.requestAnimationFrame) { n.textContent = n.dataset.final; }
+  else {
+    var t0 = null, done = false;
+    requestAnimationFrame(function step(t) {
+      if (done) return;
+      if (t0 === null) t0 = t;
+      var p = Math.min(1, (t - t0) / 1600);
+      n.textContent = String(Math.round(days * (1 - Math.pow(1 - p, 5))));
+      if (p < 1) requestAnimationFrame(step); else done = true;
+    });
+    /* 分頁在背景時 requestAnimationFrame 不會跑，時間到直接落到最終值 */
+    setTimeout(function () { done = true; n.textContent = n.dataset.final; }, 2200);
+  }
 
   /* ---------- 打包清單（與舊版共用同一個瀏覽器儲存鍵） ---------- */
   var PK = "nagoya2027.packing";

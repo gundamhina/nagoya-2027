@@ -3,6 +3,7 @@
   --paper:#efece3; --ink:#17201c; --body:#3e463f; --muted:#5b625a;
   --rule:#ccc8b9; --dark:#1d2e28; --on-dark:#efece3; --mark:#9c3b26; --gold:#b8a882;
   --tl-spring:#e3e5d8; --tl-village:#ebe3d0; --tl-meet:#e6dfe2; --tl-stripe:#ddd9cc; --dash:#9c9788;
+  --g-spring:#3b5a46; --g-village:#6e5a3b; --g-meet:#5e4a63;   /* 三組名牌：春＝松綠、鄉＝土黃、祈＝紫藤，跟時間軸色塊同色相 */
   --mincho:"Shippori Mincho","Noto Serif TC","PMingLiU",serif;
   color-scheme:light;
 }
@@ -13,6 +14,7 @@
   --paper:#1a1d1b; --ink:#ebe6d9; --body:#c6c1b3; --muted:#979488;
   --rule:#383c38; --dark:#2c4038; --mark:#d8735a; --gold:#c9b98f;
   --tl-spring:#28312b; --tl-village:#33302a; --tl-meet:#322e37; --tl-stripe:#383c38; --dash:#6d6b61;
+  --g-spring:#476b55; --g-village:#7d6846; --g-meet:#6c5871;
   color-scheme:dark;
 }
 @media (prefers-color-scheme:dark){
@@ -20,6 +22,7 @@
     --paper:#1a1d1b; --ink:#ebe6d9; --body:#c6c1b3; --muted:#979488;
     --rule:#383c38; --dark:#2c4038; --mark:#d8735a; --gold:#c9b98f;
     --tl-spring:#28312b; --tl-village:#33302a; --tl-meet:#322e37; --tl-stripe:#383c38; --dash:#6d6b61;
+    --g-spring:#476b55; --g-village:#7d6846; --g-meet:#6c5871;
     color-scheme:dark;
   }
 }
@@ -171,7 +174,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   border-top:1px solid var(--ink);padding-top:clamp(26px,3vw,36px);margin-top:clamp(20px,2.4vw,28px);}
 .group{display:flex;gap:clamp(16px,2vw,22px);min-width:0;}
 .group .kanji{font-family:var(--mincho);font-size:15px;letter-spacing:.4em;line-height:1;color:var(--on-dark);
-  background:var(--dark);padding:11px 7px;height:max-content;writing-mode:vertical-rl;}
+  background:var(--chip,var(--dark));padding:11px 7px;height:max-content;writing-mode:vertical-rl;}
 .group .body{display:flex;flex-direction:column;gap:11px;min-width:0;}
 .group .nm{font-family:var(--mincho);font-size:clamp(23px,2.8vw,28px);font-weight:500;letter-spacing:.1em;line-height:1.3;}
 .group .ct{font-size:13px;letter-spacing:.06em;}
@@ -232,7 +235,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   padding:clamp(28px,3.4vw,42px) 0;border-bottom:1px solid var(--rule);}
 .flight-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;}
 .flight-h .kanji{font-family:var(--mincho);font-size:15px;letter-spacing:.34em;line-height:1;
-  color:var(--on-dark);background:var(--dark);padding:8px 6px;writing-mode:vertical-rl;}
+  color:var(--on-dark);background:var(--chip,var(--dark));padding:8px 6px;writing-mode:vertical-rl;}
 .flight-h .nm{font-family:var(--mincho);font-size:clamp(24px,3vw,32px);font-weight:500;letter-spacing:.12em;}
 .flight-h .ct{font-size:12px;letter-spacing:.14em;color:var(--muted);}
 .legs{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:clamp(22px,2.8vw,40px);}
@@ -286,7 +289,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
   line-height:1.5;text-wrap:pretty;}
 .crew{display:flex;gap:5px;}
 .crew span{font-family:var(--mincho);font-size:12px;line-height:1;color:var(--on-dark);
-  background:var(--dark);padding:5px 6px;}
+  background:var(--chip,var(--dark));padding:5px 6px;}
 .day p{margin:0;font-size:13px;line-height:2.05;color:var(--body);text-wrap:pretty;}
 .day-f{display:flex;flex-wrap:wrap;gap:6px 20px;padding-top:2px;font-size:11.5px;letter-spacing:.06em;color:var(--muted);}
 
@@ -338,7 +341,8 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 .tl thead th:first-child{font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--muted);}
 .tl th:first-child{width:132px;position:sticky;left:0;z-index:1;background:var(--paper);}
 .tl tbody th{display:table-cell;}
-.tl tbody th .kanji{display:inline-block;font-family:var(--mincho);font-size:13px;line-height:1;color:var(--on-dark);background:var(--dark);padding:5px 6px;margin-right:8px;}
+.g-spring{--chip:var(--g-spring);}.g-village{--chip:var(--g-village);}.g-meet{--chip:var(--g-meet);}
+.tl tbody th .kanji{display:inline-block;font-family:var(--mincho);font-size:13px;line-height:1;color:var(--on-dark);background:var(--chip,var(--dark));padding:5px 6px;margin-right:8px;}
 .tl tbody th .nm{font-family:var(--mincho);font-size:19px;font-weight:500;letter-spacing:.08em;}
 .tl tbody th .rg{display:block;margin-top:8px;font-size:11px;font-weight:400;line-height:1.8;color:var(--muted);}
 .tl td b{display:block;font-family:var(--mincho);font-size:17px;font-weight:500;letter-spacing:.06em;line-height:1.4;}
