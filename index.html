@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;600&family=Zen+Old+Mincho:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v2.30">
+<link rel="stylesheet" href="assets/style.css?v2.31">
 </head>
 <body id="top" x-data="app" x-init="init()" :class="{ 'is-cond': cond }">
 <div class="wrap">
@@ -29,7 +29,7 @@
     <div class="mast-meta">
       <div class="meta-full full">
         <span class="lab">2027 SPRING</span>
-        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.30</a>
+        <a class="ver" href="https://github.com/gundamhina/nagoya-2027/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" title="點擊查看更新紀錄">v2.31</a>
       </div>
       <div class="meta-mini mini">
         <span class="cd"><span class="k">倒數</span><span class="n" x-text="$refs.cdn ? ($refs.cdn.dataset.final || $refs.cdn.textContent) : '—'">—</span><span class="u">天</span></span>
@@ -49,11 +49,12 @@
     <a href="#people"    @click.prevent="go('people')"    :aria-current="page === 'people'    ? 'page' : null"><span class="n">01</span>旅伴</a>
     <a href="#timeline"  @click.prevent="go('timeline')"  :aria-current="page === 'timeline'  ? 'page' : null"><span class="n">02</span>時間軸</a>
     <a href="#journey"   @click.prevent="go('journey')"   :aria-current="page === 'journey'   ? 'page' : null"><span class="n">03</span>交通</a>
-    <a href="#route"     @click.prevent="go('route')"     :aria-current="page === 'route'     ? 'page' : null"><span class="n">04</span>動線</a>
-    <a href="#stay"      @click.prevent="go('stay')"      :aria-current="page === 'stay'      ? 'page' : null"><span class="n">05</span>住宿資訊</a>
-    <a href="#itinerary" @click.prevent="go('itinerary')" :aria-current="page === 'itinerary' ? 'page' : null"><span class="n">06</span>行程</a>
+    <a href="#stay"      @click.prevent="go('stay')"      :aria-current="page === 'stay'      ? 'page' : null"><span class="n">04</span>住宿資訊</a>
+    <a href="#itinerary" @click.prevent="go('itinerary')" :aria-current="page === 'itinerary' ? 'page' : null"><span class="n">05</span>行程</a>
+    <a href="#food"      @click.prevent="go('food')"      :aria-current="page === 'food'      ? 'page' : null"><span class="n">06</span>美食</a>
     <a href="#prep"      @click.prevent="go('prep')"      :aria-current="page === 'prep'      ? 'page' : null"><span class="n">07</span>行前</a>
     <a href="#coupon"    @click.prevent="go('coupon')"    :aria-current="page === 'coupon'    ? 'page' : null"><span class="n">08</span>優惠券</a>
+    <a href="#emergency" @click.prevent="go('emergency')" :aria-current="page === 'emergency' ? 'page' : null"><span class="n">09</span>緊急</a>
   </nav>
  </div>
 </header>
@@ -79,8 +80,8 @@
         <span class="n" id="cd-n" x-ref="cdn">—</span>
         <span class="u" id="cd-u">計算中</span>
       </div>
-      <a href="assets/cover-2027-wide.webp?v2.30" target="_blank" rel="noopener noreferrer" title="開啟完整封面">
-        <img src="assets/cover-2027-wide.webp?v2.30" alt="北陸・名古屋 2027 春日封面：金澤茶屋街、白川鄉合掌村、名古屋城與樂高樂園，膠彩風格" width="1672" height="941">
+      <a href="assets/cover-2027-wide.webp?v2.31" target="_blank" rel="noopener noreferrer" title="開啟完整封面">
+        <img src="assets/cover-2027-wide.webp?v2.31" alt="北陸・名古屋 2027 春日封面：金澤茶屋街、白川鄉合掌村、名古屋城與樂高樂園，膠彩風格" width="1672" height="941">
       </a>
       <figcaption><span class="k">封面 · COVER</span><span>點圖看完整版</span></figcaption>
     </figure>
@@ -96,12 +97,13 @@
   <div class="toc">
     <a href="#people"    @click.prevent="go('people')"><span class="no">01</span><span class="ti">旅伴</span><span class="nt">三組名單與各段同行人數</span><span class="ar">→</span></a>
     <a href="#timeline"  @click.prevent="go('timeline')"><span class="no">02</span><span class="ti">時間軸</span><span class="nt">三組旅伴的航班、地點與同行區間</span><span class="ar">→</span></a>
-    <a href="#journey"   @click.prevent="go('journey')"><span class="no">03</span><span class="ti">交通</span><span class="nt">三組航班、包車、租車與機場</span><span class="ar">→</span></a>
-    <a href="#route"     @click.prevent="go('route')"><span class="no">04</span><span class="ti">動線</span><span class="nt">金澤、高山、白川鄉到名古屋的動線地圖</span><span class="ar">→</span></a>
-    <a href="#stay"      @click.prevent="go('stay')"><span class="no">05</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
-    <a href="#itinerary" @click.prevent="go('itinerary')"><span class="no">06</span><span class="ti">行程</span><span class="nt">總表、每天細項與旅行提醒</span><span class="ar">→</span></a>
+    <a href="#journey"   @click.prevent="go('journey')"><span class="no">03</span><span class="ti">交通</span><span class="nt">動線圖、三組航班、包車、租車、還車與機場</span><span class="ar">→</span></a>
+    <a href="#stay"      @click.prevent="go('stay')"><span class="no">04</span><span class="ti">住宿資訊</span><span class="nt">金澤與名古屋住宿、房間配置及 Notion 筆記</span><span class="ar">→</span></a>
+    <a href="#itinerary" @click.prevent="go('itinerary')"><span class="no">05</span><span class="ti">行程</span><span class="nt">總表、每天細項、門票與旅行提醒</span><span class="ar">→</span></a>
+    <a href="#food"      @click.prevent="go('food')"><span class="no">06</span><span class="ti">美食</span><span class="nt">三地名物與要訂位的餐</span><span class="ar">→</span></a>
     <a href="#prep"      @click.prevent="go('prep')"><span class="no">07</span><span class="ti">行前</span><span class="nt">三月氣溫、穿衣建議與可打勾的打包清單</span><span class="ar">→</span></a>
     <a href="#coupon"    @click.prevent="go('coupon')"><span class="no">08</span><span class="ti">優惠券</span><span class="nt">各店給外國旅客的折扣券與使用方式</span><span class="ar">→</span></a>
+    <a href="#emergency" @click.prevent="go('emergency')"><span class="no">09</span><span class="ti">緊急</span><span class="nt">急救、報警、辦事處電話，護照遺失與看病日文</span><span class="ar">→</span></a>
   </div>
 </section>
 
@@ -129,21 +131,18 @@
     <h1>交通</h1>
     <p class="lead" data-v2="journey-lead"></p>
   </div>
-  <div data-v2="journey"></div>
-</section>
-
-<section id="route" :class="{ 'is-active': page === 'route' }" aria-label="動線">
   <figure class="route-image plate">
     <a href="assets/route-2027.png?v2.22" target="_blank" rel="noopener noreferrer" title="開啟原尺寸動線圖">
       <img src="assets/route-2027.png?v2.22" alt="北陸到名古屋的十一日移動軌跡：金澤、高山、白川鄉、名古屋與進出機場" width="1672" height="941" loading="lazy">
     </a>
-    <figcaption><span class="k">動線 · ROUTE</span><span>各段日期見總覽的動線區塊 · 點圖開啟原尺寸</span></figcaption>
+    <figcaption><span class="k">動線 · ROUTE</span><span>各段日期見總覽的動線區塊與時間軸 · 點圖開啟原尺寸</span></figcaption>
   </figure>
+  <div data-v2="journey"></div>
 </section>
 
 <section id="stay" :class="{ 'is-active': page === 'stay' }">
   <div class="head">
-    <span class="kicker">05 / STAY</span>
+    <span class="kicker">04 / STAY</span>
     <h1>住宿資訊</h1>
     <p class="lead" data-v2="stay-lead"></p>
   </div>
@@ -152,11 +151,20 @@
 
 <section id="itinerary" :class="{ 'is-active': page === 'itinerary' }">
   <div class="head">
-    <span class="kicker">06 / ITINERARY</span>
+    <span class="kicker">05 / ITINERARY</span>
     <h1>行程</h1>
     <p class="lead" data-v2="itinerary-lead"></p>
   </div>
   <div data-v2="itinerary"></div>
+</section>
+
+<section id="food" :class="{ 'is-active': page === 'food' }">
+  <div class="head">
+    <span class="kicker">06 / FOOD</span>
+    <h1>美食</h1>
+    <p class="lead" data-v2="food-lead"></p>
+  </div>
+  <div data-v2="food"></div>
 </section>
 
 <section id="prep" :class="{ 'is-active': page === 'prep' }">
@@ -180,18 +188,27 @@
   <div data-v2="coupon"></div>
 </section>
 
+<section id="emergency" :class="{ 'is-active': page === 'emergency' }">
+  <div class="head">
+    <span class="kicker">09 / EMERGENCY</span>
+    <h1>緊急</h1>
+    <p class="lead" data-v2="emergency-lead"></p>
+  </div>
+  <div data-v2="emergency"></div>
+</section>
+
 </div>
 
 <footer class="foot">
   <span>名古屋・北陸 2027 · 我們的春日旅帖</span>
-  <span class="v">v2.30</span>
+  <span class="v">v2.31</span>
   <span>待確認安排請以訂房確認信與出發前官方資訊為準。</span>
 </footer>
 
 </div>
-<script src="assets/trip-data.js?v2.30"></script>
-<script src="assets/render.js?v2.30"></script>
-<script src="assets/app.js?v2.30"></script>
-<script src="assets/alpine.min.js?v2.30" defer></script>
+<script src="assets/trip-data.js?v2.31"></script>
+<script src="assets/render.js?v2.31"></script>
+<script src="assets/app.js?v2.31"></script>
+<script src="assets/alpine.min.js?v2.31" defer></script>
 </body>
 </html>

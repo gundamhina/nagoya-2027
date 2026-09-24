@@ -40,7 +40,7 @@ python -m http.server 8777
 - 排版分兩層：`assets/render.js` 產生各分頁內容，`assets/style.css` 管樣式。不要在 HTML 內嵌 `<style>`。
 - 互動用 Alpine.js（`assets/alpine.min.js`，內嵌在 repo，不走 CDN）。狀態只有兩個，都在 `body` 的 `x-data="app"`：`page` 目前分頁、`cond` 頁首是否壓縮。改狀態只透過 `assets/app.js` 的 `go()` 與捲動監聽；畫面怎麼跟著變寫在 `index.html` 的 `:class`、`x-text`、`@click` 屬性上。
 - 動態一律用 CSS：class 切換配 transition 或 keyframes。不要用 Web Animations API，不要用 setInterval 輪詢，不要在 JS 裡直接寫 style。手機左右滑切頁靠 `scroll-snap`，交給瀏覽器。
-- 全站是單頁：`index.html` 一個外框，九個 `<section>` 排在 `.pages` 軌道裡，用網址片段切換。新增分頁要同時加 `<section>`、導覽列項目、總覽目次，以及 `assets/app.js` 的 `PAGES` 與 `NAMES`。
+- 全站是單頁：`index.html` 一個外框，十個 `<section>` 排在 `.pages` 軌道裡，用網址片段切換。新增分頁要同時加 `<section>`、導覽列項目、總覽目次，以及 `assets/app.js` 的 `PAGES` 與 `NAMES`。
 - 外部服務只有 Google Fonts 提供字型；其他地方不引入外部服務。
 - 純靜態，不引入 npm、建置工具或外部圖片服務。
 - 繁體中文，金額以新台幣為單位並加千分位。
@@ -50,17 +50,17 @@ python -m http.server 8777
 
 | 檔案 | 內容 |
 | --- | --- |
-| `index.html` | 單頁外框：八個分頁的 `<section>` 與導覽 |
+| `index.html` | 單頁外框：十個分頁的 `<section>` 與導覽 |
 | `assets/trip-data.js` | **全站唯一內容來源** |
 | `assets/render.js` | 樣板：依 `data-v2` 佔位產生內容，加上倒數與打包清單 |
 | `assets/app.js` | 互動層：分頁切換、頁首壓縮、區塊漸入（Alpine 元件） |
 | `assets/alpine.min.js` | Alpine.js 3，內嵌 |
 | `assets/style.css` | 全站樣式 |
 | `assets/cover-2027.png` | 首頁封面 |
-| `assets/route-2027.png` | 動線頁路線圖 |
+| `assets/route-2027.png` | 交通頁最上面的動線圖 |
 | `assets/favicon.svg` | 瀏覽器分頁圖示 |
 
-分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#route` 動線、`#stay` 住宿資訊、`#itinerary` 行程、`#prep` 行前、`#coupon` 優惠券。
+分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#stay` 住宿資訊、`#itinerary` 行程、`#food` 美食、`#prep` 行前、`#coupon` 優惠券、`#emergency` 緊急。舊的 `#route`（動線）已併進交通，`app.js` 的 `ALIAS` 會把它轉到 `#journey`。
 
 ## 四、舊網址轉址
 
@@ -71,13 +71,13 @@ v2.5 之前是多頁版與 `v2/` 單頁版並行。現在只維護單頁版，�
 | `people.html` | `index.html#people` |
 | `timeline.html` | `index.html#timeline` |
 | `journey.html` | `index.html#journey` |
-| `route.html` | `index.html#route` |
+| `route.html` | `index.html#journey` |
 | `stay.html` | `index.html#stay` |
 | `itinerary.html` | `index.html#itinerary` |
 | `prep.html` | `index.html#prep` |
 | `reminders.html` | `index.html#itinerary` |
 | `v2/index.html` | `index.html#overview` |
-| `v2/map.html` | `index.html#route` |
+| `v2/map.html` | `index.html#journey` |
 
 這些檔案只有 meta refresh、JS 轉址與一行備援連結，不放內容也不需要樣式。旅伴的書籤和舊訊息裡的連結都還會通，不要刪。
 

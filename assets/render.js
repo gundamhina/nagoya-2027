@@ -17,6 +17,11 @@
         '</span><span class="ct">' + g.count + '</span><span class="rg">' + g.range + "</span></div></div>";
     }) + "</div>";
   }
+  /* 地面交通、門票、美食、緊急電話共用：左欄類別與日期，右欄標題、說明與待確認事項（沒有就不顯示） */
+  function todoRow(x) {
+    return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
+      x.title + "</span>" + (x.text ? "<p>" + x.text + "</p>" : "") + (x.todo ? '<span class="todo">待確認 · ' + x.todo + "</span>" : "") + "</div></div>";
+  }
   /* 每天細項的小標題與清單，在 v2 版面改成段落內換行 */
   function flatten(html) {
     return html.replace(/<h3>(.*?)<\/h3><ul>(.*?)<\/ul>/g, function (m, h, ul) {
@@ -111,10 +116,7 @@
               '</div><span class="mt">' + (f.v2label || f.label) + (f.note ? " · " + f.note : "") + "</span></div>";
           }) + "</div></div>";
       }) + '</div><p class="fine">' + t.flightTimeNote + "</p>" +
-        sec("地面交通") + '<div class="ledger">' + each(t.ground, function (x) {
-          return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
-            x.title + "</span><p>" + x.text + '</p><span class="todo">待確認 · ' + x.todo + "</span></div></div>";
-        }) + "</div>" +
+        sec("地面交通") + '<div class="ledger">' + each(t.ground, todoRow) + "</div>" +
         sec(t.mapsTitle) + '<div class="maps">' + each(t.maps, function (m) {
           return '<figure class="map-fig"><a href="' + attr(m.src) + '" target="_blank" rel="noopener noreferrer">' +
             '<img src="' + attr(m.src) + '" alt="' + attr(m.file) + '路線圖" loading="lazy" decoding="async"></a>' +
@@ -177,9 +179,40 @@
       return periods + summary + sec("每天細項") + '<div class="ledger">' + days + "</div>" +
         '<div class="prose plain" style="margin-top:clamp(30px,3.6vw,44px);gap:12px"><p style="margin:0;font-size:13px;line-height:2.05;color:var(--body)">' + T.people.carsSummary +
         '</p><a href="#people" data-jump="v2-cars" style="font-size:12.5px;letter-spacing:.1em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:2px;width:max-content">查看車輛分組 →</a></div>' +
+        sec(it.ticketsTitle) + '<div class="ledger">' + each(it.tickets, todoRow) + "</div>" +
         sec(it.remindersTitle) + '<div class="ledger">' + each(it.reminders, function (r, i) {
           return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + r + "</span></div>";
         }) + "</div>";
+    },
+
+    "food-lead": function () { return T.food.lead; },
+    food: function () {
+      var f = T.food;
+      return sec(f.dishesTitle, "", "margin-top:0") + '<div class="ledger">' + each(f.dishes, todoRow) + "</div>" +
+        sec(f.bookingsTitle) + '<div class="ledger">' + each(f.bookings, todoRow) + '</div><p class="fine">' + f.bookingsNote + "</p>";
+    },
+
+    "emergency-lead": function () { return T.emergency.lead; },
+    emergency: function () {
+      var e = T.emergency;
+      /* 電話的標題做成 tel: 連結，手機點一下就撥 */
+      var calls = each(e.calls, function (c) {
+        return todoRow({ kind: c.kind, when: c.when, text: c.text,
+          title: '<a href="tel:' + attr(c.tel.replace(/[^0-9+#]/g, "").replace("#", "%23")) + '">' + c.title + "</a>" });
+      });
+      return sec(e.callsTitle, "", "margin-top:0") + '<div class="ledger">' + calls + "</div>" +
+        sec(e.addressTitle) + '<div class="ledger">' + each(e.addresses, function (a) {
+          var p = a.place.split(" · ");
+          return todoRow({ kind: p[0], when: p[1] || "", title: a.ja, text: "" });
+        }) + "</div>" +
+        sec(e.passportTitle) + '<div class="ledger">' + each(e.passport, function (x, i) {
+          return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
+        }) + "</div>" +
+        sec(e.phrasesTitle, e.phrasesNote) + '<div class="ledger">' + each(e.phrases, function (p, i) {
+          return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t"><b style="font-size:17px;font-weight:500">' + p[0] + '</b><br><span style="color:var(--muted)">' + p[1] + "</span></span></div>";
+        }) + '</div><p class="fine">' + each(e.links, function (l) {
+          return '<a href="' + attr(l.href) + '" target="_blank" rel="noopener noreferrer" style="margin-right:18px;border-bottom:1px solid var(--rule)">' + l.text + "</a>";
+        }) + "</p>";
     },
 
     coupon: function () {

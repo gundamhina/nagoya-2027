@@ -1,12 +1,12 @@
 # 名古屋・北陸 2027
 
-目前版本：**v2.30**（2026-09-22）
+目前版本：**v2.31**（2026-09-23）
 
 靜態旅遊資訊統整頁：[開啟網站](https://gundamhina.github.io/nagoya-2027/)
 
 ## 結構
 
-單頁站台。`index.html` 一個外框，八個分頁用網址片段切換：總覽、旅伴、時間軸、交通、動線、住宿資訊、行程、行前。
+單頁站台。`index.html` 一個外框，十個分頁用網址片段切換：總覽、旅伴、時間軸、交通、住宿資訊、行程、美食、行前、優惠券、緊急。
 
 - `assets/trip-data.js`：全站唯一內容來源。
 - `assets/render.js`：樣板。
@@ -14,7 +14,7 @@
 - `assets/alpine.min.js`：Alpine.js 3，內嵌。
 - `assets/style.css`：樣式。
 - `assets/cover-2027.png`：首頁封面。
-- `assets/route-2027.png`：動線頁路線圖。
+- `assets/route-2027.png`：交通頁最上面的動線圖。
 
 v2.5 之前的多頁網址與 `v2/` 網址都保留成轉址頁，對照表在 [AGENTS.md](AGENTS.md)。
 

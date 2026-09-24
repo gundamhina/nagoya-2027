@@ -26,13 +26,15 @@ function applyTheme(t) {
 applyTheme(readTheme());
 
 document.addEventListener("alpine:init", function () {
-  var PAGES = ["overview", "people", "timeline", "journey", "route", "stay", "itinerary", "prep", "coupon"];
-  var NAMES = { overview: "總覽", people: "旅伴", timeline: "時間軸", journey: "交通", route: "動線", stay: "住宿資訊", itinerary: "行程", prep: "行前", coupon: "優惠券" };
+  var PAGES = ["overview", "people", "timeline", "journey", "stay", "itinerary", "food", "prep", "coupon", "emergency"];
+  var NAMES = { overview: "總覽", people: "旅伴", timeline: "時間軸", journey: "交通", stay: "住宿資訊", itinerary: "行程", food: "美食", prep: "行前", coupon: "優惠券", emergency: "緊急" };
+  var ALIAS = { route: "journey" };            /* v2.31 動線併進交通，舊書籤的 #route 轉過去 */
   var COND_ON = 120, COND_OFF = 96;           /* 壓縮門檻，兩段避免臨界點抖動 */
   var PHONE = "(max-width:700px)";
 
   function fromHash() {
     var id = (location.hash || "#overview").slice(1);
+    id = ALIAS[id] || id;
     return PAGES.indexOf(id) >= 0 ? id : "overview";
   }
 
