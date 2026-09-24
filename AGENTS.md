@@ -56,7 +56,7 @@ python -m http.server 8777
 | `assets/app.js` | 互動層：分頁切換、頁首壓縮、區塊漸入（Alpine 元件） |
 | `assets/alpine.min.js` | Alpine.js 3，內嵌 |
 | `assets/style.css` | 全站樣式 |
-| `assets/cover-2027.png` | 首頁封面 |
+| `assets/cover-2027-wide.webp` | 首頁封面（圖上沒有字，標題、倒數由 HTML 疊上去） |
 | `assets/route-2027.png` | 交通頁最上面的動線圖 |
 | `assets/favicon.svg` | 瀏覽器分頁圖示 |
 
