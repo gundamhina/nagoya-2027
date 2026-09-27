@@ -189,7 +189,14 @@
     food: function () {
       var f = T.food;
       return sec(f.dishesTitle, "", "margin-top:0") + '<div class="ledger">' + each(f.dishes, todoRow) + "</div>" +
-        sec(f.bookingsTitle) + '<div class="ledger">' + each(f.bookings, todoRow) + '</div><p class="fine">' + f.bookingsNote + "</p>";
+        sec(f.bookingsTitle) + '<div class="ledger">' + each(f.bookings, todoRow) + '</div><p class="fine">' + f.bookingsNote + "</p>" +
+        sec(f.comboTitle) + '<p class="lead">' + f.comboLead + '</p>' +
+        '<div class="maps combo-wrap"><figure class="map-fig"><a href="' + attr(f.comboImg) + '" target="_blank" rel="noopener noreferrer">' +
+        '<img src="' + attr(f.comboImg) + '" alt="LAWSON 超商組合 TOP20" loading="lazy" decoding="async"></a>' +
+        '<figcaption><span class="mf-t">LAWSON 超商神級組合 TOP20</span><ul class="combo-list">' +
+        each(f.comboPicks, function (p) { return "<li>" + p + "</li>"; }) +
+        "</ul></figcaption></figure></div>" +
+        '<p class="fine">' + f.comboNote + "</p>";
     },
 
     "emergency-lead": function () { return T.emergency.lead; },

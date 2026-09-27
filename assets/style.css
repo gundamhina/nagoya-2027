@@ -592,3 +592,8 @@ body.is-cond .tabs a .n{display:none;}
   .tl caption{font-size:10px;letter-spacing:.08em;}
 }
 
+
+/* 超商組合 */
+@media(min-width:900px){.combo-wrap{grid-template-columns:1fr;}}
+.combo-list{margin:8px 0 0;padding-left:1.1em;}
+.combo-list li{font-size:12px;line-height:1.85;color:var(--body);margin-bottom:3px;}
