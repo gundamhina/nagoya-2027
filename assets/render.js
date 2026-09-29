@@ -129,7 +129,8 @@
       var ext = ' target="_blank" rel="noopener noreferrer"';
       return '<div class="hub"><div class="l"><span class="t">' + s.notion.title + '</span><span class="n">' + s.notion.text + '</span></div><a class="cta" href="' +
         attr(s.notion.href) + '"' + ext + ">" + s.notion.cta + "</a></div>" +
-        sec(k.place, dash(k.period)) + '<div class="prose">' + each(k.blocks, function (b) { return '<div class="blk"><h3>' + b.title + "</h3>" + b.html + "</div>"; }) + "</div>" +
+        sec(k.place, dash(k.period)) + '<div class="prose">' +
+        (k.house ? '<a class="linkline" href="' + attr(k.house.href) + '"' + ext + ">" + k.house.text + "</a>" : "") + each(k.blocks, function (b) { return '<div class="blk"><h3>' + b.title + "</h3>" + b.html + "</div>"; }) + "</div>" +
         '<div class="ledger thin" style="margin-top:clamp(28px,3.4vw,40px)">' +
         '<div class="row row-stay row-head"><span class="cell-w">家庭／旅伴</span><span class="cell-w">人數</span><span class="cell-w">入住日期</span></div>' +
         each(T.people.families, function (f) {
