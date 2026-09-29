@@ -597,3 +597,80 @@ body.is-cond .tabs a .n{display:none;}
 @media(min-width:900px){.combo-wrap{grid-template-columns:1fr;}}
 .combo-list{margin:8px 0 0;padding-left:1.1em;}
 .combo-list li{font-size:12px;line-height:1.85;color:var(--body);margin-bottom:3px;}
+
+/* 城市地圖（交通頁）：手繪風。字用 Klee One（鉛筆手寫），線條描兩次，水是淡藍水彩 */
+:root{--water:#6f97a3;--wash:rgba(127,166,178,.28);}
+:root[data-theme="dark"]{--water:#7ea3ad;--wash:rgba(110,150,160,.22);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--water:#7ea3ad;--wash:rgba(110,150,160,.22);}}
+/* 金澤接近正方形、名古屋是直長條，欄寬 1.56:1 讓兩張一樣高 */
+.citymaps{display:grid;grid-template-columns:minmax(0,1.56fr) minmax(0,1fr);gap:clamp(20px,3vw,36px);align-items:start;}
+.citymap{margin:0;}
+.citymap svg{display:block;width:100%;height:auto;background:var(--paper);}
+.citymap figcaption{margin-top:10px;}
+.citymap path{stroke-linecap:round;stroke-linejoin:round;}
+.citymap .cm-2{opacity:.55;}
+.citymap .cm-area-park{fill:rgba(127,162,122,.26);}
+.citymap .cm-area-hill{fill:rgba(140,160,110,.22);}
+.citymap .cm-area-sea{fill:rgba(127,166,178,.22);}
+.citymap .cm-at{font-family:"Klee One",var(--mincho);font-weight:600;font-size:17px;fill:#5f7f58;letter-spacing:.2em;}
+.citymap .cm-f-tree{fill:#9dbb8c;}
+.citymap .cm-f-hill{fill:rgba(157,187,140,.5);}
+.citymap .cm-road{fill:none;stroke:#c9b48a;stroke-width:3.2;}
+.citymap .cm-rail{fill:none;stroke:var(--ink);stroke-width:1.4;opacity:.75;}
+.citymap .cm-tie{stroke:var(--ink);stroke-width:1.1;opacity:.6;}
+.citymap .cm-h{font-family:"Klee One",var(--mincho);font-weight:600;font-size:34px;fill:var(--ink);letter-spacing:.08em;}
+.citymap .cm-hd{font-family:"Klee One",var(--mincho);font-weight:600;font-size:16px;fill:var(--mark);letter-spacing:.12em;}
+.citymap .cm-hu{fill:none;stroke:var(--mark);stroke-width:2;}
+.citymap .cm-tape{fill:rgba(212,120,92,.32);}
+.citymap .cm-tape-2{fill:rgba(127,162,122,.34);}
+.citymap .cm-frame{fill:none;stroke:var(--ink);stroke-width:1.8;}
+.citymap .cm-wash{fill:none;stroke:var(--wash);stroke-width:22;}
+.citymap .cm-river{fill:none;stroke:var(--water);stroke-width:1.8;}
+.citymap .cm-coast{fill:none;stroke:var(--water);stroke-width:1.5;}
+.citymap .cm-wave{fill:none;stroke:var(--water);stroke-width:1.8;}
+.citymap .cm-link{fill:none;stroke:var(--mark);stroke-width:2.2;stroke-dasharray:2 7;}
+.citymap .cm-lt,.citymap .cm-n,.citymap .cm-s,.citymap .cm-rv,.citymap .cm-sea,.citymap .cm-north text{font-family:"Klee One",var(--mincho);font-weight:600;}
+.citymap .cm-lt{font-size:17px;fill:var(--mark);}
+.citymap .cm-rv{font-size:19px;fill:var(--water);letter-spacing:.3em;}
+.citymap .cm-sea{font-size:26px;fill:var(--water);letter-spacing:.5em;}
+.citymap .cm-n{font-size:25px;fill:var(--ink);}
+.citymap .cm-n-stay{fill:var(--mark);}
+.citymap .cm-s{font-size:16px;fill:var(--muted);}
+.citymap .cm-blob{fill:rgba(184,168,130,.3);}
+.citymap .cm-blob-stay{fill:rgba(201,106,79,.22);}
+.citymap .cm-blob-green{fill:rgba(106,142,98,.26);}
+.citymap .ic{fill:none;stroke:var(--ink);stroke-width:1.7;}
+.citymap .cm-ink{fill:var(--ink);}
+.citymap .cm-f-paper{fill:var(--paper);}
+.citymap .cm-f-mark{fill:#d4785c;}
+.citymap .cm-f-gold{fill:#e2c26e;}
+.citymap .cm-f-green{fill:#7fa27a;}
+.citymap .cm-f-water{fill:#a9c8d0;}
+.citymap .cm-f-lan{fill:#f0c9a0;}
+.citymap .cm-f-stone{fill:#c9c0ae;}
+.citymap .cm-w{stroke:var(--water);}
+.citymap .cm-bar{fill:none;stroke:var(--ink);stroke-width:1.8;}
+.citymap .cm-north text{font-size:17px;fill:var(--ink);}
+.citymap a:hover .cm-n{fill:var(--mark);}
+@media(max-width:700px){.citymaps{grid-template-columns:1fr;}}
+
+/* 行程頁的走路地圖：桌機接在細項欄下面，手機撐滿整列 */
+.day-map{grid-column:2;margin-top:clamp(14px,2vw,22px);max-width:720px;}
+@media(max-width:700px){.day-map{grid-column:1 / -1;}}
+.citymap .cm-street{fill:none;stroke:#d8c8a6;stroke-width:1.6;}
+.cm-walk .cm-road{stroke-width:4.5;}
+.citymap .cm-band{fill:none;stroke:rgba(127,162,122,.28);stroke-linecap:round;}
+.citymap .cm-route{fill:none;stroke:var(--mark);stroke-width:3.2;stroke-dasharray:9 7;opacity:.85;}
+.citymap .cm-no{fill:var(--mark);}
+.citymap .cm-no-t{font-family:"Klee One",var(--mincho);font-weight:600;font-size:15px;fill:#fff;}
+.cm-steps{margin:10px 0 0;padding:0;list-style:none;counter-reset:st;display:flex;flex-direction:column;gap:6px;}
+.cm-steps li{counter-increment:st;display:flex;gap:10px;align-items:baseline;font-size:12.5px;line-height:1.8;color:var(--body);}
+.cm-steps li::before{content:counter(st);flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--mark);color:#fff;font-size:11px;font-weight:700;line-height:1;}
+.cm-steps .tm{flex:none;font-family:var(--mincho);color:var(--ink);min-width:88px;}
+
+.day-map{scroll-margin-top:110px;}
+.mapchip{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--mark);border:1px solid var(--mark);padding:2px 7px;white-space:nowrap;}
+.mapchip:hover{background:var(--mark);color:var(--on-dark);}
+.walklinks{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 28px;margin-top:clamp(18px,2.4vw,26px);}
+.walklinks .k{flex:1 0 100%;font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--muted);}
+.walklinks .linkline{font-size:17px;}

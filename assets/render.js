@@ -22,6 +22,173 @@
     return '<div class="ground"><div class="side"><span class="no">' + x.kind + '</span><span class="wh">' + x.when + '</span></div><div class="body"><span class="ti">' +
       x.title + "</span>" + (x.text ? "<p>" + x.text + "</p>" : "") + (x.todo ? '<span class="todo">待確認 · ' + x.todo + "</span>" : "") + "</div></div>";
   }
+  /* 城市地圖：用經緯度算位置畫成 SVG，再做成手繪樣子。
+   * 線條：每條線描兩次，每次在路徑上加一點隨機偏移，像鉛筆來回描。亂數有固定種子，每次打開長得一樣。
+   * 水：底下一條寬的淡藍水彩帶，上面兩條細線。地點：水彩圓斑＋小插圖＋手寫字（Klee One）。 */
+  function cityMap(m) {
+    var s = m.bbox[0], w = m.bbox[1], n = m.bbox[2], e = m.bbox[3];
+    var cos = Math.cos((s + n) / 2 * Math.PI / 180), W = 600, K = W / ((e - w) * cos), H = Math.round((n - s) * K);
+    var seed = m.id.length * 9301 + 49297;
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function xy(ll) { return [(ll[1] - w) * cos * K, (n - ll[0]) * K]; }
+    function f(v) { return v.toFixed(1); }
+    /* Catmull-Rom 轉成三次貝茲，讓折線變成手畫的弧線 */
+    function curve(p) {
+      var d = "M" + f(p[0][0]) + " " + f(p[0][1]);
+      for (var i = 0; i < p.length - 1; i++) {
+        var a = p[i - 1] || p[i], b = p[i], c = p[i + 1], q = p[i + 2] || c;
+        d += "C" + f(b[0] + (c[0] - a[0]) / 6) + " " + f(b[1] + (c[1] - a[1]) / 6) + " " + f(c[0] - (q[0] - b[0]) / 6) + " " + f(c[1] - (q[1] - b[1]) / 6) + " " + f(c[0]) + " " + f(c[1]);
+      }
+      return d;
+    }
+    /* 把折線每 16px 切一點，每點偏移 ±amp */
+    function wobble(p, amp) {
+      var out = [];
+      for (var i = 0; i < p.length - 1; i++) {
+        var a = p[i], b = p[i + 1], len = Math.hypot(b[0] - a[0], b[1] - a[1]), k = Math.max(1, Math.round(len / 16));
+        for (var j = 0; j < k; j++) {
+          var t = j / k;
+          out.push([a[0] + (b[0] - a[0]) * t + (rnd() - 0.5) * amp, a[1] + (b[1] - a[1]) * t + (rnd() - 0.5) * amp]);
+        }
+      }
+      out.push([p[p.length - 1][0] + (rnd() - 0.5) * amp, p[p.length - 1][1] + (rnd() - 0.5) * amp]);
+      return out;
+    }
+    function sketch(p, cls, amp) { return '<path class="' + cls + '" d="' + curve(wobble(p, amp)) + '"/><path class="' + cls + ' cm-2" d="' + curve(wobble(p, amp)) + '"/>'; }
+    function blob(x, y, r, cls) {
+      var p = [], a0 = rnd() * 6.28, k = 12;
+      for (var i = 0; i <= k; i++) { var a = a0 + i / k * 6.28, rr = r * (0.82 + rnd() * 0.3); p.push([x + Math.cos(a) * rr, y + Math.sin(a) * rr]); }
+      return '<path class="' + cls + '" d="' + curve(p) + 'Z"/>';
+    }
+    function byName(nm) { return m.points.filter(function (p) { return p.n === nm; })[0]; }
+
+    /* 邊框：四條邊各自描兩次，角落故意多畫出去一點 */
+    var o = 10, frame = [[[o - 6, o], [W - o + 5, o]], [[W - o, o - 5], [W - o, H - o + 6]], [[W - o + 6, H - o], [o - 5, H - o]], [[o, H - o + 5], [o, o - 6]]]
+      .map(function (l) { return sketch(l, "cm-frame", 3); }).join("");
+    /* 色塊：公園綠、山丘綠加小山、海藍，都是水彩暈開的形狀；公園和山丘上撒小樹 */
+    var areas = "", trees = "";
+    function tree(x, y, big) {
+      var r = big ? 7 : 5;
+      return '<path class="ic cm-f-tree" d="M' + f(x) + " " + f(y - r * 2.2) + "c" + r + " 0 " + r * 1.3 + " " + r * 1.6 + " " + r * 0.2 + " " + r * 2 + "c-" + r * 1.6 + " 0.4 -" + r * 1.8 + " -" + r * 1.6 + " -" + r * 0.2 + " -" + r * 2 + 'Z"/><path class="ic" d="M' + f(x) + " " + f(y - r * 0.2) + "v" + r + '"/>';
+    }
+    (m.areas || []).filter(function (a) { return a.k !== "band"; }).forEach(function (a) {
+      var c = xy(a.ll), r = a.r * K / 111320;
+      areas += blob(c[0], c[1], r, "cm-area-" + a.k) + blob(c[0] + r * 0.12, c[1] - r * 0.1, r * 0.75, "cm-area-" + a.k);
+      if (a.k === "park") for (var i = 0; i < 7; i++) { var ang = rnd() * 6.28, d = rnd() * r * 0.7; trees += tree(c[0] + Math.cos(ang) * d, c[1] + Math.sin(ang) * d, rnd() > 0.5); }
+      if (a.k === "hill") {
+        for (var j = 0; j < 3; j++) {
+          var hx = c[0] - r * 0.5 + j * r * 0.45, hy = c[1] + (j % 2 ? -r * 0.15 : r * 0.1), hw = r * 0.42;
+          trees += '<path class="ic cm-f-hill" d="M' + f(hx - hw) + " " + f(hy) + "Q" + f(hx) + " " + f(hy - hw * 1.3) + " " + f(hx + hw) + " " + f(hy) + '"/>';
+        }
+        for (var k2 = 0; k2 < 4; k2++) trees += tree(c[0] - r * 0.6 + rnd() * r * 1.2, c[1] + r * 0.2 + rnd() * r * 0.3, false);
+      }
+      if (a.t) areas += '<text class="cm-at" x="' + f(c[0]) + '" y="' + f(c[1] + r * 0.55) + '" text-anchor="middle">' + a.t + "</text>";
+    });
+    (m.areas || []).filter(function (a) { return a.k === "band"; }).forEach(function (a) {
+      var p1 = xy(a.a), p2 = xy(a.b), bw = a.w * K / 111320;
+      areas += '<path class="cm-band" stroke-width="' + f(bw) + '" d="' + curve(wobble([p1, p2], 4)) + '"/>';
+      for (var i = 0; i < 9; i++) { var t = 0.06 + i * 0.11; trees += tree(p1[0] + (p2[0] - p1[0]) * t + (rnd() - 0.5) * bw * 0.5, p1[1] + (p2[1] - p1[1]) * t, rnd() > 0.5); }
+      if (a.t) areas += '<text class="cm-at" transform="rotate(90 ' + f(p1[0] + bw * 0.9) + " " + f((p1[1] + p2[1]) / 2) + ')" x="' + f(p1[0] + bw * 0.9) + '" y="' + f((p1[1] + p2[1]) / 2) + '" text-anchor="middle">' + a.t + "</text>";
+    });
+    /* 鐵路：一條線加枕木短橫；大路：淡色雙線 */
+    var roads = "", rails = "";
+    (m.lines || []).forEach(function (l) {
+      var p = l.p.map(xy);
+      if (l.k === "road") { roads += sketch(p, "cm-road", 1.6); return; }
+      if (l.k === "street") { roads += '<path class="cm-street" d="' + curve(wobble(p, 1.2)) + '"/>'; return; }
+      rails += sketch(p, "cm-rail", 1.2);
+      for (var i = 0; i < p.length - 1; i++) {
+        var a = p[i], b = p[i + 1], len = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / len, uy = (b[1] - a[1]) / len;
+        for (var t = 6; t < len; t += 11) {
+          var x = a[0] + ux * t, y = a[1] + uy * t;
+          rails += '<path class="cm-tie" d="M' + f(x - uy * 4) + " " + f(y + ux * 4) + "L" + f(x + uy * 4) + " " + f(y - ux * 4) + '"/>';
+        }
+      }
+    });
+    /* 左上角手寫標題、兩個角落貼紙膠帶 */
+    var head = m.heading ? '<g transform="rotate(-2 40 58)"><text class="cm-h" x="40" y="62">' + m.heading + '</text><text class="cm-hd" x="42" y="88">' + (m.dates || "") + "</text>" +
+      sketch([[38, 70], [40 + m.heading.length * 30, 67]], "cm-hu", 2) + "</g>" : "";
+    var tape = '<rect class="cm-tape" x="-18" y="-9" width="64" height="20" transform="translate(18 14) rotate(-32)"/>' +
+      '<rect class="cm-tape cm-tape-2" x="-46" y="-9" width="64" height="20" transform="translate(' + (W - 18) + ' 14) rotate(30)"/>';
+    var wash = "", lines = "";
+    m.water.forEach(function (l) {
+      var p = l.p.map(xy);
+      if (l.k === "river") wash += '<path class="cm-wash" d="' + curve(p) + '"/>';
+      lines += sketch(p, l.k === "river" ? "cm-river" : "cm-coast", 2.2);
+    });
+    var waves = each((m.sea && m.sea.waves) || [], function (ll) {
+      var c = xy(ll), x = c[0], y = c[1];
+      return '<path class="cm-wave" d="M' + f(x - 16) + " " + f(y) + "q8 -7 16 0t16 0" + '"/>';
+    });
+    var seen = {}, rivers = "";
+    m.water.slice().sort(function (a, b) { return b.p.length - a.p.length; }).forEach(function (l) {
+      if (!l.n || seen[l.n] || l.k !== "river") return;
+      seen[l.n] = 1;
+      var c = xy(l.p[Math.floor(l.p.length / 2)]);
+      rivers += '<text class="cm-rv" x="' + f(c[0] + 10) + '" y="' + f(c[1] - 8) + '">' + l.n + "</text>";
+    });
+    var links = each(m.links || [], function (k) {
+      var a = xy(byName(k.a).ll), b = xy(byName(k.b).ll), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy) || 1, bend = 18;
+      var cx = mx - dy / len * bend, cy = my + dx / len * bend;
+      return '<path class="cm-link" d="M' + f(a[0]) + " " + f(a[1]) + "Q" + f(cx) + " " + f(cy) + " " + f(b[0]) + " " + f(b[1]) + '"/>' +
+        '<text class="cm-lt" x="' + f(b[0]) + '" y="' + f(b[1] + 46) + '" text-anchor="middle">' + k.t + "</text>";
+    });
+    /* 路線：依 route 順序把地點連成紅色虛線；steps 有對到地點的，在地點左上角標號碼 */
+    var route = "", badges = {};
+    if (m.route && m.route.length > 1) route = '<path class="cm-route" d="' + curve(wobble(m.route.map(function (nm) { return xy(byName(nm).ll); }), 3)) + '"/>';
+    var no = 0;
+    (m.steps || []).forEach(function (st) { no++; if (st.n) badges[st.n] = (badges[st.n] ? badges[st.n] + "・" : "") + no; });
+    var marks = each(m.points, function (p) {
+      var c = xy(p.ll), x = c[0], y = c[1];
+      var tone = p.kind === "stay" ? "cm-blob-stay" : p.icon === "garden" || p.icon === "castle" ? "cm-blob-green" : "cm-blob";
+      var pos = { r: [30, 8, "start"], l: [-30, 8, "end"], t: [0, -32, "middle"], b: [0, 44, "middle"] }[p.pos || "r"];
+      var rot = f((rnd() - 0.5) * 5);
+      var tx = x + pos[0], ty = y + pos[1];
+      var label = '<g transform="rotate(' + rot + " " + f(tx) + " " + f(ty) + ')"><text class="cm-n' + (p.kind === "stay" ? " cm-n-stay" : "") + '" x="' + f(tx) + '" y="' + f(ty) + '" text-anchor="' + pos[2] + '">' + p.n + "</text>" +
+        (p.sub ? '<text class="cm-s" x="' + f(tx) + '" y="' + f(ty + 20) + '" text-anchor="' + pos[2] + '">' + p.sub + "</text>" : "") + "</g>";
+      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.q || p.n);
+      return '<a href="' + attr(href) + '" target="_blank" rel="noopener noreferrer"><title>' + p.n + "：開 Google 地圖</title>" +
+        blob(x, y, 28, tone) + '<g class="cm-ic" transform="translate(' + f(x) + " " + f(y) + ') scale(1.25)">' + (ICON[p.icon] || ICON.dot) + "</g>" + label +
+        (badges[p.n] ? '<circle class="cm-no" cx="' + f(x - 22) + '" cy="' + f(y - 22) + '" r="12"/><text class="cm-no-t" x="' + f(x - 22) + '" y="' + f(y - 17) + '" text-anchor="middle">' + badges[p.n] + "</text>" : "") + "</a>";
+    });
+    var bar = m.scale * K / 111320, bx = 30, by = H - 34;
+    var scale = sketch([[bx, by], [bx + bar, by]], "cm-bar", 1.5) + '<path class="cm-bar" d="M' + bx + " " + (by - 7) + "v7M" + f(bx + bar) + " " + (by - 7) + 'v7"/>' +
+      '<text class="cm-s" x="' + bx + '" y="' + (by - 12) + '">' + (m.scale >= 1000 ? m.scale / 1000 + " km" : m.scale + " m") + "</text>";
+    var north = '<g class="cm-north" transform="translate(' + (W - 44) + "," + (H - 60) + ')"><path class="cm-ink" d="M0 -20 L6 4 L0 0 L-6 4 Z"/><path class="ic" d="M0 0 L6 4 L0 22 L-6 4"/><text y="-26" text-anchor="middle">N</text></g>';
+    var sea = m.sea ? (function (c) { return '<text class="cm-sea" x="' + f(c[0]) + '" y="' + f(c[1]) + '" text-anchor="middle">' + m.sea.t + "</text>"; })(xy(m.sea.ll)) : "";
+    var fid = "cm-wob-" + m.id;
+    var steps = m.steps ? '<ol class="cm-steps">' + each(m.steps, function (st) {
+      return "<li>" + (st.t ? '<span class="tm">' + st.t + "</span>" : "") + "<span>" + st.text + "</span></li>";
+    }) + "</ol>" + (m.stepsNote ? '<p class="fine" style="margin:6px 0 0">' + m.stepsNote + "</p>" : "") : "";
+    return '<figure class="citymap' + (m.kind ? " cm-" + m.kind : "") + '"><svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + attr(m.title + "手繪示意地圖") + '">' +
+      '<defs><filter id="' + fid + '"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>' +
+      '<filter id="' + fid + '-g"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.09 0"/></filter></defs>' +
+      '<rect width="' + W + '" height="' + H + '" filter="url(#' + fid + '-g)"/>' +
+      '<clipPath id="' + fid + '-c"><rect x="' + o + '" y="' + o + '" width="' + (W - o * 2) + '" height="' + (H - o * 2) + '"/></clipPath>' +
+      '<g clip-path="url(#' + fid + '-c)"><g filter="url(#' + fid + ')">' + areas + wash + "</g>" + roads + lines + waves + rails + trees + "</g>" +
+      frame + tape + head + route + links + rivers + sea + scale + north +
+      '<g class="cm-marks">' + marks + "</g></svg>" +
+      '<figcaption><span class="mf-t">' + m.title + "</span>" + steps + "</figcaption></figure>";
+  }
+  /* 地點小插圖：以 (0,0) 為中心、約 32px 大。ic＝墨線，其餘 class 是填色 */
+  var ICON = {
+    dot: '<circle class="cm-ink" r="5"/>',
+    stay: '<path class="ic cm-f-mark" d="M-15 -1 L0 -15 L15 -1 Z"/><path class="ic cm-f-paper" d="M-11 -1 V13 H11 V-1"/><path class="ic" d="M-3 13 V5 H3 V13"/>',
+    station: '<rect class="ic cm-f-paper" x="-11" y="-14" width="22" height="23" rx="6"/><rect class="ic" x="-7" y="-10" width="14" height="7" rx="2"/><circle class="cm-ink" cx="-5.5" cy="3" r="1.8"/><circle class="cm-ink" cx="5.5" cy="3" r="1.8"/><path class="ic" d="M-7 9 L-11 15 M7 9 L11 15"/>',
+    market: '<path class="ic cm-f-mark" d="M-14 -9 H14 L12 -3 H-12 Z"/><path class="ic" d="M-7 -9 L-6 -3 M0 -9 V-3 M7 -9 L6 -3"/><path class="ic cm-f-paper" d="M-11 -3 V12 H11 V-3"/><path class="ic cm-f-water" d="M-7 5 Q-1 0 5 5 Q-1 10 -7 5 Z M5 5 L9 2 V8 Z"/>',
+    lantern: '<path class="ic" d="M0 -18 V-13"/><path class="ic" d="M-4 -13 H4 M-4 13 H4"/><ellipse class="ic cm-f-lan" rx="8" ry="11"/><path class="ic" d="M-8 -3 H8 M-7 4 H7"/>',
+    garden: '<path class="ic cm-f-green" d="M-14 -6 Q0 -13 14 -6 L11 -4 H-11 Z"/><path class="ic cm-f-paper" d="M-5 -4 V2 H5 V-4"/><path class="ic" d="M-3 2 L-9 14 M3 2 L5 14"/><path class="ic cm-w" d="M-15 15 Q-5 12 15 15"/>',
+    shop: '<path class="ic cm-f-gold" d="M-10 -5 H10 L12 13 H-12 Z"/><path class="ic" d="M-5 -5 Q-5 -13 0 -13 Q5 -13 5 -5"/>',
+    castle: '<path class="ic cm-f-green" d="M-8 -12 Q0 -18 8 -12 L6 -10 H-6 Z"/><path class="ic cm-f-paper" d="M-5 -10 V-5 H5 V-10"/><path class="ic cm-f-green" d="M-12 -5 Q0 -11 12 -5 L10 -3 H-10 Z"/><path class="ic cm-f-paper" d="M-8 -3 V3 H8 V-3"/><path class="ic cm-f-green" d="M-15 3 Q0 -2 15 3 L13 5 H-13 Z"/><path class="ic cm-f-stone" d="M-12 5 L-15 15 H15 L12 5 Z"/><circle class="cm-f-gold" cx="-7" cy="-13" r="1.8"/><circle class="cm-f-gold" cx="7" cy="-13" r="1.8"/>',
+    fish: '<path class="ic cm-f-water" d="M-13 0 Q-3 -10 8 0 Q-3 10 -13 0 Z M8 0 L15 -6 V6 Z"/><circle class="cm-ink" cx="-7" cy="-1.5" r="1.4"/><circle class="ic" cx="10" cy="-12" r="2"/><circle class="ic" cx="4" cy="-16" r="1.4"/>',
+    lego: '<rect class="ic cm-f-mark" x="-13" y="-1" width="26" height="12" rx="1.5"/><rect class="ic cm-f-mark" x="-9" y="-4" width="5" height="3"/><rect class="ic cm-f-mark" x="4" y="-4" width="5" height="3"/><rect class="ic cm-f-gold" x="-9" y="-13" width="15" height="9" rx="1.5"/><rect class="ic cm-f-gold" x="-6" y="-16" width="4" height="3"/><rect class="ic cm-f-gold" x="1" y="-16" width="4" height="3"/>',
+    street: '<path class="ic cm-f-paper" d="M-14 12 V-2 L-7 -8 L0 -2 L7 -8 L14 -2 V12 Z"/><path class="ic" d="M-10 12 V4 H-4 V12 M3 2 H10 V7 H3 Z"/><path class="ic cm-f-lan" d="M-1 -1 h3 v5 h-3 Z"/>',
+    bridge: '<path class="ic cm-f-mark" d="M-15 3 Q0 -11 15 3 L15 7 Q0 -6 -15 7 Z"/><path class="ic" d="M-11 1 V-4 M11 1 V-4 M-11 -4 Q0 -14 11 -4"/><path class="ic cm-w" d="M-16 13 Q-6 9 4 13 T16 13"/>',
+    tower: '<path class="ic" d="M-6 15 L-2 -12 H2 L6 15 M-4.6 5 H4.6 M-3.4 -3 H3.4 M-5.5 11 L3 5 M5.5 11 L-3 5"/><path class="ic cm-f-mark" d="M-3 -12 L0 -18 L3 -12 Z"/>',
+    oasis: '<ellipse class="ic cm-f-water" cy="-5" rx="14" ry="4.5"/><path class="ic" d="M-7 -1 L-9 13 M7 -1 L9 13 M-12 13 H12"/>',
+    train: '<path class="ic cm-f-paper" d="M-16 7 H9 Q18 7 17 1 Q13 -7 -16 -7 Z"/><path class="ic" d="M-12 -3 H8"/><path class="ic cm-f-water" d="M9 -5 Q14 -3 15 0 H9 Z"/><path class="ic" d="M-18 12 H18"/><circle class="cm-ink" cx="-10" cy="9" r="1.8"/><circle class="cm-ink" cx="4" cy="9" r="1.8"/>'
+  };
   /* 每天細項的小標題與清單，在 v2 版面改成段落內換行 */
   function flatten(html) {
     return html.replace(/<h3>(.*?)<\/h3><ul>(.*?)<\/ul>/g, function (m, h, ul) {
@@ -162,7 +329,8 @@
         return '<div class="day" id="v2-day-' + d.date.replace("/", "-") + '"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
           '<div class="body"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + '</span><span class="crew">' +
           each(d.crew, function (c) { return '<span class="g-' + c + '">' + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
-          '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div></div>";
+          '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div>" +
+          (d.map ? '<div class="day-map" id="v2-map-' + d.map + '">' + cityMap(it.walkMaps.filter(function (w) { return w.id === d.map; })[0]) + "</div>" : "") + "</div>";
       });
       function crew(ids) { return '<span class="crew">' + each(ids, function (c) { return '<span class="g-' + c + '">' + group(c).tag + "</span>"; }) + "</span>"; }
       var periods = '<div class="groups" style="margin-top:0">' + each(T.groups, function (g) {
@@ -172,7 +340,8 @@
       var summary = sec("行程總表") + '<p class="fine tl-intro">' + it.tableHint + "</p>" +
         '<div class="ledger">' + each(it.days, function (d) {
           return '<div class="row row-sum"><a class="sum-d" href="#itinerary" data-day="' + d.date + '"><span class="d">' + d.date + '</span><span class="w">' + d.wd + " ↓</span></a>" +
-            '<div class="sum-p"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + "</span>" + crew(d.crew) + "</div>" +
+            '<div class="sum-p"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + "</span>" + crew(d.crew) +
+            (d.map ? '<a class="mapchip" href="#itinerary" data-jump="v2-map-' + d.map + '">地圖 ↓</a>' : "") + "</div>" +
             (d.note ? '<span class="cell-s warnc">' + d.note + "</span>" : "") + "</div>" +
             '<div class="sum-s">' + (d.stay ? '<span class="cell">' + d.stay + "</span>" + crew(d.crew) +
               (d.pending ? '<span class="cell-s warnc">' + group(d.pending).tag + " 住宿未定</span>" : "") : '<span class="cell-s">—</span>') + "</div></div>";
@@ -186,6 +355,16 @@
         }) + "</div>";
     },
 
+    citymaps: function () {
+      var t = T.transport;
+      /* 走路逛街的街道地圖放在行程頁當天，這裡列入口 */
+      var walks = each(T.itinerary.walkMaps, function (w) {
+        var day = T.itinerary.days.filter(function (d) { return d.map === w.id; })[0];
+        return '<a class="linkline" href="#itinerary" data-jump="v2-map-' + w.id + '">' + (day ? day.date + " " : "") + w.heading + " →</a>";
+      });
+      return sec(t.cityMapsTitle, "", "margin-top:clamp(30px,4vw,48px)") + '<div class="citymaps">' + each(t.cityMaps, cityMap) + '</div><p class="fine">' + t.cityMapsNote + "</p>" +
+        (walks ? '<div class="walklinks"><span class="k">走路逛街的街道地圖在行程頁當天</span>' + walks + "</div>" : "");
+    },
     "food-lead": function () { return T.food.lead; },
     food: function () {
       var f = T.food;
