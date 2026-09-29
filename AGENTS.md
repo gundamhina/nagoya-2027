@@ -6,10 +6,12 @@
 
 任何改動先在本地做完、開起來看過，再回報。**沒有拿到明確的「發」「上版」「push」，不 commit、不 tag、不 push。**「本地測完就發」這種預告不算授權，要等到那一句真的出現。
 
+**推之前一定先拉。**這個 repo 不只一個地方在推。開始改之前先 `git pull --rebase`；拿到「發」之後、決定版號和打 tag 之前再拉一次。遠端已經用掉的版號不能重用，接在遠端最新號之後升次版號。遇到衝突只合併，不改別人的內容，不 force push。
+
 本地伺服器在 repo 根目錄開：
 
 ```
-python -m http.server 8777
+python tools/serve.py
 ```
 
 開 `http://localhost:8777/index.html`。伺服器用 `python tools/serve.py`（同 `http.server`，多送 `Cache-Control: no-store`），改檔案後重整就是新的。用 `python -m http.server` 也行，但手機瀏覽器會把 `assets/` 下同一個 `?vX.Y` 的檔案快取起來，改了 app.js、style.css 重整仍是舊的，看起來像沒修好；網址加 `?r=1` 只繞過 index.html，繞不過 assets。
