@@ -243,9 +243,28 @@
     });
   }
 
+  /* 現在的日期。網址加 ?today=2027-03-15 可以模擬旅途中的某一天（測試用） */
+  var NOW = (function () {
+    var q = /[?&]today=(\d{4})-(\d{2})-(\d{2})/.exec(location.search);
+    return q ? new Date(+q[1], q[2] - 1, +q[3], 12) : new Date();
+  })();
+  /* 旅途中的今天：對到行程的哪一天，寫進 T.today 給 app.js 自動跳過去 */
+  (function () {
+    var y = +T.start.slice(0, 4);
+    if (NOW.getFullYear() !== y) return;
+    var key = (NOW.getMonth() + 1) + "/" + NOW.getDate();
+    T.itinerary.days.forEach(function (d, i) { if (d.date === key) T.today = { date: d.date, wd: d.wd, title: d.title, n: i + 1, id: "v2-day-" + d.date.replace("/", "-") }; });
+  })();
+
   var views = {
     "overview-lead": function () { return T.overview.lead; },
     "hero-line": function () { return T.overview.heroLine; },
+    today: function () {
+      var t = T.today;
+      if (!t) return "";
+      return '<a class="today" href="#itinerary" data-jump="' + t.id + '"><span class="k">今天 · DAY ' + t.n + '</span><span class="t">' + t.date + "（" + t.wd + "）" + t.title +
+        '</span><span class="ar">打開今天的行程 →</span></a>';
+    },
     "hero-jp": function () { return T.overview.hero.jp; },
     "hero-title": function () { return T.overview.hero.title; },
     "hero-dates": function () { return T.overview.hero.dates; },
@@ -387,7 +406,7 @@
         if (d.choice) chips.push("二擇一");
         if (d.extra) chips.push(d.extra);
         if (d.pending) chips.push(group(d.pending).tag + " 住宿未定");
-        return '<div class="day" id="v2-day-' + d.date.replace("/", "-") + '"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
+        return '<div class="day' + (T.today && T.today.date === d.date ? " is-today" : "") + '" id="v2-day-' + d.date.replace("/", "-") + '"><div class="side"><span class="d">' + d.date + '</span><span class="w">' + d.wd + '</span><span class="dn">DAY ' + (i + 1) + "</span></div>" +
           '<div class="body"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + '</span><span class="crew">' +
           each(d.crew, function (c) { return '<span class="g-' + c + '">' + group(c).tag + "</span>"; }) + "</span></div>" + flatten(d.detail) +
           '<div class="day-f"><span>當晚 · ' + d.night + "</span>" + each(chips, function (c) { return '<span class="warnc">' + c + "</span>"; }) + "</div></div>" +
@@ -400,7 +419,7 @@
       }) + "</div>";
       var summary = sec("行程總表") + '<p class="fine tl-intro">' + it.tableHint + "</p>" +
         '<div class="ledger">' + each(it.days, function (d) {
-          return '<div class="row row-sum"><a class="sum-d" href="#itinerary" data-day="' + d.date + '"><span class="d">' + d.date + '</span><span class="w">' + d.wd + " ↓</span></a>" +
+          return '<div class="row row-sum' + (T.today && T.today.date === d.date ? " is-today" : "") + '"><a class="sum-d" href="#itinerary" data-day="' + d.date + '"><span class="d">' + d.date + '</span><span class="w">' + d.wd + " ↓</span></a>" +
             '<div class="sum-p"><div class="day-h"><span class="t">' + d.title + (d.choice ? " " + d.choice : "") + "</span>" + crew(d.crew) +
             (d.map ? '<a class="mapchip" href="#itinerary" data-jump="v2-map-' + d.map + '">地圖 ↓</a>' : "") + "</div>" +
             (d.note ? '<span class="cell-s warnc">' + d.note + "</span>" : "") + "</div>" +
@@ -467,8 +486,14 @@
     },
 
     coupon: function () {
-      var c = T.coupons;
-      return sec(c.howTitle, "", "margin-top:0") + '<div class="ledger">' + each(c.how, function (x, i) {
+      var c = T.coupons, f = c.fx;
+      var fx = f ? sec(f.title, "", "margin-top:0") + '<div class="fx" id="fx">' +
+        '<label class="fx-in"><span class="k">日圓</span><input type="number" inputmode="decimal" min="0" id="fx-jpy" placeholder="例如 5000"></label>' +
+        '<span class="fx-eq">≈</span><span class="fx-out"><span class="k">台幣</span><span class="v" id="fx-twd">—</span></span>' +
+        '<label class="fx-rate"><span class="k">匯率</span><input type="number" inputmode="decimal" step="0.001" min="0" id="fx-rate" value="' + f.rate + '"></label>' +
+        '<div class="fx-q">' + each([1000, 3000, 5000, 10000, 30000], function (v) { return '<button type="button" data-jpy="' + v + '">' + v.toLocaleString("en-US") + "</button>"; }) + "</div>" +
+        '</div><p class="fine">' + f.note + "</p>" : "";
+      return fx + sec(c.howTitle, "", f ? "" : "margin-top:0") + '<div class="ledger">' + each(c.how, function (x, i) {
           return '<div class="row row-rem"><span class="no-m" style="font-size:14px">0' + (i + 1) + '</span><span class="cell-t">' + x + "</span></div>";
         }) + "</div>" +
         sec(c.listTitle) +
@@ -493,8 +518,10 @@
       return '<div class="sec" style="margin-top:0"><span class="sec-t">三月氣溫</span><span class="sec-s">' + p.source + '</span><span class="bar"></span></div><div class="wx">' +
         each(p.weather, function (w) {
           return '<div class="wx-c"><div class="wx-h"><span class="pl">' + w.place + '</span><span class="tg">' + w.tag + '</span></div><div class="wx-t"><span class="c"><span class="hi">' +
-            w.hi + '</span><span class="k">日最高</span></span><span class="c"><span class="lo">' + w.lo + '</span><span class="k">日最低</span></span></div><span class="n">' + w.note + "</span></div>";
-        }) + '</div><div class="note" style="margin-top:clamp(28px,3.4vw,42px)"><h3>' + p.clothingTitle + "</h3>" + p.clothing + "</div>";
+            w.hi + '</span><span class="k">日最高</span></span><span class="c"><span class="lo">' + w.lo + '</span><span class="k">日最低</span></span></div><span class="n">' + w.note + "</span>" +
+            (w.fc ? '<a class="wx-fc" href="' + attr(w.fc) + '" target="_blank" rel="noopener noreferrer">氣象廳預報 ↗</a>' : "") + "</div>";
+        }) + "</div>" + (p.forecastNote ? '<p class="fine">' + p.forecastNote + "</p>" : "") +
+        '<div class="note" style="margin-top:clamp(28px,3.4vw,42px)"><h3>' + p.clothingTitle + "</h3>" + p.clothing + "</div>";
     }
   };
 
@@ -505,7 +532,8 @@
 
   /* ---------- 倒數 ---------- */
   var s = T.start.split("-");
-  var diff = Math.floor((new Date(+s[0], s[1] - 1, +s[2]) - new Date()) / 864e5);
+  /* 用今天零點算，不用現在的時刻，不然白天一過就差一天 */
+  var diff = Math.round((new Date(+s[0], s[1] - 1, +s[2]) - new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate())) / 864e5);
   var n = document.getElementById("cd-n"), u = document.getElementById("cd-u");
   var days = diff > 0 ? diff : diff > -11 ? 1 - diff : 0;
   u.textContent = diff > 0 ? "天後出發" : diff > -11 ? "旅程第幾天" : "旅程已結束";
@@ -528,6 +556,27 @@
     /* 分頁在背景時 requestAnimationFrame 不會跑，時間到直接落到最終值 */
     setTimeout(function () { done = true; n.textContent = n.dataset.final; }, 2200);
   }
+
+  /* ---------- 日圓換算：匯率記在這支手機上 ---------- */
+  (function () {
+    var box = document.getElementById("fx");
+    if (!box) return;
+    var FX = "nagoya2027.fx", jpy = document.getElementById("fx-jpy"), rate = document.getElementById("fx-rate"), out = document.getElementById("fx-twd");
+    try { var saved = parseFloat(localStorage.getItem(FX)); if (saved > 0) rate.value = saved; } catch (e) {}
+    function calc() {
+      var j = parseFloat(jpy.value), r = parseFloat(rate.value);
+      out.textContent = j > 0 && r > 0 ? "NT$ " + Math.round(j * r).toLocaleString("en-US") : "—";
+    }
+    jpy.addEventListener("input", calc);
+    rate.addEventListener("input", function () {
+      try { if (parseFloat(rate.value) > 0) localStorage.setItem(FX, rate.value); } catch (e) {}
+      calc();
+    });
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-jpy]");
+      if (b) { jpy.value = b.getAttribute("data-jpy"); calc(); }
+    });
+  })();
 
   /* ---------- 打包清單（與舊版共用同一個瀏覽器儲存鍵） ---------- */
   var PK = "nagoya2027.packing";

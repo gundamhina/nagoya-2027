@@ -162,6 +162,19 @@ document.addEventListener("alpine:init", function () {
         this.reveal();
         this.align(false);
         this.syncTabs();
+
+        /* 旅途中打開網站（網址沒指定分頁時），直接跳到今天的行程 */
+        var today = window.TRIP && window.TRIP.today;
+        if (today && !location.hash) {
+          this.go("itinerary");
+          /* Alpine 剛啟動時分頁還沒切過去，等畫面套用完再捲 */
+          this.$nextTick(function () { setTimeout(function () { var el = document.getElementById(today.id); if (el) el.scrollIntoView({ block: "start", behavior: "instant" }); }, 80); });
+        }
+
+        /* 離線快取（sw.js）。本地開發時不啟用，免得改了檔案還看到快取裡的舊版；要測就在網址加 ?sw=1 */
+        if ("serviceWorker" in navigator && (location.hostname !== "localhost" || /[?&]sw=1/.test(location.search))) {
+          navigator.serviceWorker.register("sw.js").catch(function () {});
+        }
       },
 
       /* 量完整形態的頁首高度，寫進 --head-h 當版面佔位。壓縮中量不到，標記等展開再量。 */

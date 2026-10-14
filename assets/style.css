@@ -373,7 +373,7 @@ h1{margin:0;font-family:var(--mincho);font-size:clamp(42px,8vw,92px);font-weight
 .sum-s{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:6px 10px;}
 .sum-s .cell-s{flex-basis:100%;}
 .sum-p .cell-s{line-height:1.9;}
-.day{scroll-margin-top:16px;}
+.day{scroll-margin-top:110px;}  /* 跳到某一天時留出頁首的高度，日期才不會被擋住 */
 @media(max-width:600px){
   .row-sum{grid-template-columns:64px minmax(0,1fr);}
   .row-sum .sum-s{grid-column:2;}
@@ -696,3 +696,26 @@ body.is-cond .tabs a .n{display:none;}
 .citymap:has(.cm-filter input[value="care"]:checked) a[class^="cm-c-"]:not(.cm-c-care){display:none;}
 .citymap .cm-edge{fill:var(--mark);}
 .cm-dense .cm-n-edge{font-size:18px;}
+
+/* 旅途中的「今天」：總覽封面下方的入口，行程頁今天那一天加底色 */
+.today{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-top:clamp(18px,2.4vw,26px);padding:16px 20px;
+  background:var(--dark);color:var(--on-dark);}
+.today .k{font-size:11px;font-weight:700;letter-spacing:.26em;color:var(--gold);}
+.today .t{font-family:var(--mincho);font-size:clamp(18px,2.2vw,22px);font-weight:500;letter-spacing:.06em;flex:1 1 auto;}
+.today .ar{font-size:12px;letter-spacing:.14em;}
+.today:hover{color:var(--on-dark);background:var(--mark);}
+.day.is-today{background:linear-gradient(90deg,rgba(156,59,38,.08),transparent 70%);box-shadow:inset 3px 0 0 var(--mark);}
+.row-sum.is-today{box-shadow:inset 3px 0 0 var(--mark);}
+/* 天氣卡片的預報連結 */
+.wx-fc{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:.12em;color:var(--mark);border-bottom:1px solid var(--mark);padding-bottom:1px;}
+/* 日圓換算 */
+.fx{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;padding:18px 20px;border:1px solid var(--rule);background:var(--paper);}
+.fx .k{display:block;font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--muted);margin-bottom:6px;}
+.fx input{font:inherit;font-family:var(--mincho);font-size:24px;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:2px 0;width:9em;}
+.fx .fx-rate input{font-size:16px;width:5em;}
+.fx-eq{font-family:var(--mincho);font-size:24px;color:var(--muted);padding-bottom:4px;}
+.fx-out .v{font-family:var(--mincho);font-size:28px;color:var(--mark);}
+.fx-rate{margin-left:auto;}
+.fx-q{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:6px 8px;}
+.fx-q button{font:inherit;font-size:12px;letter-spacing:.06em;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:99px;padding:4px 12px;cursor:pointer;}
+.fx-q button:hover{color:var(--mark);border-color:var(--mark);}

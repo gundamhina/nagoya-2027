@@ -16,6 +16,8 @@ python tools/serve.py
 
 開 `http://localhost:8777/index.html`。伺服器用 `python tools/serve.py`（同 `http.server`，多送 `Cache-Control: no-store`），改檔案後重整就是新的。用 `python -m http.server` 也行，但手機瀏覽器會把 `assets/` 下同一個 `?vX.Y` 的檔案快取起來，改了 app.js、style.css 重整仍是舊的，看起來像沒修好；網址加 `?r=1` 只繞過 index.html，繞不過 assets。
 
+`sw.js` 在 localhost 不會啟用，免得改了檔案還看到快取裡的舊版；要測離線就在網址加 `?sw=1`。網址加 `?today=2027-03-15` 可以模擬旅途中的某一天，看「今天」入口與自動跳轉。
+
 手機連不到 localhost。需要手機實測的改動，先講清楚這個限制，問維護者要不要先發一版上去測，等他答應再推。不要替他決定。
 
 改版時建議附上檢查結果：主控台有沒有錯誤、桌機與手機各切幾頁、頁首壓縮與展開、時間軸表格能不能自己捲。
@@ -61,6 +63,7 @@ python tools/serve.py
 | `assets/cover-2027-wide.webp` | 首頁封面（圖上沒有字，標題、倒數由 HTML 疊上去） |
 | `assets/route-2027.png` | 交通頁最上面的動線圖 |
 | `assets/favicon.svg` | 瀏覽器分頁圖示 |
+| `sw.js` | 離線快取：網頁先上網、assets 先用快取；安裝時讀 index.html 引用的檔案，版本號不用在這裡改 |
 
 分頁片段：`#overview` 總覽、`#people` 旅伴、`#timeline` 時間軸、`#journey` 交通、`#stay` 住宿資訊、`#itinerary` 行程、`#food` 美食、`#prep` 行前、`#coupon` 優惠券、`#emergency` 緊急。舊的 `#route`（動線）已併進交通，`app.js` 的 `ALIAS` 會把它轉到 `#journey`。
 
